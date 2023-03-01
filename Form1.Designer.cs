@@ -43,6 +43,8 @@
             this.boxSelectedServerTitle = new System.Windows.Forms.Label();
             this.boxSelectedServerSeparator = new System.Windows.Forms.Panel();
             this.bResetApp = new System.Windows.Forms.Label();
+            this.bResetThirdParty = new System.Windows.Forms.Label();
+            this.bRefresh = new System.Windows.Forms.Label();
             this.boxPathBox.SuspendLayout();
             this.boxServers.SuspendLayout();
             this.boxSelectedServer.SuspendLayout();
@@ -131,7 +133,7 @@
             this.boxServers.Controls.Add(this.boxServersSeparator);
             this.boxServers.Location = new System.Drawing.Point(17, 87);
             this.boxServers.Name = "boxServers";
-            this.boxServers.Size = new System.Drawing.Size(314, 338);
+            this.boxServers.Size = new System.Drawing.Size(314, 412);
             this.boxServers.TabIndex = 1;
             // 
             // boxServerPlaceholder
@@ -182,7 +184,7 @@
             this.boxSelectedServer.Controls.Add(this.boxSelectedServerSeparator);
             this.boxSelectedServer.Location = new System.Drawing.Point(347, 87);
             this.boxSelectedServer.Name = "boxSelectedServer";
-            this.boxSelectedServer.Size = new System.Drawing.Size(314, 338);
+            this.boxSelectedServer.Size = new System.Drawing.Size(314, 412);
             this.boxSelectedServer.TabIndex = 2;
             // 
             // boxSelectedServerPlaceholder
@@ -231,14 +233,45 @@
             this.bResetApp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bResetApp.AutoSize = true;
             this.bResetApp.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bResetApp.Location = new System.Drawing.Point(621, 426);
+            this.bResetApp.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.bResetApp.Location = new System.Drawing.Point(624, 502);
             this.bResetApp.Name = "bResetApp";
-            this.bResetApp.Size = new System.Drawing.Size(45, 17);
+            this.bResetApp.Size = new System.Drawing.Size(36, 13);
             this.bResetApp.TabIndex = 3;
             this.bResetApp.Text = "Reset";
             this.bResetApp.Click += new System.EventHandler(this.bResetApp_Click);
             this.bResetApp.MouseEnter += new System.EventHandler(this.bResetApp_MouseEnter);
             this.bResetApp.MouseLeave += new System.EventHandler(this.bResetApp_MouseLeave);
+            // 
+            // bResetThirdParty
+            // 
+            this.bResetThirdParty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bResetThirdParty.AutoSize = true;
+            this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bResetThirdParty.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.bResetThirdParty.Location = new System.Drawing.Point(499, 502);
+            this.bResetThirdParty.Name = "bResetThirdParty";
+            this.bResetThirdParty.Size = new System.Drawing.Size(119, 13);
+            this.bResetThirdParty.TabIndex = 4;
+            this.bResetThirdParty.Text = "Reset third party apps";
+            this.bResetThirdParty.Click += new System.EventHandler(this.bResetThirdParty_Click);
+            this.bResetThirdParty.MouseEnter += new System.EventHandler(this.bResetThirdParty_MouseEnter);
+            this.bResetThirdParty.MouseLeave += new System.EventHandler(this.bResetThirdParty_MouseLeave);
+            // 
+            // bRefresh
+            // 
+            this.bRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bRefresh.AutoSize = true;
+            this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bRefresh.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.bRefresh.Location = new System.Drawing.Point(14, 502);
+            this.bRefresh.Name = "bRefresh";
+            this.bRefresh.Size = new System.Drawing.Size(46, 13);
+            this.bRefresh.TabIndex = 5;
+            this.bRefresh.Text = "Refresh";
+            this.bRefresh.Click += new System.EventHandler(this.bRefresh_Click);
+            this.bRefresh.MouseEnter += new System.EventHandler(this.bRefresh_MouseEnter);
+            this.bRefresh.MouseLeave += new System.EventHandler(this.bRefresh_MouseLeave);
             // 
             // Form1
             // 
@@ -246,7 +279,9 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 447);
+            this.ClientSize = new System.Drawing.Size(679, 521);
+            this.Controls.Add(this.bRefresh);
+            this.Controls.Add(this.bResetThirdParty);
             this.Controls.Add(this.bResetApp);
             this.Controls.Add(this.boxSelectedServer);
             this.Controls.Add(this.boxServers);
@@ -255,13 +290,15 @@
             this.ForeColor = System.Drawing.Color.LightGray;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MinimumSize = new System.Drawing.Size(695, 486);
+            this.MinimumSize = new System.Drawing.Size(695, 560);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SPT Mini Launcher";
             this.Load += new System.EventHandler(this.Form1_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
             this.boxPathBox.ResumeLayout(false);
             this.boxPathBox.PerformLayout();
             this.boxServers.ResumeLayout(false);
@@ -287,6 +324,8 @@
         private System.Windows.Forms.Label boxSelectedServerTitle;
         private System.Windows.Forms.Panel boxSelectedServerSeparator;
         private System.Windows.Forms.Label bResetApp;
+        private System.Windows.Forms.Label bResetThirdParty;
+        private System.Windows.Forms.Label bRefresh;
     }
 }
 

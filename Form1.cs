@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -28,26 +29,32 @@ namespace SPTMiniLauncher
         public Process launcher;
 
         string[] serverOptionsStreets = {
-            "-", // - is Actions
+            "- ACTIONS -",
             "Clear cache",
-            "Clear cache + Run SPT",
+            "Run SPT",
             "Stop SPT (if running)",
             "Delete server",
-            "", // blank is Mods
+            "- MODS -",
             "Open server mods",
             "Open modloader JSON",
             "Open client mods",
+            "- THIRDPARTY -",
+            "Open Profile Editor",
+            "Open Server Value Modifier (SVM)"
         };
 
         string[] serverOptions = {
-            "-", // - is Actions
+            "- ACTIONS -",
             "Clear cache",
-            "Clear cache + Run SPT",
+            "Run SPT",
             "Stop SPT (if running)",
             "Delete server",
-            "", // blank is Mods
+            "- MODS -",
             "Open server mods",
             "Open client mods",
+            "- THIRDPARTY -",
+            "Open Profile Editor",
+            "Open Server Value Modifier (SVM)"
         };
 
         public Form1()
@@ -100,6 +107,7 @@ namespace SPTMiniLauncher
                     */
                 }
             }
+
             boxPathBox.Select();
         }
 
@@ -150,9 +158,55 @@ namespace SPTMiniLauncher
             }
         }
 
+        private void checkThirdPartyApps(string path)
+        {
+            // perform profile editor check
+            string progFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
+
+            if (Directory.Exists(Path.Combine(progFiles, "SPT-AKI Profile Editor")) &&
+                File.Exists(Path.Combine(progFiles, "SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe")))
+            {
+                Properties.Settings.Default.profile_editor_path = Path.Combine(progFiles, "SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe");
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[10] = "Open Profile Editor";
+                serverOptions[9] = "Open Profile Editor";
+            }
+            else
+            {
+                Properties.Settings.Default.profile_editor_path = "";
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[10] = "Profile Editor not detected - click to fix";
+                serverOptions[9] = "Profile Editor not detected - click to fix";
+            }
+
+            // server value modifier (svm)
+            string svmpath = Path.Combine(path, "user\\mods\\ServerValueModifier");
+
+            if (Directory.Exists(svmpath) &&
+                File.Exists(Path.Combine(svmpath, "GFVE.exe")))
+            {
+                Properties.Settings.Default.svm_path = svmpath;
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[11] = "Open Server Value Modifier (SVM)";
+                serverOptions[10] = "Open Server Value Modifier (SVM)";
+            }
+            else
+            {
+                Properties.Settings.Default.svm_path = "";
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[11] = "SVM not detected - click to download";
+                serverOptions[10] = "SVM not detected - click to download";
+            }
+        }
+
         private void listAllServers(string path)
         {
             clearUI();
+            checkThirdPartyApps(Properties.Settings.Default.server_path);
 
             if (isLoneServer)
             {
@@ -176,6 +230,7 @@ namespace SPTMiniLauncher
 
                 boxServersTitle.Text = "Listed server";
                 checkVersion(Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json"));
+                boxSelectedServerTitle.Text = lbl.Text;
             }
             else
             {
@@ -252,6 +307,7 @@ namespace SPTMiniLauncher
         private void lbl_MouseDown(object sender, EventArgs e)
         {
             System.Windows.Forms.Label lbl = (System.Windows.Forms.Label)sender;
+
             if (lbl.Text != "")
             {
                 lbl.BackColor = listSelectedcolor;
@@ -337,6 +393,8 @@ namespace SPTMiniLauncher
         {
             try
             {
+                // checkThirdPartyApps(Properties.Settings.Default.server_path);
+
                 if (isStreets)
                 {
                     for (int i = 0; i < serverOptionsStreets.Length; i++)
@@ -349,7 +407,7 @@ namespace SPTMiniLauncher
                         lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
                         lbl.Cursor = Cursors.Hand;
 
-                        if (serverOptionsStreets[i] == "")
+                        if (serverOptionsStreets[i].ToLower() == "- mods -")
                         {
                             lbl.Text = "  Mods";
                             lbl.Cursor = Cursors.Arrow;
@@ -357,13 +415,28 @@ namespace SPTMiniLauncher
                             lbl.ForeColor = Color.DodgerBlue;
                             lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                         }
-                        else if (serverOptionsStreets[i] == "-")
+                        else if (serverOptionsStreets[i].ToLower() == "- actions -")
                         {
                             lbl.Text = "  Actions";
                             lbl.Cursor = Cursors.Arrow;
                             lbl.BackColor = this.BackColor;
                             lbl.ForeColor = Color.IndianRed;
                             lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                        }
+                        else if (serverOptionsStreets[i].ToLower() == "- thirdparty -")
+                        {
+                            lbl.Text = "  Third Party Apps";
+                            lbl.Cursor = Cursors.Arrow;
+                            lbl.BackColor = this.BackColor;
+                            lbl.ForeColor = Color.DarkSeaGreen;
+                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                        }
+                        else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
+                        {
+                            lbl.Text = serverOptionsStreets[i];
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.IndianRed;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
                         else
                         {
@@ -393,19 +466,33 @@ namespace SPTMiniLauncher
                         lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
                         lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
 
-                        if (serverOptions[i] == "")
+                        if (serverOptions[i].ToLower() == "- mods -")
                         {
                             lbl.Text = "  Mods";
                             lbl.BackColor = this.BackColor;
                             lbl.ForeColor = Color.DodgerBlue;
                             lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                         }
-                        else if (serverOptions[i] == "-")
+                        else if (serverOptions[i].ToLower() == "- actions -")
                         {
                             lbl.Text = "  Actions";
                             lbl.BackColor = this.BackColor;
                             lbl.ForeColor = Color.IndianRed;
                             lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                        }
+                        else if (serverOptions[i].ToLower() == "- thirdparty -")
+                        {
+                            lbl.Text = "  Third Party Apps";
+                            lbl.BackColor = this.BackColor;
+                            lbl.ForeColor = Color.DarkSeaGreen;
+                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                        }
+                        else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
+                        {
+                            lbl.Text = serverOptionsStreets[i];
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.IndianRed;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
                         else
                         {
@@ -437,7 +524,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseEnter(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 label.BackColor = listHovercolor;
             }
@@ -446,7 +533,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseLeave(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 label.BackColor = listBackcolor;
             }
@@ -455,7 +542,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseDown(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 string currentDir = Directory.GetCurrentDirectory();
                 label.BackColor = listSelectedcolor;
@@ -498,7 +585,7 @@ namespace SPTMiniLauncher
                         }
                         break;
 
-                    case "clear cache + run spt":
+                    case "run spt":
 
                         if (isLoneServer)
                         {
@@ -624,127 +711,95 @@ namespace SPTMiniLauncher
                         WindowState = FormWindowState.Minimized;
                         break;
 
-                    case "run spt":
-                        // unused
-                        if (isLoneServer)
-                        {
-                            // server
-                            Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                            server = new Process();
-                            server.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                            server.StartInfo.FileName = "Aki.Server.exe";
-                            server.StartInfo.CreateNoWindow = false;
-                            server.StartInfo.UseShellExecute = false;
-                            server.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                server.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                            Directory.SetCurrentDirectory(currentDir);
+                    case "open server mods":
 
-                            // launcher
-                            Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                            launcher = new Process();
-                            launcher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
-                            launcher.StartInfo.CreateNoWindow = false;
-                            launcher.StartInfo.UseShellExecute = false;
-                            launcher.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                launcher.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                            Directory.SetCurrentDirectory(currentDir);
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
+                        {
+                            label.Text = "Open server modlist";
                         }
                         else
                         {
-                            // server
-                            Directory.SetCurrentDirectory($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}");
-                            server = new Process();
-                            server.StartInfo.WorkingDirectory = $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}";
-                            server.StartInfo.FileName = "Aki.Server.exe";
-                            server.StartInfo.CreateNoWindow = false;
-                            server.StartInfo.UseShellExecute = false;
-                            server.StartInfo.RedirectStandardOutput = false;
-                            try
+                            if (isLoneServer)
                             {
-                                server.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
+                                {
+                                    try
+                                    {
+                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\user\\mods");
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
                             }
-                            catch (Exception err)
+                            else
                             {
-                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
+                                {
+                                    try
+                                    {
+                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods");
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
                             }
-                            Directory.SetCurrentDirectory(currentDir);
-
-                            // launcher
-                            Directory.SetCurrentDirectory($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}");
-                            launcher = new Process();
-                            launcher.StartInfo.WorkingDirectory = $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}";
-                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
-                            launcher.StartInfo.CreateNoWindow = false;
-                            launcher.StartInfo.UseShellExecute = false;
-                            launcher.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                launcher.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                            Directory.SetCurrentDirectory(currentDir);
                         }
                         break;
 
-                    case "open server mods":
+                    case "open server modlist":
 
-                        if (isLoneServer)
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
-                            {
-                                try
-                                {
-                                    Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\user\\mods");
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
-                            }
+                            label.Text = "Open server mods";
                         }
                         else
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
+                            if (isLoneServer)
                             {
-                                try
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
                                 {
-                                    Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods");
+                                    try
+                                    {
+                                        Modlist form = new Modlist();
+
+                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
+                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                                        form.Text = boxSelectedServerTitle.Text;
+
+                                        form.ShowDialog();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
-                                catch (Exception err)
+                            }
+                            else
+                            {
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
                                 {
-                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    try
+                                    {
+                                        Modlist form = new Modlist();
+
+                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
+                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, $"{boxSelectedServerTitle.Text}\\user\\mods");
+                                        form.Text = boxSelectedServerTitle.Text;
+
+                                        form.ShowDialog();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
                             }
                         }
@@ -816,6 +871,80 @@ namespace SPTMiniLauncher
                                     Debug.WriteLine($"ERROR: {err.Message.ToString()}");
                                     MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
+                            }
+                        }
+                        break;
+
+                    case "open profile editor":
+
+                        if (File.Exists(Properties.Settings.Default.profile_editor_path))
+                        {
+                            try
+                            {
+                                Process proc = new Process();
+                                proc.StartInfo.FileName = Properties.Settings.Default.profile_editor_path;
+                                proc.Start();
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
+                        }
+                        break;
+
+                    case "profile editor not detected - click to fix":
+
+                        OpenFileDialog dialog = new OpenFileDialog();
+                        dialog.Title = "Select path for SPT-AKI Profile Editor.exe";
+                        dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                        if (dialog.ShowDialog() == DialogResult.OK)
+                        {
+                            string fullPath = Path.GetFullPath(dialog.FileName);
+
+                            if (Path.GetFileNameWithoutExtension(dialog.FileName).ToLower() == "spt-aki profile editor")
+                            {
+                                // actual SPT installation
+                                Properties.Settings.Default.profile_editor_path = fullPath;
+                                Properties.Settings.Default.Save();
+
+                                // check for Lone Server
+                                checkThirdPartyApps(Properties.Settings.Default.server_path);
+                            }
+                        }
+                        break;
+
+                    case "svm not detected - click to download":
+                        try
+                        {
+                            if (MessageBox.Show("Would you like to download SVM from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                Process.Start("https://hub.sp-tarkov.com/files/file/379-kmc-server-value-modifier/");
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                        }
+                        // nothing lol
+                        break;
+
+                    case "open server value modifier (svm)":
+
+                        if (Directory.Exists(Properties.Settings.Default.svm_path) && File.Exists(Path.Combine(Properties.Settings.Default.svm_path, "GFVE.exe")))
+                        {
+                            try
+                            {
+                                Process proc = new Process();
+                                proc.StartInfo.FileName = Path.Combine(Properties.Settings.Default.svm_path, "GFVE.exe");
+                                proc.Start();
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
                         }
                         break;
@@ -993,7 +1122,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseUp(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 label.BackColor = label.BackColor = listHovercolor;
             }
@@ -1055,19 +1184,6 @@ namespace SPTMiniLauncher
                 }
 
             }
-
-            /*
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dialog.IsFolderPicker = true;
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                boxPath.Text = dialog.FileName;
-                Properties.Settings.Default.server_path = boxPath.Text;
-
-                listAllServers(boxPath.Text);
-            }
-            */
         }
 
         private void boxOpenIn_Click(object sender, EventArgs e)
@@ -1279,6 +1395,57 @@ namespace SPTMiniLauncher
         private void boxSelectedServerTitle_MouseLeave_1(object sender, EventArgs e)
         {
             boxSelectedServerTitle.ForeColor = Color.LightGray;
+        }
+
+        private void bResetThirdParty_MouseEnter(object sender, EventArgs e)
+        {
+            bResetThirdParty.ForeColor = Color.DodgerBlue;
+        }
+
+        private void bResetThirdParty_MouseLeave(object sender, EventArgs e)
+        {
+            bResetThirdParty.ForeColor = Color.LightGray;
+        }
+
+        private void bResetThirdParty_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show("Reset third party apps?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                Properties.Settings.Default.profile_editor_path = "";
+                Properties.Settings.Default.Save();
+                showError("Reset successful");
+            }
+        }
+
+        private void Form1_KeyDown(object sender, KeyEventArgs e)
+        {
+        }
+
+        private void Form1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyData == (Keys.Control | Keys.R))
+            {
+                e.SuppressKeyPress = true;
+                e.Handled = true;
+
+                listAllServers(Properties.Settings.Default.server_path);
+                showError("Refreshed!");
+            }
+        }
+
+        private void bRefresh_Click(object sender, EventArgs e)
+        {
+            listAllServers(Properties.Settings.Default.server_path);
+        }
+
+        private void bRefresh_MouseEnter(object sender, EventArgs e)
+        {
+            bRefresh.ForeColor = Color.DodgerBlue;
+        }
+
+        private void bRefresh_MouseLeave(object sender, EventArgs e)
+        {
+            bRefresh.ForeColor = Color.LightGray;
         }
     }
 }
