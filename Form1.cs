@@ -1,4 +1,5 @@
 ﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -109,6 +110,76 @@ namespace SPTMiniLauncher
             }
 
             boxPathBox.Select();
+        }
+
+        private void updateOrderJSON(string path)
+        {
+            try
+            {
+                // Personal reference: path means user/mods
+                //
+                // I guess I'll document this for whoever is interested lmao
+                // pls no judgerino, I am dumdum with c soft
+                //
+                // This function will do the following:
+                // 
+                // 1. Check if order.json exists in the user/mods folder
+                //    >> If it doesn't, create and structure it
+                //
+                // 2. If it exists, check the list of server mods against the order list
+                //    >> If the order list is missing an existing mod, it adds said mod
+                //
+                // 3. Next, check if the order list contains any mods that don't exist anymore
+                //    >> If it does, remove said non-existent mods from the order list
+                //
+
+                string orderFile = Path.Combine(path, "order.json");
+
+                if (!File.Exists(orderFile))
+                {
+                    var jsonOrder = new { order = new List<string>() };
+                    string json = JsonConvert.SerializeObject(jsonOrder, Formatting.Indented);
+                    File.WriteAllText(orderFile, json);
+                }
+
+                string orderJSON = File.ReadAllText(orderFile);
+                JObject order = JObject.Parse(orderJSON);
+                string[] modsFolder = Directory.GetDirectories(path);
+
+                List<JToken> removeMods = new List<JToken>();
+                foreach (JToken mod in order["order"])
+                {
+                    string modName = mod.Value<string>();
+                    if (!Array.Exists(modsFolder, s => Path.GetFileName(s).Equals(modName)))
+                    {
+                        removeMods.Add(mod);
+                    }
+                }
+
+                foreach (JToken mod in removeMods)
+                {
+                    mod.Remove();
+                }
+
+                foreach (string mod in modsFolder)
+                {
+                    string name = Path.GetFileName(mod);
+                    bool exists = ((JArray)order["order"]).Any(t => t.Value<string>() == name);
+
+                    if (!exists)
+                    {
+                        ((JArray)order["order"]).Add(name);
+                    }
+                }
+
+                File.WriteAllText(orderFile, order.ToString());
+
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"ERROR: {err}");
+                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+            }
         }
 
         private void showError(string content)
@@ -231,6 +302,11 @@ namespace SPTMiniLauncher
                 boxServersTitle.Text = "Listed server";
                 checkVersion(Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json"));
                 boxSelectedServerTitle.Text = lbl.Text;
+
+                if (Directory.Exists(Path.Combine(path, "user\\mods")))
+                {
+                    updateOrderJSON(Path.Combine(path, "user\\mods"));
+                }
             }
             else
             {
@@ -258,6 +334,11 @@ namespace SPTMiniLauncher
                             lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
                             lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
                             boxServers.Controls.Add(lbl);
+
+                            if (Directory.Exists(Path.Combine(dirs[i], "user\\mods")))
+                            {
+                                updateOrderJSON(Path.Combine(dirs[i], "user\\mods"));
+                            }
                         }
                         else
                         {
@@ -487,9 +568,9 @@ namespace SPTMiniLauncher
                             lbl.ForeColor = Color.DarkSeaGreen;
                             lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                         }
-                        else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
+                        else if (serverOptions[i].ToLower().Contains("not detected"))
                         {
-                            lbl.Text = serverOptionsStreets[i];
+                            lbl.Text = serverOptions[i];
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.IndianRed;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -760,6 +841,8 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
+                            MessageBox.Show("This section is unfinished at the moment, we apologize for the inconvenience.\n\nPlease come back later!", this.Text, MessageBoxButtons.OK);
+                            /*
                             if (isLoneServer)
                             {
                                 if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
@@ -802,6 +885,7 @@ namespace SPTMiniLauncher
                                     }
                                 }
                             }
+                            */
                         }
                         break;
 
@@ -843,35 +927,98 @@ namespace SPTMiniLauncher
 
                     case "open client mods":
 
-                        if (isLoneServer)
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\BepInEx\\plugins"))
-                            {
-                                try
-                                {
-                                    Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\BepInEx\\plugins");
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
-                            }
+                            label.Text = "Open client modlist";
                         }
                         else
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\BepInEx\\plugins"))
+                            if (isLoneServer)
                             {
-                                try
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\BepInEx\\plugins"))
                                 {
-                                    Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\BepInEx\\plugins");
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    try
+                                    {
+                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\BepInEx\\plugins");
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
                             }
+                            else
+                            {
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\BepInEx\\plugins"))
+                                {
+                                    try
+                                    {
+                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\BepInEx\\plugins");
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
+                            }
+                        }
+                        break;
+
+                    case "open client modlist":
+
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
+                        {
+                            label.Text = "Open client mods";
+                        }
+                        else
+                        {
+                            MessageBox.Show("This section is unfinished at the moment, we apologize for the inconvenience.\n\nPlease come back later!", this.Text, MessageBoxButtons.OK);
+                            /*
+                            if (isLoneServer)
+                            {
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
+                                {
+                                    try
+                                    {
+                                        Modlist form = new Modlist();
+
+                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
+                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                                        form.Text = boxSelectedServerTitle.Text;
+
+                                        form.ShowDialog();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
+                                {
+                                    try
+                                    {
+                                        Modlist form = new Modlist();
+
+                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
+                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, $"{boxSelectedServerTitle.Text}\\user\\mods");
+                                        form.Text = boxSelectedServerTitle.Text;
+
+                                        form.ShowDialog();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
+                            }
+                            */
                         }
                         break;
 
@@ -918,7 +1065,7 @@ namespace SPTMiniLauncher
                     case "svm not detected - click to download":
                         try
                         {
-                            if (MessageBox.Show("Would you like to download SVM from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            if (MessageBox.Show($"SVM is not detected in this {boxSelectedServerTitle.Text}\'s mods folder.\n\nWould you like to download SVM from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
                                 Process.Start("https://hub.sp-tarkov.com/files/file/379-kmc-server-value-modifier/");
                             }
@@ -958,6 +1105,19 @@ namespace SPTMiniLauncher
                             {
                                 try
                                 {
+                                    if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\cache"))
+                                    {
+                                        try
+                                        {
+                                            Directory.Delete($"{Properties.Settings.Default.server_path}\\user\\cache", true);
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+
                                     Process[] proc = Process.GetProcesses();
                                     foreach (Process p in proc)
                                     {
@@ -1242,40 +1402,47 @@ namespace SPTMiniLauncher
             string[] items = (string[])e.Data.GetData(DataFormats.FileDrop);
             foreach (string item in items)
             {
-                try
+                if (item.EndsWith(".zip") || item.EndsWith("7.z"))
+                { 
+                    MessageBox.Show("Please right click \"Open server mods\" and open the modlist before you try to add a mod!", this.Text, MessageBoxButtons.OK);
+                }
+                else
                 {
-                    if (File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Server.exe")) &&
-                        File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(Path.GetFullPath(item), "Aki_Data")))
+                    try
                     {
-                        // Chosen folder actually contains an SPT installation
-                        boxPath.Text = Path.GetFullPath(item);
-                        Properties.Settings.Default.server_path = boxPath.Text;
-                        Properties.Settings.Default.Save();
-                        isLoneServer = true;
-                        listAllServers(boxPath.Text);
-                    }
-                    else
-                    {
-                        try
+                        if (File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Server.exe")) &&
+                            File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Launcher.exe")) &&
+                            Directory.Exists(Path.Combine(Path.GetFullPath(item), "Aki_Data")))
                         {
+                            // Chosen folder actually contains an SPT installation
                             boxPath.Text = Path.GetFullPath(item);
                             Properties.Settings.Default.server_path = boxPath.Text;
                             Properties.Settings.Default.Save();
-                            isLoneServer = false;
+                            isLoneServer = true;
                             listAllServers(boxPath.Text);
                         }
-                        catch (Exception err)
+                        else
                         {
-                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                            try
+                            {
+                                boxPath.Text = Path.GetFullPath(item);
+                                Properties.Settings.Default.server_path = boxPath.Text;
+                                Properties.Settings.Default.Save();
+                                isLoneServer = false;
+                                listAllServers(boxPath.Text);
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
                         }
                     }
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
                 }
             }
             boxPathBox.Select();
@@ -1423,7 +1590,7 @@ namespace SPTMiniLauncher
 
         private void Form1_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyData == (Keys.Control | Keys.R))
+            if (e.KeyData == (Keys.LControlKey | Keys.R))
             {
                 e.SuppressKeyPress = true;
                 e.Handled = true;
