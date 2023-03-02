@@ -1028,9 +1028,17 @@ namespace SPTMiniLauncher
                         {
                             try
                             {
+                                string currentDirectory = Directory.GetCurrentDirectory();
+                                Directory.SetCurrentDirectory(Properties.Settings.Default.profile_editor_path);
                                 Process proc = new Process();
-                                proc.StartInfo.FileName = Properties.Settings.Default.profile_editor_path;
+
+                                proc.StartInfo.WorkingDirectory = Properties.Settings.Default.profile_editor_path;
+                                proc.StartInfo.FileName = Path.GetFileName(Properties.Settings.Default.profile_editor_path);
+                                proc.StartInfo.CreateNoWindow = false;
+                                proc.StartInfo.UseShellExecute = false;
                                 proc.Start();
+
+                                Directory.SetCurrentDirectory(currentDirectory);
                             }
                             catch (Exception err)
                             {
@@ -1084,9 +1092,17 @@ namespace SPTMiniLauncher
                         {
                             try
                             {
+                                string currentDirectory = Directory.GetCurrentDirectory();
+                                Directory.SetCurrentDirectory(Properties.Settings.Default.svm_path);
                                 Process proc = new Process();
-                                proc.StartInfo.FileName = Path.Combine(Properties.Settings.Default.svm_path, "GFVE.exe");
+
+                                proc.StartInfo.WorkingDirectory = Properties.Settings.Default.svm_path;
+                                proc.StartInfo.FileName = "GFVE.exe";
+                                proc.StartInfo.CreateNoWindow = false;
+                                proc.StartInfo.UseShellExecute = false;
                                 proc.Start();
+
+                                Directory.SetCurrentDirectory(currentDirectory);
                             }
                             catch (Exception err)
                             {
