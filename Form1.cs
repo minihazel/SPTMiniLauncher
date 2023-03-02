@@ -237,7 +237,7 @@ namespace SPTMiniLauncher
             if (Directory.Exists(Path.Combine(progFiles, "SPT-AKI Profile Editor")) &&
                 File.Exists(Path.Combine(progFiles, "SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe")))
             {
-                Properties.Settings.Default.profile_editor_path = Path.Combine(progFiles, "SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe");
+                Properties.Settings.Default.profile_editor_path = Path.Combine(progFiles, "SPT-AKI Profile Editor");
                 Properties.Settings.Default.Save();
 
                 serverOptionsStreets[10] = "Open Profile Editor";
@@ -277,7 +277,6 @@ namespace SPTMiniLauncher
         private void listAllServers(string path)
         {
             clearUI();
-            checkThirdPartyApps(Properties.Settings.Default.server_path);
 
             if (isLoneServer)
             {
@@ -302,6 +301,7 @@ namespace SPTMiniLauncher
                 boxServersTitle.Text = "Listed server";
                 checkVersion(Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json"));
                 boxSelectedServerTitle.Text = lbl.Text;
+                checkThirdPartyApps(Properties.Settings.Default.server_path);
 
                 if (Directory.Exists(Path.Combine(path, "user\\mods")))
                 {
@@ -474,6 +474,14 @@ namespace SPTMiniLauncher
         {
             try
             {
+                if (isLoneServer)
+                {
+                    checkThirdPartyApps(Properties.Settings.Default.server_path);
+                }
+                else
+                {
+                    checkThirdPartyApps(Path.Combine(boxPath.Text, boxSelectedServerTitle.Text));
+                }
                 // checkThirdPartyApps(Properties.Settings.Default.server_path);
 
                 if (isStreets)
@@ -1024,7 +1032,7 @@ namespace SPTMiniLauncher
 
                     case "open profile editor":
 
-                        if (File.Exists(Properties.Settings.Default.profile_editor_path))
+                        if (Directory.Exists(Properties.Settings.Default.profile_editor_path) && File.Exists(Path.Combine(Properties.Settings.Default.profile_editor_path, "SPT-AKI Profile Editor.exe")))
                         {
                             try
                             {
@@ -1033,9 +1041,10 @@ namespace SPTMiniLauncher
                                 Process proc = new Process();
 
                                 proc.StartInfo.WorkingDirectory = Properties.Settings.Default.profile_editor_path;
-                                proc.StartInfo.FileName = Path.GetFileName(Properties.Settings.Default.profile_editor_path);
+                                proc.StartInfo.FileName = "SPT-AKI Profile Editor.exe";
                                 proc.StartInfo.CreateNoWindow = false;
                                 proc.StartInfo.UseShellExecute = false;
+                                proc.StartInfo.RedirectStandardOutput = false;
                                 proc.Start();
 
                                 Directory.SetCurrentDirectory(currentDirectory);
@@ -1057,15 +1066,24 @@ namespace SPTMiniLauncher
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
                             string fullPath = Path.GetFullPath(dialog.FileName);
+                            string parentDir = Path.GetDirectoryName(fullPath);
 
                             if (Path.GetFileNameWithoutExtension(dialog.FileName).ToLower() == "spt-aki profile editor")
                             {
                                 // actual SPT installation
-                                Properties.Settings.Default.profile_editor_path = fullPath;
+                                Properties.Settings.Default.profile_editor_path = parentDir;
                                 Properties.Settings.Default.Save();
 
-                                // check for Lone Server
-                                checkThirdPartyApps(Properties.Settings.Default.server_path);
+                                if (isLoneServer)
+                                {
+                                    // check for Lone Server
+                                    checkThirdPartyApps(Properties.Settings.Default.server_path);
+                                }
+                                else
+                                {
+                                    // check for Lone Server
+                                    checkThirdPartyApps(Path.Combine(boxPath.Text, boxSelectedServerTitle.Text));
+                                }
                             }
                         }
                         break;
@@ -1100,6 +1118,7 @@ namespace SPTMiniLauncher
                                 proc.StartInfo.FileName = "GFVE.exe";
                                 proc.StartInfo.CreateNoWindow = false;
                                 proc.StartInfo.UseShellExecute = false;
+                                proc.StartInfo.RedirectStandardOutput = false;
                                 proc.Start();
 
                                 Directory.SetCurrentDirectory(currentDirectory);
