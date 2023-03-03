@@ -121,26 +121,28 @@ namespace SPTMiniLauncher
             boxPathBox.Select();
         }
 
-        private void updateOrderJSON(string path)
+        public void updateOrderJSON(string path)
         {
+
+            // Personal reference: path means user/mods
+            //
+            // I guess I'll document this for whoever is interested lmao
+            // pls no judgerino, I am dumdum with c soft
+            //
+            // This function will do the following:
+            // 
+            // 1. Check if order.json exists in the user/mods folder
+            //    >> If it doesn't, create and structure it
+            //
+            // 2. If it exists, check the list of server mods against the order list
+            //    >> If the order list is missing an existing mod, it adds said mod
+            //
+            // 3. Next, check if the order list contains any mods that don't exist anymore
+            //    >> If it does, remove said non-existent mods from the order list
+            //
+
             try
             {
-                // Personal reference: path means user/mods
-                //
-                // I guess I'll document this for whoever is interested lmao
-                // pls no judgerino, I am dumdum with c soft
-                //
-                // This function will do the following:
-                // 
-                // 1. Check if order.json exists in the user/mods folder
-                //    >> If it doesn't, create and structure it
-                //
-                // 2. If it exists, check the list of server mods against the order list
-                //    >> If the order list is missing an existing mod, it adds said mod
-                //
-                // 3. Next, check if the order list contains any mods that don't exist anymore
-                //    >> If it does, remove said non-existent mods from the order list
-                //
 
                 string orderFile = Path.Combine(path, "order.json");
 
@@ -873,13 +875,13 @@ namespace SPTMiniLauncher
                             else
                             {
                                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string selectedServerModsFolder = Path.Combine(selectedServer, "user\\mods");
+                                string modsFolder = Path.Combine(selectedServer, "user\\mods");
 
-                                if (Directory.Exists(selectedServerModsFolder))
+                                if (Directory.Exists(modsFolder))
                                 {
                                     try
                                     {
-                                        Process.Start("explorer.exe", selectedServerModsFolder);
+                                        Process.Start("explorer.exe", modsFolder);
                                     }
                                     catch (Exception err)
                                     {
@@ -899,20 +901,24 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            MessageBox.Show("This section is unfinished at the moment, we apologize for the inconvenience.\n\nPlease come back later!", this.Text, MessageBoxButtons.OK);
-                            /*
                             if (isLoneServer)
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
+                                string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                                if (Directory.Exists(modsFolder))
                                 {
                                     try
                                     {
                                         Modlist form = new Modlist();
 
-                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
-                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
-                                        form.Text = boxSelectedServerTitle.Text;
+                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
+                                        Label loneServer = (Label)form.Controls["loneServer"];
+                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
+                                        boxPathPlaceholder.Text = modsFolder;
+                                        boxModsType.Text = "Server mods";
+                                        loneServer.Text = "True";
+
+                                        form.Text = boxSelectedServerTitle.Text;
                                         form.ShowDialog();
                                     }
                                     catch (Exception err)
@@ -924,16 +930,24 @@ namespace SPTMiniLauncher
                             }
                             else
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
+                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                string modsFolder = Path.Combine(selectedServer, "user\\mods");
+
+                                if (Directory.Exists(modsFolder))
                                 {
                                     try
                                     {
                                         Modlist form = new Modlist();
 
-                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
-                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, $"{boxSelectedServerTitle.Text}\\user\\mods");
-                                        form.Text = boxSelectedServerTitle.Text;
+                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
+                                        Label loneServer = (Label)form.Controls["loneServer"];
+                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
+                                        boxPathPlaceholder.Text = Path.Combine(selectedServer, "user\\mods");
+                                        boxModsType.Text = "Server mods";
+                                        loneServer.Text = "False";
+
+                                        form.Text = boxSelectedServerTitle.Text;
                                         form.ShowDialog();
                                     }
                                     catch (Exception err)
@@ -943,7 +957,6 @@ namespace SPTMiniLauncher
                                     }
                                 }
                             }
-                            */
                         }
                         break;
 
@@ -1038,20 +1051,24 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            MessageBox.Show("This section is unfinished at the moment, we apologize for the inconvenience.\n\nPlease come back later!", this.Text, MessageBoxButtons.OK);
-                            /*
                             if (isLoneServer)
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
+                                string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
+                                if (Directory.Exists(modsFolder))
                                 {
                                     try
                                     {
                                         Modlist form = new Modlist();
 
-                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
-                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
-                                        form.Text = boxSelectedServerTitle.Text;
+                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
+                                        Label loneServer = (Label)form.Controls["loneServer"];
+                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
+                                        boxPathPlaceholder.Text = modsFolder;
+                                        boxModsType.Text = "Client mods";
+                                        loneServer.Text = "True";
+
+                                        form.Text = boxSelectedServerTitle.Text;
                                         form.ShowDialog();
                                     }
                                     catch (Exception err)
@@ -1063,16 +1080,24 @@ namespace SPTMiniLauncher
                             }
                             else
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
+                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                string modsFolder = Path.Combine(selectedServer, "BepInEx\\plugins");
+
+                                if (Directory.Exists(modsFolder))
                                 {
                                     try
                                     {
                                         Modlist form = new Modlist();
 
-                                        Label boxServerPlaceholder = (Label)form.Controls["boxServerPlaceholder"];
-                                        boxServerPlaceholder.Text = Path.Combine(Properties.Settings.Default.server_path, $"{boxSelectedServerTitle.Text}\\user\\mods");
-                                        form.Text = boxSelectedServerTitle.Text;
+                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
+                                        Label loneServer = (Label)form.Controls["loneServer"];
+                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
+                                        boxPathPlaceholder.Text = Path.Combine(selectedServer, "BepInEx\\plugins");
+                                        boxModsType.Text = "Client mods";
+                                        loneServer.Text = "false";
+
+                                        form.Text = boxSelectedServerTitle.Text;
                                         form.ShowDialog();
                                     }
                                     catch (Exception err)
@@ -1082,7 +1107,6 @@ namespace SPTMiniLauncher
                                     }
                                 }
                             }
-                            */
                         }
                         break;
 

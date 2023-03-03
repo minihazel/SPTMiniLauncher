@@ -29,41 +29,42 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Modlist));
-            this.boxServerMods = new System.Windows.Forms.GroupBox();
-            this.boxServerList = new System.Windows.Forms.ComboBox();
+            this.boxModsType = new System.Windows.Forms.GroupBox();
+            this.boxModList = new System.Windows.Forms.ComboBox();
             this.boxServerOption = new System.Windows.Forms.Label();
             this.boxServerSeparator = new System.Windows.Forms.Panel();
-            this.boxServerPlaceholder = new System.Windows.Forms.Label();
-            this.boxServerMods.SuspendLayout();
+            this.boxPathPlaceholder = new System.Windows.Forms.Label();
+            this.loneServer = new System.Windows.Forms.Label();
+            this.boxModsType.SuspendLayout();
             this.SuspendLayout();
             // 
-            // boxServerMods
+            // boxModsType
             // 
-            this.boxServerMods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.boxModsType.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.boxServerMods.Controls.Add(this.boxServerList);
-            this.boxServerMods.Controls.Add(this.boxServerOption);
-            this.boxServerMods.Controls.Add(this.boxServerSeparator);
-            this.boxServerMods.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
-            this.boxServerMods.ForeColor = System.Drawing.Color.LightGray;
-            this.boxServerMods.Location = new System.Drawing.Point(17, 12);
-            this.boxServerMods.Name = "boxServerMods";
-            this.boxServerMods.Size = new System.Drawing.Size(644, 55);
-            this.boxServerMods.TabIndex = 1;
-            this.boxServerMods.TabStop = false;
-            this.boxServerMods.Text = " Server mods ";
+            this.boxModsType.Controls.Add(this.boxModList);
+            this.boxModsType.Controls.Add(this.boxServerOption);
+            this.boxModsType.Controls.Add(this.boxServerSeparator);
+            this.boxModsType.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.boxModsType.ForeColor = System.Drawing.Color.LightGray;
+            this.boxModsType.Location = new System.Drawing.Point(17, 12);
+            this.boxModsType.Name = "boxModsType";
+            this.boxModsType.Size = new System.Drawing.Size(644, 55);
+            this.boxModsType.TabIndex = 1;
+            this.boxModsType.TabStop = false;
+            this.boxModsType.Text = " Server mods ";
             // 
-            // boxServerList
+            // boxModList
             // 
-            this.boxServerList.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.boxServerList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.boxServerList.Font = new System.Drawing.Font("Bahnschrift Light", 11F);
-            this.boxServerList.FormattingEnabled = true;
-            this.boxServerList.Location = new System.Drawing.Point(12, 19);
-            this.boxServerList.Name = "boxServerList";
-            this.boxServerList.Size = new System.Drawing.Size(469, 26);
-            this.boxServerList.TabIndex = 4;
-            this.boxServerList.SelectedIndexChanged += new System.EventHandler(this.boxServerList_SelectedIndexChanged);
+            this.boxModList.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.boxModList.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.boxModList.Font = new System.Drawing.Font("Bahnschrift Light", 11F);
+            this.boxModList.FormattingEnabled = true;
+            this.boxModList.Location = new System.Drawing.Point(12, 19);
+            this.boxModList.Name = "boxModList";
+            this.boxModList.Size = new System.Drawing.Size(469, 26);
+            this.boxModList.TabIndex = 4;
+            this.boxModList.SelectedIndexChanged += new System.EventHandler(this.boxServerList_SelectedIndexChanged);
             // 
             // boxServerOption
             // 
@@ -91,15 +92,25 @@
             this.boxServerSeparator.Size = new System.Drawing.Size(1, 30);
             this.boxServerSeparator.TabIndex = 1;
             // 
-            // boxServerPlaceholder
+            // boxPathPlaceholder
             // 
-            this.boxServerPlaceholder.AutoSize = true;
-            this.boxServerPlaceholder.Location = new System.Drawing.Point(14, -1);
-            this.boxServerPlaceholder.Name = "boxServerPlaceholder";
-            this.boxServerPlaceholder.Size = new System.Drawing.Size(84, 17);
-            this.boxServerPlaceholder.TabIndex = 2;
-            this.boxServerPlaceholder.Text = "placeholder";
-            this.boxServerPlaceholder.Visible = false;
+            this.boxPathPlaceholder.AutoSize = true;
+            this.boxPathPlaceholder.Location = new System.Drawing.Point(14, -1);
+            this.boxPathPlaceholder.Name = "boxPathPlaceholder";
+            this.boxPathPlaceholder.Size = new System.Drawing.Size(84, 17);
+            this.boxPathPlaceholder.TabIndex = 2;
+            this.boxPathPlaceholder.Text = "placeholder";
+            // 
+            // loneServer
+            // 
+            this.loneServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.loneServer.AutoSize = true;
+            this.loneServer.Location = new System.Drawing.Point(577, -1);
+            this.loneServer.Name = "loneServer";
+            this.loneServer.Size = new System.Drawing.Size(84, 17);
+            this.loneServer.TabIndex = 3;
+            this.loneServer.Text = "placeholder";
+            this.loneServer.Visible = false;
             // 
             // Modlist
             // 
@@ -108,8 +119,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 86);
-            this.Controls.Add(this.boxServerPlaceholder);
-            this.Controls.Add(this.boxServerMods);
+            this.Controls.Add(this.loneServer);
+            this.Controls.Add(this.boxPathPlaceholder);
+            this.Controls.Add(this.boxModsType);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -120,10 +132,11 @@
             this.Name = "Modlist";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Modlist";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Modlist_FormClosing);
             this.Load += new System.EventHandler(this.Modlist_Load);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Modlist_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Modlist_DragEnter);
-            this.boxServerMods.ResumeLayout(false);
+            this.boxModsType.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,10 +144,11 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox boxServerMods;
+        private System.Windows.Forms.GroupBox boxModsType;
         private System.Windows.Forms.Label boxServerOption;
         private System.Windows.Forms.Panel boxServerSeparator;
-        private System.Windows.Forms.Label boxServerPlaceholder;
-        public System.Windows.Forms.ComboBox boxServerList;
+        private System.Windows.Forms.Label boxPathPlaceholder;
+        public System.Windows.Forms.ComboBox boxModList;
+        private System.Windows.Forms.Label loneServer;
     }
 }
