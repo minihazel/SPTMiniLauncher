@@ -35,6 +35,7 @@
             this.boxServerSeparator = new System.Windows.Forms.Panel();
             this.boxPathPlaceholder = new System.Windows.Forms.Label();
             this.loneServer = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.boxModsType.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -100,6 +101,7 @@
             this.boxPathPlaceholder.Size = new System.Drawing.Size(84, 17);
             this.boxPathPlaceholder.TabIndex = 2;
             this.boxPathPlaceholder.Text = "placeholder";
+            this.boxPathPlaceholder.Visible = false;
             // 
             // loneServer
             // 
@@ -112,19 +114,30 @@
             this.loneServer.Text = "placeholder";
             this.loneServer.Visible = false;
             // 
+            // label1
+            // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Location = new System.Drawing.Point(12, 77);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(655, 17);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "↓  Please drag and drop any mods into the empty space  ↓";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Modlist
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 86);
+            this.ClientSize = new System.Drawing.Size(679, 220);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.loneServer);
             this.Controls.Add(this.boxPathPlaceholder);
             this.Controls.Add(this.boxModsType);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
@@ -150,5 +163,6 @@
         private System.Windows.Forms.Label boxPathPlaceholder;
         public System.Windows.Forms.ComboBox boxModList;
         private System.Windows.Forms.Label loneServer;
+        private System.Windows.Forms.Label label1;
     }
 }
