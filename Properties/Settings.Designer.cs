@@ -58,5 +58,17 @@ namespace SPTMiniLauncher.Properties {
                 this["svm_path"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string realism_path {
+            get {
+                return ((string)(this["realism_path"]));
+            }
+            set {
+                this["realism_path"] = value;
+            }
+        }
     }
 }

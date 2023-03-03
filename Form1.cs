@@ -19,8 +19,15 @@ namespace SPTMiniLauncher
 {
     public partial class Form1 : Form
     {
-        public string serverPath;
+        // Start variables
+        // Pre-set path variables
+        // Palette
+        // Pre-set processes
+
         public bool isLoneServer = false;
+        public string selectedServer;
+
+        public string core;
 
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
@@ -29,6 +36,7 @@ namespace SPTMiniLauncher
         public Process server;
         public Process launcher;
 
+        // Lists
         string[] serverOptionsStreets = {
             "- ACTIONS -",
             "Clear cache",
@@ -41,9 +49,9 @@ namespace SPTMiniLauncher
             "Open client mods",
             "- THIRDPARTY -",
             "Open Profile Editor",
-            "Open Server Value Modifier (SVM)"
+            "Open Server Value Modifier (SVM)",
+            "Open SPT Realism"
         };
-
         string[] serverOptions = {
             "- ACTIONS -",
             "Clear cache",
@@ -55,7 +63,8 @@ namespace SPTMiniLauncher
             "Open client mods",
             "- THIRDPARTY -",
             "Open Profile Editor",
-            "Open Server Value Modifier (SVM)"
+            "Open Server Value Modifier (SVM)",
+            "Open SPT Realism"
         };
 
         public Form1()
@@ -272,6 +281,27 @@ namespace SPTMiniLauncher
                 serverOptionsStreets[11] = "SVM not detected - click to download";
                 serverOptions[10] = "SVM not detected - click to download";
             }
+
+            // spt realism
+            string realismpath = Path.Combine(path, "user\\mods\\SPT-Realism-Mod");
+
+            if (Directory.Exists(realismpath) &&
+                File.Exists(Path.Combine(realismpath, "RealismModConfig.exe")))
+            {
+                Properties.Settings.Default.realism_path = realismpath;
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[12] = "Open SPT Realism";
+                serverOptions[11] = "Open SPT Realism";
+            }
+            else
+            {
+                Properties.Settings.Default.realism_path = "";
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[12] = "SPT Realism not detected - click to download";
+                serverOptions[11] = "SPT Realism not detected - click to download";
+            }
         }
 
         private void listAllServers(string path)
@@ -299,66 +329,72 @@ namespace SPTMiniLauncher
                 boxServers.Controls.Add(lbl);
 
                 boxServersTitle.Text = "Listed server";
-                checkVersion(Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json"));
                 boxSelectedServerTitle.Text = lbl.Text;
-                checkThirdPartyApps(Properties.Settings.Default.server_path);
 
-                if (Directory.Exists(Path.Combine(path, "user\\mods")))
+                core = Path.Combine(path, "Aki_Data\\Server\\configs\\core.json");
+
+                if (File.Exists(core))
                 {
-                    updateOrderJSON(Path.Combine(path, "user\\mods"));
+                    string cacheFolder = Path.Combine(path, "user\\cache");
+                    string serverModsFolder = Path.Combine(path, "user\\mods");
+                    checkVersion(core);
+                    checkThirdPartyApps(Properties.Settings.Default.server_path);
+                    if (Directory.Exists(serverModsFolder))
+                    {
+                        updateOrderJSON(serverModsFolder);
+                    }
+                }
+                else
+                {
+                    showError($"SPT metadata could not be found for single installation. UI will be cleared, please search for another installation.\n\nExpected path: {core}");
+                    clearUI();
                 }
             }
             else
             {
+                List<string> directories = new List<string>();
                 string[] dirs = Directory.GetDirectories(path);
+
                 if (dirs.Length > 0)
                 {
-                    for (int i = 0; i < dirs.Length; i++)
+                    foreach (string dir in dirs)
                     {
-                        if (File.Exists(Path.Combine(Properties.Settings.Default.server_path, $"{dirs[i]}\\Aki.Server.exe")))
-                        {
-                            Label lbl = new Label();
-                            lbl.Text = Path.GetFileName(dirs[i]);
-                            lbl.AutoSize = false;
-                            lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                            lbl.TextAlign = ContentAlignment.MiddleLeft;
-                            lbl.Size = new Size(boxServerPlaceholder.Size.Width, boxServerPlaceholder.Size.Height);
-                            lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.LightGray;
-                            lbl.Margin = new Padding(1, 1, 1, 1);
-                            lbl.Cursor = Cursors.Hand;
-                            lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
-                            lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
-                            lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                            lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
-                            boxServers.Controls.Add(lbl);
+                        selectedServer = dir;
+                        string akiFile = Path.Combine(selectedServer, "Aki.Server.exe");
+                        string launcherFile = Path.Combine(selectedServer, "Aki.Launcher.exe");
+                        string akiData = Path.Combine(selectedServer, "Aki_Data");
 
-                            if (Directory.Exists(Path.Combine(dirs[i], "user\\mods")))
-                            {
-                                updateOrderJSON(Path.Combine(dirs[i], "user\\mods"));
-                            }
-                        }
-                        else
+                        if (Directory.Exists(akiData) && File.Exists(akiFile) && File.Exists(launcherFile))
                         {
-                            Label lbl = new Label();
-                            lbl.Text = $"No SPT detected";
-                            lbl.AutoSize = false;
-                            lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                            lbl.TextAlign = ContentAlignment.MiddleLeft;
-                            lbl.Size = new Size(boxServerPlaceholder.Size.Width, boxServerPlaceholder.Size.Height);
-                            lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.LightGray;
-                            lbl.Margin = new Padding(1, 1, 1, 1);
-                            lbl.Cursor = Cursors.Hand;
-                            lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
-                            lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
-                            lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                            lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
-                            boxServers.Controls.Add(lbl);
+                            directories.Add(Path.GetFileName(dir));
+                        }
+                    }
+
+                    for (int i = 0; i < directories.Count; i++)
+                    {
+                        selectedServer = Path.Combine(path, Path.GetFileName(directories[i]));
+                        string serverModsFolder = Path.Combine(selectedServer, "user\\mods");
+                        Label lbl = new Label();
+                        lbl.Text = Path.GetFileName(selectedServer);
+                        lbl.AutoSize = false;
+                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                        lbl.TextAlign = ContentAlignment.MiddleLeft;
+                        lbl.Size = new Size(boxServerPlaceholder.Size.Width, boxServerPlaceholder.Size.Height);
+                        lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.LightGray;
+                        lbl.Margin = new Padding(1, 1, 1, 1);
+                        lbl.Cursor = Cursors.Hand;
+                        lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
+                        lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
+                        lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
+                        lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
+                        boxServers.Controls.Add(lbl);
+
+                        if (Directory.Exists(serverModsFolder))
+                        {
+                            updateOrderJSON(serverModsFolder);
                         }
                     }
 
@@ -415,17 +451,19 @@ namespace SPTMiniLauncher
                 {
                     if (isLoneServer)
                     {
-                        if (File.Exists(Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json")))
+                        core = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json");
+                        if (File.Exists(core))
                         {
-                            checkVersion(Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json"));
+                            checkVersion(core);
                         }
                     }
                     else
                     {
-
-                        if (File.Exists(Path.Combine(Properties.Settings.Default.server_path, $"{lbl.Text}\\Aki_Data\\Server\\configs\\core.json")))
+                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                        core = Path.Combine(selectedServer, "Aki_Data\\Server\\configs\\core.json");
+                        if (File.Exists(core))
                         {
-                            checkVersion(Path.Combine(Properties.Settings.Default.server_path, $"{lbl.Text}\\Aki_Data\\Server\\configs\\core.json"));
+                            checkVersion(core);
                         }
                     }
                 }
@@ -480,9 +518,9 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    checkThirdPartyApps(Path.Combine(boxPath.Text, boxSelectedServerTitle.Text));
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    checkThirdPartyApps(selectedServer);
                 }
-                // checkThirdPartyApps(Properties.Settings.Default.server_path);
 
                 if (isStreets)
                 {
@@ -641,11 +679,12 @@ namespace SPTMiniLauncher
                     case "clear cache":
                         if (isLoneServer)
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\cache"))
+                            string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
+                            if (Directory.Exists(cacheFolder))
                             {
                                 try
                                 {
-                                    Directory.Delete($"{Properties.Settings.Default.server_path}\\user\\cache", true);
+                                    Directory.Delete(cacheFolder, true);
                                     showError("Cache cleared!");
                                 }
                                 catch (Exception err)
@@ -658,11 +697,14 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\cache"))
+                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                            string cacheFolder = Path.Combine(selectedServer, "user\\cache");
+
+                            if (Directory.Exists(cacheFolder))
                             {
                                 try
                                 {
-                                    Directory.Delete($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\cache", true);
+                                    Directory.Delete(cacheFolder, true);
                                     showError("Cache cleared!");
                                 }
                                 catch (Exception err)
@@ -678,11 +720,12 @@ namespace SPTMiniLauncher
 
                         if (isLoneServer)
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\cache"))
+                            string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
+                            if (Directory.Exists(cacheFolder))
                             {
                                 try
                                 {
-                                    Directory.Delete($"{Properties.Settings.Default.server_path}\\user\\cache", true);
+                                    Directory.Delete(cacheFolder, true);
                                 }
                                 catch (Exception err)
                                 {
@@ -738,11 +781,14 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerPlaceholder.Text}\\user\\cache"))
+                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                            string cacheFolder = Path.Combine(selectedServer, "user\\cache");
+
+                            if (Directory.Exists(cacheFolder))
                             {
                                 try
                                 {
-                                    Directory.Delete($"{Properties.Settings.Default.server_path}\\{boxSelectedServerPlaceholder.Text}\\user\\cache", true);
+                                    Directory.Delete(cacheFolder, true);
                                 }
                                 catch (Exception err)
                                 {
@@ -752,9 +798,9 @@ namespace SPTMiniLauncher
                             }
 
                             // server
-                            Directory.SetCurrentDirectory($"{Properties.Settings.Default.server_path}\\{boxSelectedServerPlaceholder.Text}");
+                            Directory.SetCurrentDirectory(selectedServer);
                             server = new Process();
-                            server.StartInfo.WorkingDirectory = $"{Properties.Settings.Default.server_path}\\{boxSelectedServerPlaceholder.Text}";
+                            server.StartInfo.WorkingDirectory = selectedServer;
                             server.StartInfo.FileName = "Aki.Server.exe";
                             server.StartInfo.CreateNoWindow = false;
                             server.StartInfo.UseShellExecute = false;
@@ -774,9 +820,9 @@ namespace SPTMiniLauncher
                             Directory.SetCurrentDirectory(currentDir);
 
                             // launcher
-                            Directory.SetCurrentDirectory($"{Properties.Settings.Default.server_path}\\{boxSelectedServerPlaceholder.Text}");
+                            Directory.SetCurrentDirectory(selectedServer);
                             launcher = new Process();
-                            launcher.StartInfo.WorkingDirectory = $"{Properties.Settings.Default.server_path}\\{boxSelectedServerPlaceholder.Text}";
+                            launcher.StartInfo.WorkingDirectory = selectedServer;
                             launcher.StartInfo.FileName = "Aki.Launcher.exe";
                             launcher.StartInfo.CreateNoWindow = false;
                             launcher.StartInfo.UseShellExecute = false;
@@ -810,11 +856,12 @@ namespace SPTMiniLauncher
                         {
                             if (isLoneServer)
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\mods"))
+                                string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                                if (Directory.Exists(modsFolder))
                                 {
                                     try
                                     {
-                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\user\\mods");
+                                        Process.Start("explorer.exe", modsFolder);
                                     }
                                     catch (Exception err)
                                     {
@@ -825,11 +872,14 @@ namespace SPTMiniLauncher
                             }
                             else
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods"))
+                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                string selectedServerModsFolder = Path.Combine(selectedServer, "user\\mods");
+
+                                if (Directory.Exists(selectedServerModsFolder))
                                 {
                                     try
                                     {
-                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods");
+                                        Process.Start("explorer.exe", selectedServerModsFolder);
                                     }
                                     catch (Exception err)
                                     {
@@ -901,12 +951,12 @@ namespace SPTMiniLauncher
 
                         if (isLoneServer)
                         {
-                            if (File.Exists($"{Properties.Settings.Default.server_path}\\user\\mods\\order.json"))
+                            string orderFile = Path.Combine(Properties.Settings.Default.server_path, "user\\mods\\order.json");
+                            if (File.Exists(orderFile))
                             {
                                 try
                                 {
-
-                                    Process.Start(Path.Combine(Properties.Settings.Default.server_path, "user\\mods\\order.json"));
+                                    Process.Start(orderFile);
                                 }
                                 catch (Exception err)
                                 {
@@ -917,12 +967,14 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (File.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\user\\mods\\order.json"))
+                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                            string orderFile = Path.Combine(selectedServer, "user\\mods\\order.json");
+
+                            if (File.Exists(orderFile))
                             {
                                 try
                                 {
-
-                                    Process.Start(Path.Combine(Properties.Settings.Default.server_path, $"{boxSelectedServerTitle.Text}\\user\\mods\\order.json"));
+                                    Process.Start(orderFile);
                                 }
                                 catch (Exception err)
                                 {
@@ -943,11 +995,12 @@ namespace SPTMiniLauncher
                         {
                             if (isLoneServer)
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\BepInEx\\plugins"))
+                                string pluginsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
+                                if (Directory.Exists(pluginsFolder))
                                 {
                                     try
                                     {
-                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\BepInEx\\plugins");
+                                        Process.Start("explorer.exe", pluginsFolder);
                                     }
                                     catch (Exception err)
                                     {
@@ -958,11 +1011,14 @@ namespace SPTMiniLauncher
                             }
                             else
                             {
-                                if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\BepInEx\\plugins"))
+                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                string pluginsFolder = Path.Combine(selectedServer, "BepInEx\\plugins");
+
+                                if (Directory.Exists(pluginsFolder))
                                 {
                                     try
                                     {
-                                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}\\BepInEx\\plugins");
+                                        Process.Start("explorer.exe", pluginsFolder);
                                     }
                                     catch (Exception err)
                                     {
@@ -1065,24 +1121,23 @@ namespace SPTMiniLauncher
 
                         if (dialog.ShowDialog() == DialogResult.OK)
                         {
-                            string fullPath = Path.GetFullPath(dialog.FileName);
-                            string parentDir = Path.GetDirectoryName(fullPath);
 
                             if (Path.GetFileNameWithoutExtension(dialog.FileName).ToLower() == "spt-aki profile editor")
                             {
                                 // actual SPT installation
+                                string fullPath = Path.GetFullPath(dialog.FileName);
+                                string parentDir = Path.GetDirectoryName(fullPath);
                                 Properties.Settings.Default.profile_editor_path = parentDir;
                                 Properties.Settings.Default.Save();
 
                                 if (isLoneServer)
                                 {
-                                    // check for Lone Server
                                     checkThirdPartyApps(Properties.Settings.Default.server_path);
                                 }
                                 else
                                 {
-                                    // check for Lone Server
-                                    checkThirdPartyApps(Path.Combine(boxPath.Text, boxSelectedServerTitle.Text));
+                                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                    checkThirdPartyApps(selectedServer);
                                 }
                             }
                         }
@@ -1106,7 +1161,8 @@ namespace SPTMiniLauncher
 
                     case "open server value modifier (svm)":
 
-                        if (Directory.Exists(Properties.Settings.Default.svm_path) && File.Exists(Path.Combine(Properties.Settings.Default.svm_path, "GFVE.exe")))
+                        string SVMFile = Path.Combine(Properties.Settings.Default.svm_path, "GFVE.exe");
+                        if (Directory.Exists(Properties.Settings.Default.svm_path) && File.Exists(SVMFile))
                         {
                             try
                             {
@@ -1131,6 +1187,50 @@ namespace SPTMiniLauncher
                         }
                         break;
 
+                    case "spt realism not detected":
+                        try
+                        {
+                            if (MessageBox.Show($"SPT Realism is not detected in {boxSelectedServerTitle.Text}\'s mods folder.\n\nWould you like to download it from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                Process.Start("https://hub.sp-tarkov.com/files/file/606-spt-realism-mod/");
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                        }
+                        // nothing lol
+                        break;
+
+                    case "open spt realism":
+
+                        string RealismFile = Path.Combine(Properties.Settings.Default.realism_path, "RealismModConfig.exe");
+                        if (Directory.Exists(Properties.Settings.Default.realism_path) && File.Exists(RealismFile))
+                        {
+                            try
+                            {
+                                string currentDirectory = Directory.GetCurrentDirectory();
+                                Directory.SetCurrentDirectory(Properties.Settings.Default.realism_path);
+                                Process proc = new Process();
+
+                                proc.StartInfo.WorkingDirectory = Properties.Settings.Default.realism_path;
+                                proc.StartInfo.FileName = "RealismModConfig.exe";
+                                proc.StartInfo.CreateNoWindow = false;
+                                proc.StartInfo.UseShellExecute = false;
+                                proc.StartInfo.RedirectStandardOutput = false;
+                                proc.Start();
+
+                                Directory.SetCurrentDirectory(currentDirectory);
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
+                        }
+                        break;
+
                     case "stop spt (if running)":
 
                         if (isLoneServer)
@@ -1140,11 +1240,12 @@ namespace SPTMiniLauncher
                             {
                                 try
                                 {
-                                    if (Directory.Exists($"{Properties.Settings.Default.server_path}\\user\\cache"))
+                                    string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
+                                    if (Directory.Exists(cacheFolder))
                                     {
                                         try
                                         {
-                                            Directory.Delete($"{Properties.Settings.Default.server_path}\\user\\cache", true);
+                                            Directory.Delete(cacheFolder, true);
                                         }
                                         catch (Exception err)
                                         {
@@ -1194,7 +1295,7 @@ namespace SPTMiniLauncher
 
                                     if (confirm == 2)
                                     {
-                                        showError("Server and launcher stopped!");
+                                        showError("Server and launcher stopped + cache cleared!");
                                     }
                                 }
                                 catch (Exception err)
@@ -1207,7 +1308,9 @@ namespace SPTMiniLauncher
                         else
                         {
                             int confirm = 0;
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}"))
+                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+
+                            if (Directory.Exists(selectedServer))
                             {
                                 try
                                 {
@@ -1252,7 +1355,7 @@ namespace SPTMiniLauncher
 
                                     if (confirm == 2)
                                     {
-                                        showError("Server and launcher stopped!");
+                                        showError("Server and launcher stopped + cache cleared!");
                                     }
                                 }
                                 catch (Exception err)
@@ -1290,13 +1393,14 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (Directory.Exists($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}"))
+                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                            if (Directory.Exists(selectedServer))
                             {
                                 if (MessageBox.Show($"Do you wish to delete {boxSelectedServerTitle.Text}?\nThis action is irreversible!", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
                                     try
                                     {
-                                        Directory.Delete($"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}", true);
+                                        Directory.Delete(selectedServer, true);
                                         listAllServers(Properties.Settings.Default.server_path);
                                     }
                                     catch (Exception err)
@@ -1354,28 +1458,22 @@ namespace SPTMiniLauncher
                 string fullPath = Path.GetFullPath(dialog.FileName);
                 if (Directory.Exists(fullPath))
                 {
+                    boxPath.Text = fullPath;
+                    Properties.Settings.Default.server_path = boxPath.Text;
+                    Properties.Settings.Default.Save();
 
                     if (File.Exists(Path.Combine(fullPath, "Aki.Server.exe")) &&
                         File.Exists(Path.Combine(fullPath, "Aki.Launcher.exe")) &&
                         Directory.Exists(Path.Combine(fullPath, "Aki_Data")))
                     {
-                        // actual SPT installation
-                        boxPath.Text = fullPath;
-                        Properties.Settings.Default.server_path = boxPath.Text;
-                        Properties.Settings.Default.Save();
-
                         isLoneServer = true;
-                        listAllServers(boxPath.Text);
                     }
                     else
                     {
-                        boxPath.Text = fullPath;
-                        Properties.Settings.Default.server_path = boxPath.Text;
-                        Properties.Settings.Default.Save();
-
                         isLoneServer = false;
-                        listAllServers(boxPath.Text);
                     }
+
+                    listAllServers(Properties.Settings.Default.server_path);
                 }
 
             }
@@ -1385,7 +1483,7 @@ namespace SPTMiniLauncher
         {
             try
             {
-                Process.Start("explorer.exe", boxPath.Text);
+                Process.Start("explorer.exe", Properties.Settings.Default.server_path);
             }
             catch (Exception err)
             {
@@ -1400,7 +1498,8 @@ namespace SPTMiniLauncher
             {
                 try
                 {
-                    Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}");
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    Process.Start("explorer.exe", selectedServer);
                 }
                 catch (Exception err)
                 {
@@ -1449,22 +1548,23 @@ namespace SPTMiniLauncher
                             File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Launcher.exe")) &&
                             Directory.Exists(Path.Combine(Path.GetFullPath(item), "Aki_Data")))
                         {
-                            // Chosen folder actually contains an SPT installation
                             boxPath.Text = Path.GetFullPath(item);
-                            Properties.Settings.Default.server_path = boxPath.Text;
+                            Properties.Settings.Default.server_path = Path.GetFullPath(item);
                             Properties.Settings.Default.Save();
+
                             isLoneServer = true;
-                            listAllServers(boxPath.Text);
+                            listAllServers(Properties.Settings.Default.server_path);
                         }
                         else
                         {
                             try
                             {
                                 boxPath.Text = Path.GetFullPath(item);
-                                Properties.Settings.Default.server_path = boxPath.Text;
+                                Properties.Settings.Default.server_path = Path.GetFullPath(item);
                                 Properties.Settings.Default.Save();
+
                                 isLoneServer = false;
-                                listAllServers(boxPath.Text);
+                                listAllServers(Properties.Settings.Default.server_path);
                             }
                             catch (Exception err)
                             {
@@ -1514,7 +1614,6 @@ namespace SPTMiniLauncher
         {
             if (boxPath.Text.Length > 0)
             {
-
                 if (e.KeyCode == Keys.Enter)
                 {
                     e.SuppressKeyPress = true;
@@ -1528,18 +1627,24 @@ namespace SPTMiniLauncher
                         File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
                         Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
                         {
-                            // Chosen folder actually contains an SPT installation
-                            isLoneServer = true;
-                            listAllServers(boxPath.Text);
-                            boxPathBox.Select();
-
+                            try
+                            {
+                                isLoneServer = true;
+                                listAllServers(Properties.Settings.Default.server_path);
+                                boxPathBox.Select();
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
                         }
                         else
                         {
                             try
                             {
                                 isLoneServer = false;
-                                listAllServers(boxPath.Text);
+                                listAllServers(Properties.Settings.Default.server_path);
                                 boxPathBox.Select();
                             }
                             catch (Exception err)
@@ -1574,7 +1679,8 @@ namespace SPTMiniLauncher
                 {
                     try
                     {
-                        Process.Start("explorer.exe", $"{Properties.Settings.Default.server_path}\\{boxSelectedServerTitle.Text}");
+                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                        Process.Start("explorer.exe", selectedServer);
                     }
                     catch (Exception err)
                     {
@@ -1614,6 +1720,7 @@ namespace SPTMiniLauncher
             if (MessageBox.Show("Reset third party apps?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 Properties.Settings.Default.profile_editor_path = "";
+                Properties.Settings.Default.svm_path = "";
                 Properties.Settings.Default.Save();
                 showError("Reset successful");
             }
