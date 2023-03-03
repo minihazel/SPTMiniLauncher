@@ -1187,7 +1187,7 @@ namespace SPTMiniLauncher
                         }
                         break;
 
-                    case "spt realism not detected":
+                    case "spt realism not detected - click to download":
                         try
                         {
                             if (MessageBox.Show($"SPT Realism is not detected in {boxSelectedServerTitle.Text}\'s mods folder.\n\nWould you like to download it from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -1312,6 +1312,20 @@ namespace SPTMiniLauncher
 
                             if (Directory.Exists(selectedServer))
                             {
+                                string cacheFolder = Path.Combine(selectedServer, "user\\cache");
+                                if (Directory.Exists(cacheFolder))
+                                {
+                                    try
+                                    {
+                                        Directory.Delete(cacheFolder, true);
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
+
                                 try
                                 {
                                     Process[] proc = Process.GetProcesses();
