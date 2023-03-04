@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -130,25 +131,43 @@ namespace SPTMiniLauncher
 
             if ((Control.MouseButtons & MouseButtons.Right) != 0)
             {
-                if (boxServerOption.Text.ToLower() == "open")
+                if (boxModsType.Text.ToLower().Contains("client"))
                 {
-                    boxServerOption.Text = "Add";
-                }
-                else if (boxServerOption.Text.ToLower() == "add")
+                    if (boxServerOption.Text.ToLower() == "open")
+                    {
+                        boxServerOption.Text = "Remove";
+                    }
+                    else if (boxServerOption.Text.ToLower() == "remove")
+                    {
+                        boxServerOption.Text = "Open";
+                    }
+                    else if (boxServerOption.Text.ToLower() == "open mods folder")
+                    {
+                        boxServerOption.Text = "Open mods folder";
+                    }
+                } 
+                else if (boxModsType.Text.ToLower().Contains("server"))
                 {
-                    boxServerOption.Text = "Remove";
-                }
-                else if (boxServerOption.Text.ToLower() == "remove")
-                {
-                    boxServerOption.Text = "Open";
-                }
-                else if (boxServerOption.Text.ToLower() == "open mods folder")
-                {
-                    boxServerOption.Text = "Add new mod";
-                }
-                else if (boxServerOption.Text.ToLower() == "add new mod")
-                {
-                    boxServerOption.Text = "Open mods folder";
+                    if (boxServerOption.Text.ToLower() == "open")
+                    {
+                        boxServerOption.Text = "Add";
+                    }
+                    else if (boxServerOption.Text.ToLower() == "add")
+                    {
+                        boxServerOption.Text = "Remove";
+                    }
+                    else if (boxServerOption.Text.ToLower() == "remove")
+                    {
+                        boxServerOption.Text = "Open";
+                    }
+                    else if (boxServerOption.Text.ToLower() == "open mods folder")
+                    {
+                        boxServerOption.Text = "Add new mod";
+                    }
+                    else if (boxServerOption.Text.ToLower() == "add new mod")
+                    {
+                        boxServerOption.Text = "Open mods folder";
+                    }
                 }
             }
             else
@@ -172,51 +191,7 @@ namespace SPTMiniLauncher
 
                             if (Directory.Exists(fullPath))
                             {
-                                string path = System.IO.Path.Combine(Environment.CurrentDirectory, System.IO.Path.GetFileNameWithoutExtension(fullPath));
-                                if (Directory.Exists(path))
-                                {
-                                    Directory.Delete(path, true);
-                                }
-
-                                if (File.Exists(System.IO.Path.Combine(path, "package.json")))
-                                {
-                                    try
-                                    {
-                                        // "Directory"
-                                        string packageJsonFolderPath = "";
-                                        FindPackageJsonFolder(path, ref packageJsonFolderPath);
-
-                                        if (packageJsonFolderPath != null || packageJsonFolderPath != "")
-                                        {
-                                            string modFolder = System.IO.Path.Combine(boxPathPlaceholder.Text, System.IO.Path.GetFileNameWithoutExtension(packageJsonFolderPath));
-                                            if (!Directory.Exists(modFolder))
-                                            {
-                                                CopyDirectory(path, modFolder, true);
-                                                boxServerSeparator.Select();
-                                            } else
-                                            {
-                                                showMessage($"The server mod {System.IO.Path.GetFileName(modFolder)} already exists in user/mods!");
-                                            }
-
-                                            if (Directory.Exists(path))
-                                            {
-                                                Directory.Delete(path, true);
-                                            }
-                                        }
-
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine(err);
-                                        MessageBox.Show($"This mod seems to be already installed! We\'ll cancel this for you.", this.Text, MessageBoxButtons.OK);
-
-                                        if (Directory.Exists(path))
-                                        {
-                                            Directory.Delete(path, true);
-                                        }
-                                    }
-
-                                }
+                                SearchForPackageJson(fullPath);
                             }
                         }
                         addMods();
@@ -235,16 +210,46 @@ namespace SPTMiniLauncher
 
                                 if (attr.HasFlag(FileAttributes.Directory))
                                 {
-                                    Directory.Delete(fullPath);
-                                    addMods();
+                                    try
+                                    {
+                                        showBoard("Remove mods",
+                                            $"The following mod has been successfully deleted from server {this.Text}" +
+                                            $"\n\n" +
+                                            $"- {boxModList.Text}" +
+                                            $"\n\n",
+                                            false
+                                        );
+
+                                        Directory.Delete(fullPath, true);
+                                        addMods();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
                                 else
                                 {
-                                    File.Delete(fullPath);
-                                    addMods();
+                                    try
+                                    {
+                                        showBoard("Remove mods",
+                                            $"The following mod has been successfully deleted from server {this.Text}" +
+                                            $"\n\n" +
+                                            $"- {boxModList.Text}" +
+                                            $"\n\n",
+                                            false
+                                        );
 
+                                        File.Delete(fullPath);
+                                        addMods();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
-                                
                             }
                             catch (Exception err)
                             {
@@ -305,6 +310,27 @@ namespace SPTMiniLauncher
             MessageBox.Show(content, this.Text, MessageBoxButtons.OK);
         }
 
+        public void showBoard(string title, string content, bool isClient)
+        {
+            messageBoard form = new messageBoard();
+            RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
+            Label messageTitle = (Label)form.Controls["messageTitle"];
+
+            if (isClient)
+            {
+                messageTitle.ForeColor = Color.IndianRed;
+            }
+            else
+            {
+                messageTitle.ForeColor = Color.LightGray;
+            }
+
+            messageTitle.Text = title;
+            messageBox.Text = content;
+
+            form.ShowDialog();
+        }
+
         private void Modlist_DragEnter(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
@@ -315,82 +341,62 @@ namespace SPTMiniLauncher
 
         private void Modlist_DragDrop(object sender, DragEventArgs e)
         {
-
             /*
              * My futile attempt at documentation:
              * 
              * 1. Listing all items dropped into the window.
              * 2. Check what the full path of each item ends in.
-             * 3. If it's a regular folder, copy it to the root folder.
-             * 4. If it's a file, copy it straight to where it should go.
-             * 5. If it's a zip, unpack it and repeat step 2 to 4.
-             * 6. Delete the placeholder root folder.
-             * 7. Finally, forcibly refresh the in-house mod list to avoid potential conflicts.
+             * 3. If it ends in ".zip" then unpack it into the root folder.
+             * 4. If it ends in ".7z" then deny it (due to a lack of proper library to handle 7-Zip).
+             * 5. If it's a regular folder, check if it's a Server mod by means of package.json detection.
+             * 6. Find the folder that contains package.json and transfer it to the user/mods folder.
              *
              */
 
-
-            string[] items = (string[])e.Data.GetData(DataFormats.FileDrop);
-            int counter = 0;
-            string[] arr = { };
-
-            foreach (string item in items)
+            if (boxModsType.Text.ToLower().Contains("client"))
             {
-                string fullPath = item;
-                counter++;
+                showBoard(
+                    $"Viewing client mod list",
+                    $"It appears that you are trying to install one or more client mods to {this.Text}:\n\n-" +
+                    $"" +
+                    $"Due to the many ways that BepInEx patches can be loaded, it makes the auto-install process very tedious. Thus, we don\'t support client mods right now.\n" +
+                    $"We apologize for the inconvenience.",
+                    true
+                );
+            }
+            else if (boxModsType.Text.ToLower().Contains("server"))
+            {
+                string[] items = (string[])e.Data.GetData(DataFormats.FileDrop);
+                int counter = 0;
+                string[] arr = { };
 
-                FileAttributes attr = File.GetAttributes(fullPath);
-                if (fullPath.EndsWith(".zip"))
+                foreach (string item in items)
                 {
-                    try
+                    string fullPath = item;
+                    counter++;
+
+                    FileAttributes attr = File.GetAttributes(fullPath);
+                    if (fullPath.EndsWith(".zip"))
                     {
-                        using (ZipArchive archive = ZipFile.OpenRead(fullPath))
+                        try
                         {
-                            string path = System.IO.Path.Combine(Environment.CurrentDirectory, System.IO.Path.GetFileNameWithoutExtension(item));
-                            if (Directory.Exists(path))
+                            using (ZipArchive archive = ZipFile.OpenRead(fullPath))
                             {
-                                Directory.Delete(path, true);
-                            }
-                            archive.ExtractToDirectory(path);
+                                string path = System.IO.Path.Combine(Environment.CurrentDirectory, System.IO.Path.GetFileNameWithoutExtension(item));
+                                if (Directory.Exists(path))
+                                {
+                                    Directory.Delete(path, true);
+                                }
 
-                            FileAttributes arrZip = File.GetAttributes(path);
-                            if (arrZip != System.IO.FileAttributes.Directory)
-                            {
                                 try
                                 {
-                                    string modFolder = System.IO.Path.Combine(boxPathPlaceholder.Text, $"{System.IO.Path.GetFileNameWithoutExtension(fullPath)}.dll");
-                                    if (!File.Exists(modFolder))
-                                    {
-                                        File.Move(path, modFolder);
-                                        showMessage($"Client mod {System.IO.Path.GetFileName(path)} installed successfully!");
-                                    }
-                                    else
-                                    {
-                                        showMessage($"Client mod {System.IO.Path.GetFileName(path)} is already installed!");
-                                    }
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine(err);
-                                    MessageBox.Show($"This mod seems to be already installed! We\'ll cancel this for you.", this.Text, MessageBoxButtons.OK);
-
-                                    if (Directory.Exists(path))
-                                    {
-                                        Directory.Delete(path, true);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                try
-                                {
+                                    archive.ExtractToDirectory(path);
                                     SearchForPackageJson(path);
 
                                     if (Directory.Exists(path))
                                     {
                                         Directory.Delete(path, true);
                                     }
-
                                 }
                                 catch (Exception err)
                                 {
@@ -403,68 +409,51 @@ namespace SPTMiniLauncher
                                 }
                             }
                         }
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                        MessageBox.Show($"This mod seems to be already installed! We\'ll cancel this for you.", this.Text, MessageBoxButtons.OK);
-                    }
-                }
-                else if (fullPath.EndsWith(".7z"))
-                {
-                    MessageBox.Show("Unfortunately, 7z is not supported at the moment. We apologize for the inconvenience.", this.Text, MessageBoxButtons.OK);
-                }
-                else
-                {
-                    if (attr == System.IO.FileAttributes.Directory)
-                    {
-                        if (!File.Exists(System.IO.Path.Combine(fullPath, "package.json")))
+                        catch (Exception err)
                         {
-                            try
-                            {
-                                CopyDirectory(fullPath, System.IO.Path.Combine(boxPathPlaceholder.Text, System.IO.Path.GetFileName(fullPath)), true);
-                                showMessage($"Client mod {System.IO.Path.GetFileName(fullPath)} installed successfully!");
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine(err);
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                        } else
+                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                            MessageBox.Show($"This mod seems to be already installed! We\'ll cancel this for you.", this.Text, MessageBoxButtons.OK);
+                        }
+                    }
+                    else if (fullPath.EndsWith(".7z"))
+                    {
+                        showBoard(
+                            $"7-Zip mod detected",
+                            $"You have attempted to install a mod via 7-Zip to {this.Text}:\n\n-" +
+                            $"" +
+                            $"- {System.IO.Path.GetFileName(fullPath)}\n\n" +
+                            $"" +
+                            $"Unfortunately we don\'t use any library that supports 7-Zip, and thus cannot auto-install this mod for you." +
+                            $"We apologize for the inconvenience.",
+                            false
+                        );
+                    }
+                    else if (attr == System.IO.FileAttributes.Directory)
+                    {
+                        string path = System.IO.Path.Combine(Environment.CurrentDirectory, System.IO.Path.GetFileNameWithoutExtension(fullPath));
+                        try
                         {
-                            string path = System.IO.Path.Combine(Environment.CurrentDirectory, System.IO.Path.GetFileNameWithoutExtension(fullPath));
-                            try
-                            {
-                                SearchForPackageJson(path);
+                            SearchForPackageJson(path);
 
-                                if (Directory.Exists(path))
-                                {
-                                    Directory.Delete(path, true);
-                                }
+                            if (Directory.Exists(path))
+                            {
+                                Directory.Delete(path, true);
                             }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine(err);
-                                //MessageBox.Show($"2 This mod seems to be already installed! We\'ll cancel this for you.", this.Text, MessageBoxButtons.OK);
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine(err);
+                            //MessageBox.Show($"2 This mod seems to be already installed! We\'ll cancel this for you.", this.Text, MessageBoxButtons.OK);
 
-                                if (Directory.Exists(path))
-                                {
-                                    Directory.Delete(path, true);
-                                }
+                            if (Directory.Exists(path))
+                            {
+                                Directory.Delete(path, true);
                             }
                         }
                     }
                 }
             }
             addMods();
-        }
-
-        private void boxServerList_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (boxModList.SelectedIndex > -1 && boxModList.Text.Length > 0)
-            {
-                boxServerOption.Text = "Open";
-            }
         }
 
         public void SearchForPackageJson(string rootFolderPath)
@@ -485,28 +474,52 @@ namespace SPTMiniLauncher
                 if (!Directory.Exists(modFolder))
                 {
                     CopyDirectory(rootFolderPath, modFolder, true);
-                    showMessage($"Server mod {System.IO.Path.GetFileNameWithoutExtension(rootFolderPath)} installed successfully!");
+
+                    showBoard(
+                        $"Server mod installed!",
+                        $"The following server mod has been installed to {this.Text}:\n\n-" +
+                        $"" +
+                        $"- {System.IO.Path.GetFileName(rootFolderPath)}\n\n" +
+                        $"",
+                        false
+                    );
+
                     isfound = true;
-                } else
+                }
+                else
                 {
                     showMessage($"Server mod {System.IO.Path.GetFileNameWithoutExtension(rootFolderPath)} is already installed!");
-                    isfound = false;
                 }
             }
 
+            update();
+            /*
             if (isfound && !Directory.Exists(System.IO.Path.Combine(boxPathPlaceholder.Text, System.IO.Path.GetFileName(rootFolderPath))))
             {
+                
+                showBoard(
+                    $"Client mod detected!",
+                    $"It appears that you are trying to install the following client mod to {this.Text}\n\n-" +
+                    $"" +
+                    $"{System.IO.Path.GetFileName(rootFolderPath)}\n\n" +
+                    $"" +
+                    $"Due to the many ways that BepInEx patches can be loaded, it makes the auto-install process very tedious. Thus, we don\'t support client mods right now.\n" +
+                    $"We apologize for the inconvenience.",
+                    true
+                );
                 // showMessage($"Server mod {System.IO.Path.GetFileNameWithoutExtension(rootFolderPath)} does not have a package.json!");
+                
                 if (!Directory.Exists(System.IO.Path.Combine(boxPathPlaceholder.Text, System.IO.Path.GetFileName(rootFolderPath))))
                 {
                     CopyDirectory(rootFolderPath, System.IO.Path.Combine(boxPathPlaceholder.Text, System.IO.Path.GetFileName(rootFolderPath)), true);
-                    showMessage($"Client mod {System.IO.Path.GetFileName(rootFolderPath)} installed successfully!");
                 }
                 else
                 {
                     showMessage($"Client mod {System.IO.Path.GetFileName(rootFolderPath)} is already installed!");
                 }
+                
             }
+            */
         }
 
         private void FindPackageJsonFolder(string rootFolderPath, ref string packageJsonFolderPath)
@@ -559,7 +572,15 @@ namespace SPTMiniLauncher
             Directory.Delete(sourceDir, true);
         }
 
-        private void Modlist_FormClosing(object sender, FormClosingEventArgs e)
+        private void boxServerList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (boxModList.SelectedIndex > -1 && boxModList.Text.Length > 0)
+            {
+                boxServerOption.Text = "Open";
+            }
+        }
+
+        public void update()
         {
             Form1 form = new Form1();
 
@@ -569,12 +590,17 @@ namespace SPTMiniLauncher
                 string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
                 form.updateOrderJSON(modsFolder);
             }
-            else if(loneServer.Text.ToLower() == "false")
+            else if (loneServer.Text.ToLower() == "false")
             {
                 string selectedServer = System.IO.Path.Combine(Properties.Settings.Default.server_path, this.Text);
                 string modsFolder = System.IO.Path.Combine(selectedServer, "user\\mods");
                 form.updateOrderJSON(modsFolder);
             }
+        }
+
+        private void Modlist_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            update();
         }
     }
 }

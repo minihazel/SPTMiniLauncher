@@ -35,7 +35,7 @@
             this.boxServerSeparator = new System.Windows.Forms.Panel();
             this.boxPathPlaceholder = new System.Windows.Forms.Label();
             this.loneServer = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
+            this.watermark = new System.Windows.Forms.Label();
             this.boxModsType.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -114,16 +114,16 @@
             this.loneServer.Text = "placeholder";
             this.loneServer.Visible = false;
             // 
-            // label1
+            // watermark
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.watermark.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.Location = new System.Drawing.Point(12, 77);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(655, 17);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "↓  Please drag and drop any mods into the empty space  ↓";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.watermark.Location = new System.Drawing.Point(12, 77);
+            this.watermark.Name = "watermark";
+            this.watermark.Size = new System.Drawing.Size(655, 17);
+            this.watermark.TabIndex = 4;
+            this.watermark.Text = "↓  Please drag and drop any mods into the empty space  ↓";
+            this.watermark.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // Modlist
             // 
@@ -131,8 +131,8 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 220);
-            this.Controls.Add(this.label1);
+            this.ClientSize = new System.Drawing.Size(679, 167);
+            this.Controls.Add(this.watermark);
             this.Controls.Add(this.loneServer);
             this.Controls.Add(this.boxPathPlaceholder);
             this.Controls.Add(this.boxModsType);
@@ -163,6 +163,6 @@
         private System.Windows.Forms.Label boxPathPlaceholder;
         public System.Windows.Forms.ComboBox boxModList;
         private System.Windows.Forms.Label loneServer;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label watermark;
     }
 }

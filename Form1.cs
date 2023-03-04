@@ -26,6 +26,8 @@ namespace SPTMiniLauncher
 
         public bool isLoneServer = false;
         public string selectedServer;
+        public string settingsFile;
+        public string firstTime;
 
         public string core;
 
@@ -74,51 +76,84 @@ namespace SPTMiniLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
+            settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
+            firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
+
+            messageBoard form = new messageBoard();
+            RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
+            Label messageTitle = (Label)form.Controls["messageTitle"];
+            messageTitle.ForeColor = Color.LightGray;
+
+            if (File.Exists(settingsFile) && File.Exists(firstTime))
             {
-                boxPath.Text = Properties.Settings.Default.server_path;
-                if (Directory.Exists(boxPath.Text))
+                string readSettings = File.ReadAllText(settingsFile);
+                JObject settingsObject = JObject.Parse(readSettings);
+
+                if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
                 {
-                    if (File.Exists(Path.Combine(boxPath.Text, "Aki.Server.exe")) &&
-                        File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
+                    settingsObject.Property("showFirstTimeMessage").Value = "false";
+
+                    messageTitle.Text = "First time setup";
+                    messageBox.Text = File.ReadAllText(firstTime);
+                    form.ShowDialog();
+
+                    File.WriteAllText(settingsFile, settingsObject.ToString());
+                }
+                else
+                {
+                    if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
                     {
-                        isLoneServer = true;
-                        listAllServers(boxPath.Text);
+                        boxPath.Text = Properties.Settings.Default.server_path;
+                        if (Directory.Exists(boxPath.Text))
+                        {
+                            if (File.Exists(Path.Combine(boxPath.Text, "Aki.Server.exe")) &&
+                                File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
+                                Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
+                            {
+                                isLoneServer = true;
+                                listAllServers(boxPath.Text);
+                            }
+                            else
+                            {
+                                isLoneServer = false;
+                                listAllServers(boxPath.Text);
+                            }
+                        }
                     }
                     else
                     {
-                        isLoneServer = false;
-                        listAllServers(boxPath.Text);
+                        if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Server.exe")) &&
+                                File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Launcher.exe")) &&
+                                Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Aki_Data")))
+                        {
+                            // actual app is in an SPT installation folder
+                            isLoneServer = true;
+                            // boxPath.Text = Environment.CurrentDirectory;
+                            Properties.Settings.Default.server_path = boxPath.Text;
+                            Properties.Settings.Default.Save();
+                            listAllServers(boxPath.Text);
+                        }
+                        else
+                        {
+                            showError("It looks like this you have reset the app, or it\'s your first time. Please drag and drop or browse for an SPT folder to begin!");
+                            /*
+                            isLoneServer = false;
+                            Properties.Settings.Default.server_path = boxPath.Text;
+                            Properties.Settings.Default.Save();
+                            listAllServers(boxPath.Text);
+                            */
+                        }
                     }
+
+                    boxPathBox.Select();
                 }
             }
             else
             {
-                if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Server.exe")) &&
-                        File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Aki_Data")))
-                {
-                    // actual app is in an SPT installation folder
-                    isLoneServer = true;
-                    boxPath.Text = Environment.CurrentDirectory;
-                    Properties.Settings.Default.server_path = boxPath.Text;
-                    Properties.Settings.Default.Save();
-                    listAllServers(boxPath.Text);
-                }
-                else
-                {
-                    showError("It looks like this you have reset the app, or it\'s your first time. Please drag and drop or browse for an SPT folder to begin!");
-                    /*
-                    isLoneServer = false;
-                    Properties.Settings.Default.server_path = boxPath.Text;
-                    Properties.Settings.Default.Save();
-                    listAllServers(boxPath.Text);
-                    */
-                }
+                messageTitle.Text = "Settings file was not detected!";
+                messageBox.Text = $"We could not detect the settings file. Please restart so that the launcher can generate it!";
+                form.ShowDialog();
             }
-
-            boxPathBox.Select();
         }
 
         public void updateOrderJSON(string path)
@@ -912,10 +947,12 @@ namespace SPTMiniLauncher
 
                                         Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
                                         Label loneServer = (Label)form.Controls["loneServer"];
+                                        Label watermark = (Label)form.Controls["watermark"];
                                         GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
                                         boxPathPlaceholder.Text = modsFolder;
                                         boxModsType.Text = "Server mods";
+                                        watermark.Visible = true;
                                         loneServer.Text = "True";
 
                                         form.Text = boxSelectedServerTitle.Text;
@@ -1062,10 +1099,12 @@ namespace SPTMiniLauncher
 
                                         Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
                                         Label loneServer = (Label)form.Controls["loneServer"];
+                                        Label watermark = (Label)form.Controls["watermark"];
                                         GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
                                         boxPathPlaceholder.Text = modsFolder;
                                         boxModsType.Text = "Client mods";
+                                        watermark.Visible = false;
                                         loneServer.Text = "True";
 
                                         form.Text = boxSelectedServerTitle.Text;
@@ -1091,10 +1130,12 @@ namespace SPTMiniLauncher
 
                                         Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
                                         Label loneServer = (Label)form.Controls["loneServer"];
+                                        Label watermark = (Label)form.Controls["watermark"];
                                         GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
                                         boxPathPlaceholder.Text = Path.Combine(selectedServer, "BepInEx\\plugins");
                                         boxModsType.Text = "Client mods";
+                                        watermark.Visible = false;
                                         loneServer.Text = "false";
 
                                         form.Text = boxSelectedServerTitle.Text;
