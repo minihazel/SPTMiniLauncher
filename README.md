@@ -19,3 +19,7 @@ This feature-set is incomplete as I have some more plans for this later down the
 
 ## Usage
 This <a href="https://www.youtube.com/watch?v=_Bx9D9cgi4k">video demonstration</a> covers a pretty thorough but brief showcase of how you use the tool.
+
+Right-Clicking `Open server mods` and `Open client mods` will cycle to `Open server modlist` and `Open client modlist` respectively.
+
+When either of the two are displaying `modlist` instead of `mods` you can open the mod mod manager window by Left-Clicking them.
