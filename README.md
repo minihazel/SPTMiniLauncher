@@ -1,6 +1,8 @@
 # SPTMiniLauncher
 A remade version of the original SPT Mini Launcher. This acts as both a launcher and a miniature mod management utility that mostly caters to experienced SPT-AKI users.
 
+![SPT Mini Launcher](https://media.discordapp.net/attachments/1064578464994304060/1081685968572129350/image.png)
+
 ## Features
 This feature-set is incomplete as I have some more plans for this later down the road!
 
@@ -17,6 +19,3 @@ This feature-set is incomplete as I have some more plans for this later down the
 
 ## Usage
 This <a href="https://www.youtube.com/watch?v=_Bx9D9cgi4k">video demonstration</a> covers a pretty thorough but brief showcase of how you use the tool.
-
-## Images & Screenshots
-![SPT Mini Launcher](https://media.discordapp.net/attachments/1064578464994304060/1081685968572129350/image.png)
