@@ -98,8 +98,8 @@ namespace SPTMiniLauncher
 
                     messageTitle.Text = "First time setup";
                     messageBox.Text = File.ReadAllText(firstTime);
-                    form.ShowDialog();
 
+                    form.ShowDialog();
                     File.WriteAllText(settingsFile, settingsObject.ToString());
                 }
                 else
@@ -844,9 +844,22 @@ namespace SPTMiniLauncher
                             }
                             Directory.SetCurrentDirectory(currentDir);
 
+                            int akiPort;
+                            string portPath = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\database\\server.json");
+                            bool portExists = File.Exists(portPath);
+                            if (portExists)
+                            {
+                                string readPort = File.ReadAllText(settingsFile);
+                                JObject portObject = JObject.Parse(readPort);
+                                akiPort = (int)portObject["port"];
+                            }
+                            else
+                            {
+                                akiPort = 6969;
+                            }
+
                             int elapsed = 0;
-                            int timeout = 120000;
-                            int akiPort = 6969;
+                            int timeout = 180000;
 
                             System.Threading.Timer timer = null;
                             timer = new System.Threading.Timer(_ =>
@@ -949,9 +962,23 @@ namespace SPTMiniLauncher
                             }
                             Directory.SetCurrentDirectory(currentDir);
 
+                            int akiPort;
+                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                            string portPath = Path.Combine(selectedServer, "Aki_Data\\Server\\database\\server.json");
+                            bool portExists = File.Exists(portPath);
+                            if (portExists)
+                            {
+                                string readPort = File.ReadAllText(settingsFile);
+                                JObject portObject = JObject.Parse(readPort);
+                                akiPort = (int)portObject["port"];
+                            }
+                            else
+                            {
+                                akiPort = 6969;
+                            }
+
                             int elapsed = 0;
-                            int timeout = 120000;
-                            int akiPort = 6969;
+                            int timeout = 180000;
 
                             System.Threading.Timer timer = null;
                             timer = new System.Threading.Timer(_ =>
