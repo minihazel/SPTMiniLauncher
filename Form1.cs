@@ -849,7 +849,7 @@ namespace SPTMiniLauncher
                             bool portExists = File.Exists(portPath);
                             if (portExists)
                             {
-                                string readPort = File.ReadAllText(settingsFile);
+                                string readPort = File.ReadAllText(portPath);
                                 JObject portObject = JObject.Parse(readPort);
                                 akiPort = (int)portObject["port"];
                             }
@@ -968,7 +968,7 @@ namespace SPTMiniLauncher
                             bool portExists = File.Exists(portPath);
                             if (portExists)
                             {
-                                string readPort = File.ReadAllText(settingsFile);
+                                string readPort = File.ReadAllText(portPath);
                                 JObject portObject = JObject.Parse(readPort);
                                 akiPort = (int)portObject["port"];
                             }
