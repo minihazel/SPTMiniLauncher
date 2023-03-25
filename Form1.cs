@@ -9,8 +9,10 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Xml.Linq;
@@ -50,6 +52,7 @@ namespace SPTMiniLauncher
             "Open modloader JSON",
             "Open client mods",
             "- THIRDPARTY -",
+            "Open Load Order Editor (LOE)",
             "Open Profile Editor",
             "Open Server Value Modifier (SVM)",
             "Open SPT Realism"
@@ -277,6 +280,24 @@ namespace SPTMiniLauncher
 
         private void checkThirdPartyApps(string path)
         {
+            // load order editor (loe)
+            string loepath = Path.Combine(path, "user\\mods\\Load Order Editor.exe");
+
+            if (File.Exists(loepath))
+            {
+                Properties.Settings.Default.loe_path = loepath;
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[10] = "Open Load Order Editor (LOE)";
+            }
+            else
+            {
+                Properties.Settings.Default.loe_path = "";
+                Properties.Settings.Default.Save();
+
+                serverOptionsStreets[10] = "LOE not detected - click to download";
+            }
+
             // perform profile editor check
             string progFiles = Environment.ExpandEnvironmentVariables("%ProgramW6432%");
 
@@ -286,7 +307,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.profile_editor_path = Path.Combine(progFiles, "SPT-AKI Profile Editor");
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[10] = "Open Profile Editor";
+                serverOptionsStreets[11] = "Open Profile Editor";
                 serverOptions[9] = "Open Profile Editor";
             }
             else
@@ -294,7 +315,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.profile_editor_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[10] = "Profile Editor not detected - click to fix";
+                serverOptionsStreets[11] = "Profile Editor not detected - click to fix";
                 serverOptions[9] = "Profile Editor not detected - click to fix";
             }
 
@@ -307,7 +328,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.svm_path = svmpath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[11] = "Open Server Value Modifier (SVM)";
+                serverOptionsStreets[12] = "Open Server Value Modifier (SVM)";
                 serverOptions[10] = "Open Server Value Modifier (SVM)";
             }
             else
@@ -315,7 +336,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.svm_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[11] = "SVM not detected - click to download";
+                serverOptionsStreets[12] = "SVM not detected - click to download";
                 serverOptions[10] = "SVM not detected - click to download";
             }
 
@@ -328,7 +349,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.realism_path = realismpath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[12] = "Open SPT Realism";
+                serverOptionsStreets[13] = "Open SPT Realism";
                 serverOptions[11] = "Open SPT Realism";
             }
             else
@@ -336,7 +357,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.realism_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[12] = "SPT Realism not detected - click to download";
+                serverOptionsStreets[13] = "SPT Realism not detected - click to download";
                 serverOptions[11] = "SPT Realism not detected - click to download";
             }
         }
@@ -571,7 +592,21 @@ namespace SPTMiniLauncher
                         lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
                         lbl.Cursor = Cursors.Hand;
 
-                        if (serverOptionsStreets[i].ToLower() == "- mods -")
+                        if (serverOptionsStreets[i].ToLower() == "run spt")
+                        {
+                            lbl.Text = "Run SPT";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.DodgerBlue;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
+                        else if (serverOptionsStreets[i].ToLower() == "delete server")
+                        {
+                            lbl.Text = "Delete server";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.IndianRed;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
+                        else if (serverOptionsStreets[i].ToLower() == "- mods -")
                         {
                             lbl.Text = "  Mods";
                             lbl.Cursor = Cursors.Arrow;
@@ -630,7 +665,21 @@ namespace SPTMiniLauncher
                         lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
                         lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
 
-                        if (serverOptions[i].ToLower() == "- mods -")
+                        if (serverOptions[i].ToLower() == "run spt")
+                        {
+                            lbl.Text = "Run SPT";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.DodgerBlue;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
+                        else if (serverOptions[i].ToLower() == "delete server")
+                        {
+                            lbl.Text = "Delete server";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.IndianRed;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
+                        else if (serverOptions[i].ToLower() == "- mods -")
                         {
                             lbl.Text = "  Mods";
                             lbl.BackColor = this.BackColor;
@@ -755,6 +804,11 @@ namespace SPTMiniLauncher
 
                     case "run spt":
 
+                        if (chkMinimizeOnRun.Checked)
+                        {
+                            WindowState = FormWindowState.Minimized;
+                        }
+
                         if (isLoneServer)
                         {
                             string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
@@ -782,39 +836,81 @@ namespace SPTMiniLauncher
                             try
                             {
                                 server.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
                             }
                             catch (Exception err)
                             {
                                 Debug.WriteLine($"ERROR: {err.Message.ToString()}");
                                 MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
-
                             Directory.SetCurrentDirectory(currentDir);
 
-                            // launcher
-                            Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                            launcher = new Process();
-                            launcher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
-                            launcher.StartInfo.CreateNoWindow = false;
-                            launcher.StartInfo.UseShellExecute = false;
-                            launcher.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                launcher.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
+                            int elapsed = 0;
+                            int timeout = 120000;
+                            int akiPort = 6969;
 
-                            Directory.SetCurrentDirectory(currentDir);
+                            System.Threading.Timer timer = null;
+                            timer = new System.Threading.Timer(_ =>
+                            {
+                                if (elapsed >= timeout)
+                                {
+                                    showError("We could not detect the Aki Launcher after 20 seconds.\n" +
+                                        "\n" +
+                                        "Max duration reached, launching SPT-AKI.");
 
+                                    // launcher
+                                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                                    launcher = new Process();
+                                    launcher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                                    launcher.StartInfo.FileName = "Aki.Launcher.exe";
+                                    launcher.StartInfo.CreateNoWindow = false;
+                                    launcher.StartInfo.UseShellExecute = false;
+                                    launcher.StartInfo.RedirectStandardOutput = false;
+                                    try
+                                    {
+                                        launcher.Start();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                    Directory.SetCurrentDirectory(currentDir);
+                                    timer.Dispose();
+                                }
+                                else
+                                {
+                                    using (var client = new TcpClient())
+                                    {
+                                        try
+                                        {
+                                            client.Connect("localhost", akiPort);
+                                            // launcher
+                                            Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                                            launcher = new Process();
+                                            launcher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
+                                            launcher.StartInfo.CreateNoWindow = false;
+                                            launcher.StartInfo.UseShellExecute = false;
+                                            launcher.StartInfo.RedirectStandardOutput = false;
+                                            try
+                                            {
+                                                launcher.Start();
+                                            }
+                                            catch (Exception err)
+                                            {
+                                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                            }
+                                            Directory.SetCurrentDirectory(currentDir);
+                                            timer.Dispose();
+                                        }
+                                        catch (SocketException)
+                                        {
+                                        }
+                                    }
+                                    elapsed += 1000;
+                                }
+                            }, null, 1000, 1000);
                         }
                         else
                         {
@@ -845,42 +941,82 @@ namespace SPTMiniLauncher
                             try
                             {
                                 server.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
                             }
                             catch (Exception err)
                             {
                                 Debug.WriteLine($"ERROR: {err.Message.ToString()}");
                                 MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
-
                             Directory.SetCurrentDirectory(currentDir);
 
-                            // launcher
-                            Directory.SetCurrentDirectory(selectedServer);
-                            launcher = new Process();
-                            launcher.StartInfo.WorkingDirectory = selectedServer;
-                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
-                            launcher.StartInfo.CreateNoWindow = false;
-                            launcher.StartInfo.UseShellExecute = false;
-                            launcher.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                launcher.Start();
-                                this.WindowState = FormWindowState.Normal;
-                                this.Focus();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
+                            int elapsed = 0;
+                            int timeout = 120000;
+                            int akiPort = 6969;
 
-                            Directory.SetCurrentDirectory(currentDir);
+                            System.Threading.Timer timer = null;
+                            timer = new System.Threading.Timer(_ =>
+                            {
+                                if (elapsed >= timeout)
+                                {
+                                    showError("We could not detect the Aki Launcher after 20 seconds.\n" +
+                                        "\n" +
+                                        "Max duration reached, launching SPT-AKI.");
 
+                                    // launcher
+                                    Directory.SetCurrentDirectory(selectedServer);
+                                    launcher = new Process();
+                                    launcher.StartInfo.WorkingDirectory = selectedServer;
+                                    launcher.StartInfo.FileName = "Aki.Launcher.exe";
+                                    launcher.StartInfo.CreateNoWindow = false;
+                                    launcher.StartInfo.UseShellExecute = false;
+                                    launcher.StartInfo.RedirectStandardOutput = false;
+                                    try
+                                    {
+                                        launcher.Start();
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                    Directory.SetCurrentDirectory(currentDir);
+                                    timer.Dispose();
+                                }
+                                else
+                                {
+                                    using (var client = new TcpClient())
+                                    {
+                                        try
+                                        {
+                                            client.Connect("localhost", akiPort);
+                                            // launcher
+                                            Directory.SetCurrentDirectory(selectedServer);
+                                            launcher = new Process();
+                                            launcher.StartInfo.WorkingDirectory = selectedServer;
+                                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
+                                            launcher.StartInfo.CreateNoWindow = false;
+                                            launcher.StartInfo.UseShellExecute = false;
+                                            launcher.StartInfo.RedirectStandardOutput = false;
+                                            try
+                                            {
+                                                launcher.Start();
+                                            }
+                                            catch (Exception err)
+                                            {
+                                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                            }
+                                            Directory.SetCurrentDirectory(currentDir);
+                                            timer.Dispose();
+                                        }
+                                        catch (SocketException)
+                                        {
+                                        }
+                                    }
+                                    elapsed += 1000;
+                                }
+                            }, null, 1000, 1000);
                         }
-
-                        WindowState = FormWindowState.Minimized;
                         break;
 
                     case "open server mods":
@@ -1151,6 +1287,83 @@ namespace SPTMiniLauncher
                         }
                         break;
 
+                    case "open load order editor (loe)":
+
+                        if (isLoneServer)
+                        {
+                            string LOEFile = Properties.Settings.Default.loe_path;
+                            if (File.Exists(LOEFile))
+                            {
+                                try
+                                {
+                                    string currentDirectory = Directory.GetCurrentDirectory();
+                                    string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                                    Directory.SetCurrentDirectory(modsFolder);
+                                    Process proc = new Process();
+
+                                    proc.StartInfo.WorkingDirectory = modsFolder;
+                                    proc.StartInfo.FileName = "Load Order Editor.exe";
+                                    proc.StartInfo.CreateNoWindow = false;
+                                    proc.StartInfo.UseShellExecute = false;
+                                    proc.StartInfo.RedirectStandardOutput = false;
+                                    proc.Start();
+
+                                    Directory.SetCurrentDirectory(currentDirectory);
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            string LOEFile = Properties.Settings.Default.loe_path;
+                            if (File.Exists(LOEFile))
+                            {
+                                try
+                                {
+                                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                    string currentDirectory = Directory.GetCurrentDirectory();
+                                    string modsFolder = Path.Combine(selectedServer, "user\\mods");
+                                    Directory.SetCurrentDirectory(modsFolder);
+                                    Process proc = new Process();
+
+                                    proc.StartInfo.WorkingDirectory = modsFolder;
+                                    proc.StartInfo.FileName = "Load Order Editor.exe";
+                                    proc.StartInfo.CreateNoWindow = false;
+                                    proc.StartInfo.UseShellExecute = false;
+                                    proc.StartInfo.RedirectStandardOutput = false;
+                                    proc.Start();
+
+                                    Directory.SetCurrentDirectory(currentDirectory);
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                }
+                            }
+                        }
+                        break;
+
+                    case "loe not detected - click to download":
+
+                        try
+                        {
+                            if (MessageBox.Show($"LOE is not detected in this {boxSelectedServerTitle.Text}\'s mods folder.\n\nWould you like to download LOE from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            {
+                                Process.Start("https://hub.sp-tarkov.com/files/file/1082-loe-load-order-editor/");
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                        }
+                        break;
+
                     case "open profile editor":
 
                         if (Directory.Exists(Properties.Settings.Default.profile_editor_path) && File.Exists(Path.Combine(Properties.Settings.Default.profile_editor_path, "SPT-AKI Profile Editor.exe")))
@@ -1209,6 +1422,7 @@ namespace SPTMiniLauncher
                         break;
 
                     case "svm not detected - click to download":
+
                         try
                         {
                             if (MessageBox.Show($"SVM is not detected in this {boxSelectedServerTitle.Text}\'s mods folder.\n\nWould you like to download SVM from the workshop?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -1221,7 +1435,6 @@ namespace SPTMiniLauncher
                             Debug.WriteLine($"ERROR: {err.Message.ToString()}");
                             MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
                         }
-                        // nothing lol
                         break;
 
                     case "open server value modifier (svm)":
@@ -1356,11 +1569,30 @@ namespace SPTMiniLauncher
                                                 }
                                             }
                                         }
+                                        else if (p.ProcessName.ToLower() == "escapefromtarkov")
+                                        {
+                                            string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                            if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                            {
+                                                try
+                                                {
+                                                    p.Kill();
+                                                    confirm++;
+                                                }
+                                                catch (Exception err)
+                                                {
+                                                    Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                                }
+                                            }
+                                        }
                                     }
 
-                                    if (confirm == 2)
+                                    if (confirm == 3)
                                     {
-                                        showError("Server and launcher stopped + cache cleared!");
+                                        showError("Stopped SPT-AKI!\n" +
+                                            "\n" +
+                                            "Cache cleared!");
                                     }
                                 }
                                 catch (Exception err)
@@ -1823,7 +2055,14 @@ namespace SPTMiniLauncher
 
         private void bRefresh_Click(object sender, EventArgs e)
         {
-            listAllServers(Properties.Settings.Default.server_path);
+            if (boxPath.Text != "" || Directory.Exists(boxPath.Text))
+            {
+                listAllServers(Properties.Settings.Default.server_path);
+            }
+            else
+            {
+                showError("Please have a standalone installation, or gallery of SPT versions, selected. before you refresh.");
+            }
         }
 
         private void bRefresh_MouseEnter(object sender, EventArgs e)

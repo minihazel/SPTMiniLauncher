@@ -62,6 +62,7 @@ namespace SPTMiniLauncher
 
         private void Modlist_Load(object sender, EventArgs e)
         {
+            update();
             addMods();
             boxServerSeparator.Select();
         }

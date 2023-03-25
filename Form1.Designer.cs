@@ -45,6 +45,7 @@
             this.bResetApp = new System.Windows.Forms.Label();
             this.bResetThirdParty = new System.Windows.Forms.Label();
             this.bRefresh = new System.Windows.Forms.Label();
+            this.chkMinimizeOnRun = new System.Windows.Forms.CheckBox();
             this.boxPathBox.SuspendLayout();
             this.boxServers.SuspendLayout();
             this.boxSelectedServer.SuspendLayout();
@@ -134,7 +135,7 @@
             this.boxServers.Controls.Add(this.boxServersSeparator);
             this.boxServers.Location = new System.Drawing.Point(17, 87);
             this.boxServers.Name = "boxServers";
-            this.boxServers.Size = new System.Drawing.Size(314, 442);
+            this.boxServers.Size = new System.Drawing.Size(314, 465);
             this.boxServers.TabIndex = 1;
             // 
             // boxServerPlaceholder
@@ -185,7 +186,7 @@
             this.boxSelectedServer.Controls.Add(this.boxSelectedServerSeparator);
             this.boxSelectedServer.Location = new System.Drawing.Point(347, 87);
             this.boxSelectedServer.Name = "boxSelectedServer";
-            this.boxSelectedServer.Size = new System.Drawing.Size(314, 442);
+            this.boxSelectedServer.Size = new System.Drawing.Size(314, 465);
             this.boxSelectedServer.TabIndex = 2;
             // 
             // boxSelectedServerPlaceholder
@@ -231,11 +232,11 @@
             // 
             // bResetApp
             // 
-            this.bResetApp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bResetApp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bResetApp.AutoSize = true;
             this.bResetApp.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetApp.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetApp.Location = new System.Drawing.Point(624, 532);
+            this.bResetApp.Location = new System.Drawing.Point(75, 555);
             this.bResetApp.Name = "bResetApp";
             this.bResetApp.Size = new System.Drawing.Size(36, 13);
             this.bResetApp.TabIndex = 3;
@@ -246,11 +247,11 @@
             // 
             // bResetThirdParty
             // 
-            this.bResetThirdParty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bResetThirdParty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.bResetThirdParty.AutoSize = true;
             this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetThirdParty.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetThirdParty.Location = new System.Drawing.Point(499, 532);
+            this.bResetThirdParty.Location = new System.Drawing.Point(126, 555);
             this.bResetThirdParty.Name = "bResetThirdParty";
             this.bResetThirdParty.Size = new System.Drawing.Size(119, 13);
             this.bResetThirdParty.TabIndex = 4;
@@ -265,7 +266,7 @@
             this.bRefresh.AutoSize = true;
             this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bRefresh.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bRefresh.Location = new System.Drawing.Point(14, 532);
+            this.bRefresh.Location = new System.Drawing.Point(14, 555);
             this.bRefresh.Name = "bRefresh";
             this.bRefresh.Size = new System.Drawing.Size(46, 13);
             this.bRefresh.TabIndex = 5;
@@ -274,13 +275,26 @@
             this.bRefresh.MouseEnter += new System.EventHandler(this.bRefresh_MouseEnter);
             this.bRefresh.MouseLeave += new System.EventHandler(this.bRefresh_MouseLeave);
             // 
+            // chkMinimizeOnRun
+            // 
+            this.chkMinimizeOnRun.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.chkMinimizeOnRun.AutoSize = true;
+            this.chkMinimizeOnRun.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.chkMinimizeOnRun.Location = new System.Drawing.Point(347, 554);
+            this.chkMinimizeOnRun.Name = "chkMinimizeOnRun";
+            this.chkMinimizeOnRun.Size = new System.Drawing.Size(149, 17);
+            this.chkMinimizeOnRun.TabIndex = 6;
+            this.chkMinimizeOnRun.Text = "Minimize when SPT runs";
+            this.chkMinimizeOnRun.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 551);
+            this.ClientSize = new System.Drawing.Size(679, 574);
+            this.Controls.Add(this.chkMinimizeOnRun);
             this.Controls.Add(this.bRefresh);
             this.Controls.Add(this.bResetThirdParty);
             this.Controls.Add(this.bResetApp);
@@ -327,6 +341,7 @@
         private System.Windows.Forms.Label bResetApp;
         private System.Windows.Forms.Label bResetThirdParty;
         private System.Windows.Forms.Label bRefresh;
+        private System.Windows.Forms.CheckBox chkMinimizeOnRun;
     }
 }
 
