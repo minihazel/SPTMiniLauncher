@@ -809,6 +809,118 @@ namespace SPTMiniLauncher
                             WindowState = FormWindowState.Minimized;
                         }
 
+                        bool isTrue = false;
+                        if (isLoneServer)
+                        {
+                            Process[] processes = Process.GetProcesses();
+                            foreach (Process p in processes)
+                            {
+                                if (p.ProcessName.ToLower() == "aki.server")
+                                {
+                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                    {
+                                        try
+                                        {
+                                            p.Kill();
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+                                }
+                                else if (p.ProcessName.ToLower() == "aki.launcher")
+                                {
+                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                    {
+                                        try
+                                        {
+                                            p.Kill();
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+                                }
+                                else if (p.ProcessName.ToLower() == "escapefromtarkov")
+                                {
+                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                    {
+                                        try
+                                        {
+                                            p.Kill();
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            Process[] processes = Process.GetProcesses();
+                            foreach (Process p in processes)
+                            {
+                                if (p.ProcessName.ToLower() == "aki.server")
+                                {
+                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                    {
+                                        try
+                                        {
+                                            p.Kill();
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+                                }
+                                else if (p.ProcessName.ToLower() == "aki.launcher")
+                                {
+                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                    {
+                                        try
+                                        {
+                                            p.Kill();
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+                                }
+                                else if (p.ProcessName.ToLower() == "escapefromtarkov")
+                                {
+                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                    {
+                                        try
+                                        {
+                                            p.Kill();
+                                        }
+                                        catch (Exception err)
+                                        {
+                                            Debug.WriteLine($"ERROR: {err.Message.ToString()}");
+                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
                         if (isLoneServer)
                         {
                             string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
@@ -825,7 +937,6 @@ namespace SPTMiniLauncher
                                 }
                             }
 
-                            // server
                             Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
                             server = new Process();
                             server.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
@@ -859,13 +970,14 @@ namespace SPTMiniLauncher
                             }
 
                             int elapsed = 0;
-                            int timeout = 180000;
+                            int timeout = 240000;
 
                             System.Threading.Timer timer = null;
                             timer = new System.Threading.Timer(_ =>
                             {
                                 if (elapsed >= timeout)
                                 {
+                                    timer.Dispose();
                                     showError("We could not detect the Aki Launcher after 20 seconds.\n" +
                                         "\n" +
                                         "Max duration reached, launching SPT-AKI.");
@@ -888,7 +1000,6 @@ namespace SPTMiniLauncher
                                         MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                     Directory.SetCurrentDirectory(currentDir);
-                                    timer.Dispose();
                                 }
                                 else
                                 {
@@ -897,31 +1008,16 @@ namespace SPTMiniLauncher
                                         try
                                         {
                                             client.Connect("localhost", akiPort);
-                                            // launcher
-                                            Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                                            launcher = new Process();
-                                            launcher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                                            launcher.StartInfo.FileName = "Aki.Launcher.exe";
-                                            launcher.StartInfo.CreateNoWindow = false;
-                                            launcher.StartInfo.UseShellExecute = false;
-                                            launcher.StartInfo.RedirectStandardOutput = false;
-                                            try
-                                            {
-                                                launcher.Start();
-                                            }
-                                            catch (Exception err)
-                                            {
-                                                Debug.WriteLine($"ERROR: {err.Message.ToString()}");
-                                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
-                                            }
-                                            Directory.SetCurrentDirectory(currentDir);
                                             timer.Dispose();
+                                            elapsed = 0;
+
+                                            runLauncher();
                                         }
                                         catch (SocketException)
                                         {
+                                            elapsed += 1000;
                                         }
                                     }
-                                    elapsed += 1000;
                                 }
                             }, null, 1000, 1000);
                         }
@@ -1754,6 +1850,67 @@ namespace SPTMiniLauncher
                 }
             }
             boxPathBox.Select();
+        }
+
+        public void runLauncher()
+        {
+            string launcherProcess = "Aki.Launcher";
+            Process[] launchers = Process.GetProcessesByName(launcherProcess);
+
+            string currentDir = Directory.GetCurrentDirectory();
+            if (isLoneServer)
+            {
+                if (launchers.Length > 0)
+                {
+                }
+                else
+                {
+                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                    launcher = new Process();
+                    launcher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                    launcher.StartInfo.FileName = "Aki.Launcher.exe";
+                    launcher.StartInfo.CreateNoWindow = false;
+                    launcher.StartInfo.UseShellExecute = false;
+                    launcher.StartInfo.RedirectStandardOutput = false;
+                    try
+                    {
+                        launcher.Start();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
+                }
+            }
+            else
+            {
+                if (launchers.Length > 0)
+                {
+                }
+                else
+                {
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    Directory.SetCurrentDirectory(selectedServer);
+                    launcher = new Process();
+                    launcher.StartInfo.WorkingDirectory = selectedServer;
+                    launcher.StartInfo.FileName = "Aki.Launcher.exe";
+                    launcher.StartInfo.CreateNoWindow = false;
+                    launcher.StartInfo.UseShellExecute = false;
+                    launcher.StartInfo.RedirectStandardOutput = false;
+                    try
+                    {
+                        launcher.Start();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.Message.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
+                }
+            }
         }
 
         private void lbl2_MouseUp(object sender, EventArgs e)
