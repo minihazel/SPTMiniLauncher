@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>123</ApplicationRevision>
+    <ApplicationRevision>132</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -120,6 +120,12 @@
     <Compile Include="Modlist.Designer.cs">
       <DependentUpon>Modlist.cs</DependentUpon>
     </Compile>
+    <Compile Include="optionsWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="optionsWindow.Designer.cs">
+      <DependentUpon>optionsWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -130,6 +136,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Modlist.resx">
       <DependentUpon>Modlist.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="optionsWindow.resx">
+      <DependentUpon>optionsWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -82,5 +82,29 @@ namespace SPTMiniLauncher.Properties {
                 this["loe_path"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool minimizeToggle {
+            get {
+                return ((bool)(this["minimizeToggle"]));
+            }
+            set {
+                this["minimizeToggle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool timedLauncherToggle {
+            get {
+                return ((bool)(this["timedLauncherToggle"]));
+            }
+            set {
+                this["timedLauncherToggle"] = value;
+            }
+        }
     }
 }
