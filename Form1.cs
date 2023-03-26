@@ -978,8 +978,8 @@ namespace SPTMiniLauncher
                                 {
                                     if (elapsed >= timeout)
                                     {
-                                        elapsed = 0;
                                         timer.Dispose();
+                                        elapsed = 0;
                                         showError("We could not detect the Aki Launcher after 20 seconds.\n" +
                                             "\n" +
                                             "Max duration reached, launching SPT-AKI.");
@@ -992,8 +992,8 @@ namespace SPTMiniLauncher
                                         {
                                             try
                                             {
-                                                client.Connect("localhost", akiPort);
                                                 timer.Dispose();
+                                                client.Connect("localhost", akiPort);
                                                 elapsed = 0;
 
                                                 runLauncher();
@@ -1073,8 +1073,8 @@ namespace SPTMiniLauncher
                                 {
                                     if (elapsed >= timeout)
                                     {
-                                        elapsed = 0;
                                         timer.Dispose();
+                                        elapsed = 0;
                                         showError("We could not detect the Aki Launcher after 20 seconds.\n" +
                                             "\n" +
                                             "Max duration reached, launching SPT-AKI.");
@@ -1087,8 +1087,8 @@ namespace SPTMiniLauncher
                                         {
                                             try
                                             {
-                                                client.Connect("localhost", akiPort);
                                                 timer.Dispose();
+                                                client.Connect("localhost", akiPort);
                                                 elapsed = 0;
 
                                                 runLauncher();
