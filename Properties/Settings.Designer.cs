@@ -106,5 +106,17 @@ namespace SPTMiniLauncher.Properties {
                 this["timedLauncherToggle"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool clearCache {
+            get {
+                return ((bool)(this["clearCache"]));
+            }
+            set {
+                this["clearCache"] = value;
+            }
+        }
     }
 }

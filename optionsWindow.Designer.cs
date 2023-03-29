@@ -30,16 +30,19 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(optionsWindow));
             this.panelMinimizeOnSPTLaunch = new System.Windows.Forms.GroupBox();
-            this.panelEnableTimedAkiLauncher = new System.Windows.Forms.GroupBox();
             this.bMinimize = new System.Windows.Forms.Button();
+            this.panelEnableTimedAkiLauncher = new System.Windows.Forms.GroupBox();
             this.bEnableTimed = new System.Windows.Forms.Button();
             this.panelMisc = new System.Windows.Forms.GroupBox();
-            this.bRefresh = new System.Windows.Forms.Button();
-            this.bReset = new System.Windows.Forms.Button();
             this.bResetThirdParty = new System.Windows.Forms.Button();
+            this.bReset = new System.Windows.Forms.Button();
+            this.bRefresh = new System.Windows.Forms.Button();
+            this.panelClearCache = new System.Windows.Forms.GroupBox();
+            this.bEnableClearCache = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
+            this.panelClearCache.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -53,21 +56,11 @@
             this.panelMinimizeOnSPTLaunch.TabStop = false;
             this.panelMinimizeOnSPTLaunch.Text = " Minimize on SPT launch ";
             // 
-            // panelEnableTimedAkiLauncher
-            // 
-            this.panelEnableTimedAkiLauncher.Controls.Add(this.bEnableTimed);
-            this.panelEnableTimedAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
-            this.panelEnableTimedAkiLauncher.Location = new System.Drawing.Point(12, 92);
-            this.panelEnableTimedAkiLauncher.Name = "panelEnableTimedAkiLauncher";
-            this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(437, 65);
-            this.panelEnableTimedAkiLauncher.TabIndex = 1;
-            this.panelEnableTimedAkiLauncher.TabStop = false;
-            this.panelEnableTimedAkiLauncher.Text = " Enable timed Aki Launcher ";
-            // 
             // bMinimize
             // 
             this.bMinimize.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bMinimize.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bMinimize.FlatAppearance.BorderSize = 0;
             this.bMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bMinimize.ForeColor = System.Drawing.Color.IndianRed;
             this.bMinimize.Location = new System.Drawing.Point(15, 23);
@@ -79,10 +72,22 @@
             this.bMinimize.UseVisualStyleBackColor = true;
             this.bMinimize.Click += new System.EventHandler(this.bMinimize_Click);
             // 
+            // panelEnableTimedAkiLauncher
+            // 
+            this.panelEnableTimedAkiLauncher.Controls.Add(this.bEnableTimed);
+            this.panelEnableTimedAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
+            this.panelEnableTimedAkiLauncher.Location = new System.Drawing.Point(12, 92);
+            this.panelEnableTimedAkiLauncher.Name = "panelEnableTimedAkiLauncher";
+            this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(437, 65);
+            this.panelEnableTimedAkiLauncher.TabIndex = 1;
+            this.panelEnableTimedAkiLauncher.TabStop = false;
+            this.panelEnableTimedAkiLauncher.Text = " Enable timed Aki Launcher ";
+            // 
             // bEnableTimed
             // 
             this.bEnableTimed.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bEnableTimed.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableTimed.FlatAppearance.BorderSize = 0;
             this.bEnableTimed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bEnableTimed.ForeColor = System.Drawing.Color.IndianRed;
             this.bEnableTimed.Location = new System.Drawing.Point(15, 23);
@@ -100,47 +105,18 @@
             this.panelMisc.Controls.Add(this.bReset);
             this.panelMisc.Controls.Add(this.bRefresh);
             this.panelMisc.ForeColor = System.Drawing.Color.LightGray;
-            this.panelMisc.Location = new System.Drawing.Point(12, 172);
+            this.panelMisc.Location = new System.Drawing.Point(12, 252);
             this.panelMisc.Name = "panelMisc";
             this.panelMisc.Size = new System.Drawing.Size(437, 65);
             this.panelMisc.TabIndex = 2;
             this.panelMisc.TabStop = false;
             this.panelMisc.Text = " Misc. ";
             // 
-            // bRefresh
-            // 
-            this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bRefresh.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bRefresh.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bRefresh.Location = new System.Drawing.Point(15, 23);
-            this.bRefresh.Name = "bRefresh";
-            this.bRefresh.Size = new System.Drawing.Size(108, 30);
-            this.bRefresh.TabIndex = 3;
-            this.bRefresh.Text = "Refresh";
-            this.bRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bRefresh.UseVisualStyleBackColor = true;
-            this.bRefresh.Click += new System.EventHandler(this.bRefresh_Click);
-            // 
-            // bReset
-            // 
-            this.bReset.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bReset.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bReset.ForeColor = System.Drawing.Color.IndianRed;
-            this.bReset.Location = new System.Drawing.Point(138, 23);
-            this.bReset.Name = "bReset";
-            this.bReset.Size = new System.Drawing.Size(108, 30);
-            this.bReset.TabIndex = 4;
-            this.bReset.Text = "Reset";
-            this.bReset.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bReset.UseVisualStyleBackColor = true;
-            this.bReset.Click += new System.EventHandler(this.bReset_Click);
-            // 
             // bResetThirdParty
             // 
             this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetThirdParty.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bResetThirdParty.FlatAppearance.BorderSize = 0;
             this.bResetThirdParty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bResetThirdParty.ForeColor = System.Drawing.Color.IndianRed;
             this.bResetThirdParty.Location = new System.Drawing.Point(261, 23);
@@ -152,12 +128,72 @@
             this.bResetThirdParty.UseVisualStyleBackColor = true;
             this.bResetThirdParty.Click += new System.EventHandler(this.bResetThirdParty_Click);
             // 
+            // bReset
+            // 
+            this.bReset.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bReset.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bReset.FlatAppearance.BorderSize = 0;
+            this.bReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bReset.ForeColor = System.Drawing.Color.IndianRed;
+            this.bReset.Location = new System.Drawing.Point(138, 23);
+            this.bReset.Name = "bReset";
+            this.bReset.Size = new System.Drawing.Size(108, 30);
+            this.bReset.TabIndex = 4;
+            this.bReset.Text = "Reset";
+            this.bReset.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bReset.UseVisualStyleBackColor = true;
+            this.bReset.Click += new System.EventHandler(this.bReset_Click);
+            // 
+            // bRefresh
+            // 
+            this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bRefresh.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bRefresh.FlatAppearance.BorderSize = 0;
+            this.bRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bRefresh.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bRefresh.Location = new System.Drawing.Point(15, 23);
+            this.bRefresh.Name = "bRefresh";
+            this.bRefresh.Size = new System.Drawing.Size(108, 30);
+            this.bRefresh.TabIndex = 3;
+            this.bRefresh.Text = "Refresh";
+            this.bRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bRefresh.UseVisualStyleBackColor = true;
+            this.bRefresh.Click += new System.EventHandler(this.bRefresh_Click);
+            // 
+            // panelClearCache
+            // 
+            this.panelClearCache.Controls.Add(this.bEnableClearCache);
+            this.panelClearCache.ForeColor = System.Drawing.Color.LightGray;
+            this.panelClearCache.Location = new System.Drawing.Point(12, 172);
+            this.panelClearCache.Name = "panelClearCache";
+            this.panelClearCache.Size = new System.Drawing.Size(437, 65);
+            this.panelClearCache.TabIndex = 3;
+            this.panelClearCache.TabStop = false;
+            this.panelClearCache.Text = " Clear cache when running SPT ";
+            // 
+            // bEnableClearCache
+            // 
+            this.bEnableClearCache.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableClearCache.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableClearCache.FlatAppearance.BorderSize = 0;
+            this.bEnableClearCache.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableClearCache.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableClearCache.Location = new System.Drawing.Point(15, 23);
+            this.bEnableClearCache.Name = "bEnableClearCache";
+            this.bEnableClearCache.Size = new System.Drawing.Size(207, 30);
+            this.bEnableClearCache.TabIndex = 4;
+            this.bEnableClearCache.Text = "Disabled";
+            this.bEnableClearCache.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableClearCache.UseVisualStyleBackColor = true;
+            this.bEnableClearCache.Click += new System.EventHandler(this.bEnableClearCache_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(461, 263);
+            this.ClientSize = new System.Drawing.Size(461, 340);
+            this.Controls.Add(this.panelClearCache);
             this.Controls.Add(this.panelMisc);
             this.Controls.Add(this.panelEnableTimedAkiLauncher);
             this.Controls.Add(this.panelMinimizeOnSPTLaunch);
@@ -165,7 +201,7 @@
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "optionsWindow";
@@ -176,6 +212,7 @@
             this.panelMinimizeOnSPTLaunch.ResumeLayout(false);
             this.panelEnableTimedAkiLauncher.ResumeLayout(false);
             this.panelMisc.ResumeLayout(false);
+            this.panelClearCache.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -190,5 +227,7 @@
         private System.Windows.Forms.Button bRefresh;
         private System.Windows.Forms.Button bReset;
         private System.Windows.Forms.Button bResetThirdParty;
+        private System.Windows.Forms.GroupBox panelClearCache;
+        private System.Windows.Forms.Button bEnableClearCache;
     }
 }

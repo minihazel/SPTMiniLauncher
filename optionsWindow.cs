@@ -42,6 +42,17 @@ namespace SPTMiniLauncher
                 bEnableTimed.Text = "Disabled";
                 bEnableTimed.ForeColor = Color.IndianRed;
             }
+
+            if (Properties.Settings.Default.clearCache)
+            {
+                bEnableClearCache.Text = "Enabled";
+                bEnableClearCache.ForeColor = Color.DodgerBlue;
+            }
+            else
+            {
+                bEnableClearCache.Text = "Disabled";
+                bEnableClearCache.ForeColor = Color.IndianRed;
+            }
         }
 
         private void bMinimize_Click(object sender, EventArgs e)
@@ -73,6 +84,22 @@ namespace SPTMiniLauncher
                 bEnableTimed.Text = "Enabled";
                 bEnableTimed.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.timedLauncherToggle = true;
+            }
+        }
+
+        private void bEnableClearCache_Click(object sender, EventArgs e)
+        {
+            if (bEnableClearCache.Text.ToLower() == "enabled")
+            {
+                bEnableClearCache.Text = "Disabled";
+                bEnableClearCache.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.clearCache = false;
+            }
+            else
+            {
+                bEnableClearCache.Text = "Enabled";
+                bEnableClearCache.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.clearCache = true;
             }
         }
 

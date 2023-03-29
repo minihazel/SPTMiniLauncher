@@ -923,16 +923,19 @@ namespace SPTMiniLauncher
                         if (isLoneServer)
                         {
                             string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
-                            if (Directory.Exists(cacheFolder))
+                            if (Properties.Settings.Default.clearCache)
                             {
-                                try
+                                if (Directory.Exists(cacheFolder))
                                 {
-                                    Directory.Delete(cacheFolder, true);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    try
+                                    {
+                                        Directory.Delete(cacheFolder, true);
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
                             }
 
@@ -1016,16 +1019,19 @@ namespace SPTMiniLauncher
                             selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                             string cacheFolder = Path.Combine(selectedServer, "user\\cache");
 
-                            if (Directory.Exists(cacheFolder))
+                            if (Properties.Settings.Default.clearCache)
                             {
-                                try
+                                if (Directory.Exists(cacheFolder))
                                 {
-                                    Directory.Delete(cacheFolder, true);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    try
+                                    {
+                                        Directory.Delete(cacheFolder, true);
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
                             }
 
