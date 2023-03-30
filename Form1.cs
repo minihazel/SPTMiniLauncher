@@ -39,6 +39,7 @@ namespace SPTMiniLauncher
 
         public Process server;
         public Process launcher;
+        BackgroundWorker CheckServerWorker;
 
         // Lists
         string[] serverOptionsStreets = {
@@ -97,7 +98,7 @@ namespace SPTMiniLauncher
                     settingsObject.Property("showFirstTimeMessage").Value = "false";
 
                     messageTitle.Text = "First time setup";
-                    messageBox.Text = File.ReadAllText(firstTime);
+                    messageBox.Text = Properties.Settings.Default.firstTimeMessage; /* File.ReadAllText(firstTime); */
 
                     form.ShowDialog();
                     File.WriteAllText(settingsFile, settingsObject.ToString());
@@ -809,309 +810,8 @@ namespace SPTMiniLauncher
                             WindowState = FormWindowState.Minimized;
                         }
 
-                        if (isLoneServer)
-                        {
-                            Process[] processes = Process.GetProcesses();
-                            foreach (Process p in processes)
-                            {
-                                if (p.ProcessName.ToLower() == "aki.server")
-                                {
-                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                    {
-                                        try
-                                        {
-                                            p.Kill();
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-                                }
-                                else if (p.ProcessName.ToLower() == "aki.launcher")
-                                {
-                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                    {
-                                        try
-                                        {
-                                            p.Kill();
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-                                }
-                                else if (p.ProcessName.ToLower() == "escapefromtarkov")
-                                {
-                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                    {
-                                        try
-                                        {
-                                            p.Kill();
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            Process[] processes = Process.GetProcesses();
-                            foreach (Process p in processes)
-                            {
-                                if (p.ProcessName.ToLower() == "aki.server")
-                                {
-                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                    {
-                                        try
-                                        {
-                                            p.Kill();
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-                                }
-                                else if (p.ProcessName.ToLower() == "aki.launcher")
-                                {
-                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                    {
-                                        try
-                                        {
-                                            p.Kill();
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-                                }
-                                else if (p.ProcessName.ToLower() == "escapefromtarkov")
-                                {
-                                    string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                    if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                    {
-                                        try
-                                        {
-                                            p.Kill();
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        if (isLoneServer)
-                        {
-                            string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
-                            if (Properties.Settings.Default.clearCache)
-                            {
-                                if (Directory.Exists(cacheFolder))
-                                {
-                                    try
-                                    {
-                                        Directory.Delete(cacheFolder, true);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
-                                }
-                            }
-
-                            Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                            server = new Process();
-                            server.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                            server.StartInfo.FileName = "Aki.Server.exe";
-                            server.StartInfo.CreateNoWindow = false;
-                            server.StartInfo.UseShellExecute = false;
-                            server.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                server.Start();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                            Directory.SetCurrentDirectory(currentDir);
-
-                            if (Properties.Settings.Default.timedLauncherToggle)
-                            {
-                                int akiPort;
-                                string portPath = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\database\\server.json");
-                                bool portExists = File.Exists(portPath);
-                                if (portExists)
-                                {
-                                    string readPort = File.ReadAllText(portPath);
-                                    JObject portObject = JObject.Parse(readPort);
-                                    akiPort = (int)portObject["port"];
-                                }
-                                else
-                                {
-                                    akiPort = 6969;
-                                }
-
-                                int elapsed = 0;
-                                int timeout = 240000;
-
-                                System.Threading.Timer timer = null;
-                                timer = new System.Threading.Timer(_ =>
-                                {
-                                    if (elapsed >= timeout)
-                                    {
-                                        timer.Dispose();
-                                        elapsed = 0;
-                                        showError("We could not detect the Aki Launcher after 20 seconds.\n" +
-                                            "\n" +
-                                            "Max duration reached, launching SPT-AKI.");
-
-                                        runLauncher();
-                                    }
-                                    else
-                                    {
-                                        using (var client = new TcpClient())
-                                        {
-                                            try
-                                            {
-                                                timer.Dispose();
-                                                client.Connect("localhost", akiPort);
-                                                elapsed = 0;
-
-                                                runLauncher();
-                                            }
-                                            catch (SocketException)
-                                            {
-                                                elapsed += 1000;
-                                            }
-                                        }
-                                    }
-                                }, null, 1000, 1000);
-                            }
-                            else
-                            {
-                                runLauncher();
-                            }
-                        }
-                        else
-                        {
-                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                            string cacheFolder = Path.Combine(selectedServer, "user\\cache");
-
-                            if (Properties.Settings.Default.clearCache)
-                            {
-                                if (Directory.Exists(cacheFolder))
-                                {
-                                    try
-                                    {
-                                        Directory.Delete(cacheFolder, true);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
-                                }
-                            }
-
-                            // server
-                            Directory.SetCurrentDirectory(selectedServer);
-                            server = new Process();
-                            server.StartInfo.WorkingDirectory = selectedServer;
-                            server.StartInfo.FileName = "Aki.Server.exe";
-                            server.StartInfo.CreateNoWindow = false;
-                            server.StartInfo.UseShellExecute = false;
-                            server.StartInfo.RedirectStandardOutput = false;
-                            try
-                            {
-                                server.Start();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                            Directory.SetCurrentDirectory(currentDir);
-
-                            if (Properties.Settings.Default.timedLauncherToggle)
-                            {
-                                int akiPort;
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string portPath = Path.Combine(selectedServer, "Aki_Data\\Server\\database\\server.json");
-                                bool portExists = File.Exists(portPath);
-                                if (portExists)
-                                {
-                                    string readPort = File.ReadAllText(portPath);
-                                    JObject portObject = JObject.Parse(readPort);
-                                    akiPort = (int)portObject["port"];
-                                }
-                                else
-                                {
-                                    akiPort = 6969;
-                                }
-
-                                int elapsed = 0;
-                                int timeout = 180000;
-
-                                System.Threading.Timer timer = null;
-                                timer = new System.Threading.Timer(_ =>
-                                {
-                                    if (elapsed >= timeout)
-                                    {
-                                        timer.Dispose();
-                                        elapsed = 0;
-                                        showError("We could not detect the Aki Launcher after 20 seconds.\n" +
-                                            "\n" +
-                                            "Max duration reached, launching SPT-AKI.");
-
-                                        runLauncher();
-                                    }
-                                    else
-                                    {
-                                        using (var client = new TcpClient())
-                                        {
-                                            try
-                                            {
-                                                timer.Dispose();
-                                                client.Connect("localhost", akiPort);
-                                                elapsed = 0;
-
-                                                runLauncher();
-                                            }
-                                            catch (SocketException)
-                                            {
-                                                elapsed += 1000;
-                                            }
-                                        }
-                                    }
-                                }, null, 1000, 1000);
-                            }
-                            else
-                            {
-                                runLauncher();
-                            }
-                        }
+                        runServer();
+                        checkWorker();
                         break;
 
                     case "open server mods":
@@ -1771,6 +1471,8 @@ namespace SPTMiniLauncher
                                 }
                             }
                         }
+
+                        CheckServerWorker.Dispose();
                         break;
 
                     case "delete server":
@@ -1822,6 +1524,71 @@ namespace SPTMiniLauncher
                 }
             }
             boxPathBox.Select();
+        }
+
+        public void runServer()
+        {
+            string launcherProcess = "Aki.Server";
+            Process[] launchers = Process.GetProcessesByName(launcherProcess);
+
+            string currentDir = Directory.GetCurrentDirectory();
+            if (isLoneServer)
+            {
+                if (launchers.Length > 0)
+                {
+                }
+                else
+                {
+                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                    Process akiServer = new Process();
+
+                    akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                    akiServer.StartInfo.FileName = "Aki.Server.exe";
+                    akiServer.StartInfo.CreateNoWindow = false;
+                    akiServer.StartInfo.UseShellExecute = false;
+                    akiServer.StartInfo.RedirectStandardOutput = false;
+
+                    try
+                    {
+                        akiServer.Start();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
+                }
+            }
+            else
+            {
+                if (launchers.Length > 0)
+                {
+                }
+                else
+                {
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    Directory.SetCurrentDirectory(selectedServer);
+                    Process akiServer = new Process();
+
+                    akiServer.StartInfo.WorkingDirectory = selectedServer;
+                    akiServer.StartInfo.FileName = "Aki.Server.exe";
+                    akiServer.StartInfo.CreateNoWindow = false;
+                    akiServer.StartInfo.UseShellExecute = false;
+                    akiServer.StartInfo.RedirectStandardOutput = false;
+
+                    try
+                    {
+                        akiServer.Start();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
+                }
+            }
         }
 
         public void runLauncher()
@@ -1884,6 +1651,154 @@ namespace SPTMiniLauncher
                     }
                     Directory.SetCurrentDirectory(currentDir);
                 }
+            }
+        }
+
+        public void checkWorker()
+        {
+            if (Properties.Settings.Default.timedLauncherToggle)
+            {
+                CheckServerWorker = new BackgroundWorker();
+                CheckServerWorker.Dispose();
+                CheckServerWorker.WorkerSupportsCancellation = true;
+                CheckServerWorker.WorkerReportsProgress = false;
+
+                CheckServerWorker.DoWork += CheckServerWorker_DoWork;
+                CheckServerWorker.RunWorkerCompleted += CheckServerWorker_RunWorkerCompleted;
+
+                try
+                {
+                    CheckServerWorker.RunWorkerAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Error: {ex.Message}");
+                }
+            }
+            else
+            {
+                runLauncher();
+            }
+        }
+
+        private void CheckServerWorker_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (isLoneServer)
+            {
+                int akiPort;
+                string portPath = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\database\\server.json");
+                bool portExists = File.Exists(portPath);
+                if (portExists)
+                {
+                    string readPort = File.ReadAllText(portPath);
+                    JObject portObject = JObject.Parse(readPort);
+                    akiPort = (int)portObject["port"];
+                }
+                else
+                {
+                    akiPort = 6969;
+                }
+
+                int port = akiPort; // the port to check
+                int timeout = 360000; // the maximum time to wait for the port to open in milliseconds
+                int delay = 1000; // the delay between port checks in milliseconds
+                int elapsed = 0; // the time elapsed since starting to check the port
+
+                while (!CheckPort(port))
+                {
+                    if (elapsed >= timeout)
+                    {
+                        // port was not opened within the timeout period, so cancel the operation
+                        e.Cancel = true;
+                        CheckServerWorker.Dispose();
+
+                        showError("We could not detect the Aki Launcher after 20 seconds.\n" +
+                                  "\n" +
+                                  "Max duration reached, launching SPT-AKI.");
+
+                        runLauncher();
+                        return;
+                    }
+
+                    Thread.Sleep(delay); // wait before checking again
+                    elapsed += delay;
+
+                }
+            }
+            else
+            {
+                int akiPort;
+                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                string portPath = Path.Combine(selectedServer, "Aki_Data\\Server\\database\\server.json");
+                bool portExists = File.Exists(portPath);
+                if (portExists)
+                {
+                    string readPort = File.ReadAllText(portPath);
+                    JObject portObject = JObject.Parse(readPort);
+                    akiPort = (int)portObject["port"];
+                }
+                else
+                {
+                    akiPort = 6969;
+                }
+
+                int port = akiPort; // the port to check
+                int timeout = 360000; // the maximum time to wait for the port to open in milliseconds
+                int delay = 1000; // the delay between port checks in milliseconds
+                int elapsed = 0; // the time elapsed since starting to check the port
+
+                while (!CheckPort(port))
+                {
+                    if (elapsed >= timeout)
+                    {
+                        // port was not opened within the timeout period, so cancel the operation
+                        e.Cancel = true;
+                        CheckServerWorker.Dispose();
+
+                        showError("We could not detect the Aki Launcher after 20 seconds.\n" +
+                                  "\n" +
+                                  "Max duration reached, launching SPT-AKI.");
+
+                        runLauncher();
+                        return;
+                    }
+
+                    Thread.Sleep(delay); // wait before checking again
+                    elapsed += delay;
+
+                }
+            }
+        }
+
+        private void CheckServerWorker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Cancelled)
+            {
+                // port was not opened within the timeout period
+                Debug.WriteLine("Port could not be opened within the specified time period.");
+            }
+            else if (e.Error != null)
+            {
+                // an error occurred while checking the port
+                Debug.WriteLine("An error occurred while checking the port: " + e.Error.Message);
+            }
+        }
+
+        private bool CheckPort(int port)
+        {
+            try
+            {
+                using (var client = new TcpClient())
+                {
+                    CheckServerWorker.Dispose();
+                    client.Connect("localhost", port);
+                    runLauncher();
+                    return true;
+                }
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 

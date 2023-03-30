@@ -118,5 +118,43 @@ namespace SPTMiniLauncher.Properties {
                 this["clearCache"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute(@"
+Welcome to my SPT Mini Launcher!
+It looks like it's your first time running this launcher, or you just downloaded a new update of it.
+
+This tool has quite a few features. Via the control panel you can do the following:
+
+- Launch SPT   (cache will be automatically cleared)
+
+- Quit and exit SPT   (cache will be automatically cleared)
+
+- Clear cache
+
+- Open client and server mods folders
+
+- Open the load order file (post-3.5 installations only)
+   \__ Load Order Editor manages this for you (third party app)
+
+- Manage mods
+   \__ Client mods can only be viewed and removed. Server mods can be viewed, removed and added.
+  
+- Launch Load Order Editor (if detected)
+
+- Launch Profile Editor (if detected)
+
+- Launch SVM (if detected)
+
+- Launch SPT Realism (if detected)")]
+        public string firstTimeMessage {
+            get {
+                return ((string)(this["firstTimeMessage"]));
+            }
+            set {
+                this["firstTimeMessage"] = value;
+            }
+        }
     }
 }
