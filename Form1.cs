@@ -279,6 +279,18 @@ namespace SPTMiniLauncher
             }
         }
 
+        private void checkProfileEditor(string profilePath)
+        {
+            string fullPath = profilePath;
+
+            bool pathExists = File.Exists(fullPath);
+            if (pathExists)
+            {
+                serverOptionsStreets[11] = "Open Profile Editor";
+                serverOptions[9] = "Open Profile Editor";
+            }
+        }
+
         private void checkThirdPartyApps(string path)
         {
             // load order editor (loe)
@@ -310,6 +322,10 @@ namespace SPTMiniLauncher
 
                 serverOptionsStreets[11] = "Open Profile Editor";
                 serverOptions[9] = "Open Profile Editor";
+            }
+            else if (Properties.Settings.Default.profile_editor_path != null || Properties.Settings.Default.profile_editor_path != "")
+            {
+                checkProfileEditor(Properties.Settings.Default.profile_editor_path);
             }
             else
             {
@@ -812,6 +828,17 @@ namespace SPTMiniLauncher
 
                         runServer();
                         checkWorker();
+
+                        label.Enabled = false;
+                        System.Windows.Forms.Timer runtimer = new System.Windows.Forms.Timer();
+                        runtimer.Interval = 2000;
+                        runtimer.Tick += ((bsender, be) =>
+                        {
+                            label.Enabled = true;
+                            runtimer.Stop();
+                            runtimer.Dispose();
+                        });
+                        runtimer.Start();
                         break;
 
                     case "open server mods":
@@ -1161,27 +1188,72 @@ namespace SPTMiniLauncher
 
                     case "open profile editor":
 
-                        if (Directory.Exists(Properties.Settings.Default.profile_editor_path) && File.Exists(Path.Combine(Properties.Settings.Default.profile_editor_path, "SPT-AKI Profile Editor.exe")))
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
-                            try
+                            OpenFileDialog rightDialog = new OpenFileDialog();
+                            rightDialog.Title = "Select path for SPT-AKI Profile Editor.exe";
+                            rightDialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+
+                            if (rightDialog.ShowDialog() == DialogResult.OK)
                             {
-                                string currentDirectory = Directory.GetCurrentDirectory();
-                                Directory.SetCurrentDirectory(Properties.Settings.Default.profile_editor_path);
-                                Process proc = new Process();
 
-                                proc.StartInfo.WorkingDirectory = Properties.Settings.Default.profile_editor_path;
-                                proc.StartInfo.FileName = "SPT-AKI Profile Editor.exe";
-                                proc.StartInfo.CreateNoWindow = false;
-                                proc.StartInfo.UseShellExecute = false;
-                                proc.StartInfo.RedirectStandardOutput = false;
-                                proc.Start();
+                                if (Path.GetFileNameWithoutExtension(rightDialog.FileName).ToLower() == "spt-aki profile editor")
+                                {
+                                    // actual SPT installation
+                                    string fullPath = rightDialog.FileName;
+                                    string parentDir = Path.GetDirectoryName(fullPath);
+                                    Properties.Settings.Default.profile_editor_path = parentDir;
+                                    Properties.Settings.Default.Save();
 
-                                Directory.SetCurrentDirectory(currentDirectory);
+                                    checkProfileEditor(Properties.Settings.Default.profile_editor_path);
+                                }
                             }
-                            catch (Exception err)
+                        }
+                        else if ((Control.MouseButtons & MouseButtons.Left) != 0)
+                        {
+                            Debug.WriteLine(Properties.Settings.Default.profile_editor_path);
+                            if (Directory.Exists(Properties.Settings.Default.profile_editor_path) &&
+                                File.Exists(Path.Combine(Properties.Settings.Default.profile_editor_path, "SPT-AKI Profile Editor.exe")))
                             {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                try
+                                {
+                                    string currentDirectory = Directory.GetCurrentDirectory();
+                                    Directory.SetCurrentDirectory(Properties.Settings.Default.profile_editor_path);
+                                    Process proc = new Process();
+
+                                    proc.StartInfo.WorkingDirectory = Properties.Settings.Default.profile_editor_path;
+                                    proc.StartInfo.FileName = "SPT-AKI Profile Editor.exe";
+                                    proc.StartInfo.CreateNoWindow = false;
+                                    proc.StartInfo.UseShellExecute = false;
+                                    proc.StartInfo.RedirectStandardOutput = false;
+                                    try
+                                    {
+                                        proc.Start();
+                                        label.Enabled = false;
+                                        System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
+                                        _timer.Interval = 1500;
+                                        _timer.Tick += ((bsender, be) =>
+                                        {
+                                            label.Enabled = true;
+                                            _timer.Stop();
+                                            _timer.Dispose();
+                                        });
+                                        _timer.Start();
+
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+
+                                    Directory.SetCurrentDirectory(currentDirectory);
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                }
                             }
                         }
                         break;
@@ -1198,20 +1270,12 @@ namespace SPTMiniLauncher
                             if (Path.GetFileNameWithoutExtension(dialog.FileName).ToLower() == "spt-aki profile editor")
                             {
                                 // actual SPT installation
-                                string fullPath = Path.GetFullPath(dialog.FileName);
+                                string fullPath = dialog.FileName;
                                 string parentDir = Path.GetDirectoryName(fullPath);
                                 Properties.Settings.Default.profile_editor_path = parentDir;
                                 Properties.Settings.Default.Save();
 
-                                if (isLoneServer)
-                                {
-                                    checkThirdPartyApps(Properties.Settings.Default.server_path);
-                                }
-                                else
-                                {
-                                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                    checkThirdPartyApps(selectedServer);
-                                }
+                                checkProfileEditor(Properties.Settings.Default.profile_editor_path);
                             }
                         }
                         break;
