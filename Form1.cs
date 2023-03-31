@@ -1536,7 +1536,15 @@ namespace SPTMiniLauncher
                             }
                         }
 
-                        CheckServerWorker.Dispose();
+                        try
+                        {
+                            CheckServerWorker.Dispose();
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine($"DISPOSE FAILURE (IGNORE): {err.ToString()}");
+                        }
+
                         break;
 
                     case "delete server":
