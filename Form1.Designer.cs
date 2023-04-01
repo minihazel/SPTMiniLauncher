@@ -135,7 +135,7 @@
             this.boxServers.Controls.Add(this.boxServersSeparator);
             this.boxServers.Location = new System.Drawing.Point(17, 87);
             this.boxServers.Name = "boxServers";
-            this.boxServers.Size = new System.Drawing.Size(314, 470);
+            this.boxServers.Size = new System.Drawing.Size(314, 497);
             this.boxServers.TabIndex = 1;
             // 
             // boxServerPlaceholder
@@ -186,7 +186,7 @@
             this.boxSelectedServer.Controls.Add(this.boxSelectedServerSeparator);
             this.boxSelectedServer.Location = new System.Drawing.Point(347, 87);
             this.boxSelectedServer.Name = "boxSelectedServer";
-            this.boxSelectedServer.Size = new System.Drawing.Size(314, 470);
+            this.boxSelectedServer.Size = new System.Drawing.Size(314, 497);
             this.boxSelectedServer.TabIndex = 2;
             // 
             // boxSelectedServerPlaceholder
@@ -236,7 +236,7 @@
             this.bResetApp.AutoSize = true;
             this.bResetApp.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetApp.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetApp.Location = new System.Drawing.Point(75, 577);
+            this.bResetApp.Location = new System.Drawing.Point(75, 604);
             this.bResetApp.Name = "bResetApp";
             this.bResetApp.Size = new System.Drawing.Size(36, 13);
             this.bResetApp.TabIndex = 3;
@@ -252,7 +252,7 @@
             this.bResetThirdParty.AutoSize = true;
             this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetThirdParty.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetThirdParty.Location = new System.Drawing.Point(126, 577);
+            this.bResetThirdParty.Location = new System.Drawing.Point(126, 604);
             this.bResetThirdParty.Name = "bResetThirdParty";
             this.bResetThirdParty.Size = new System.Drawing.Size(119, 13);
             this.bResetThirdParty.TabIndex = 4;
@@ -268,7 +268,7 @@
             this.bRefresh.AutoSize = true;
             this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bRefresh.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bRefresh.Location = new System.Drawing.Point(14, 577);
+            this.bRefresh.Location = new System.Drawing.Point(14, 604);
             this.bRefresh.Name = "bRefresh";
             this.bRefresh.Size = new System.Drawing.Size(46, 13);
             this.bRefresh.TabIndex = 5;
@@ -283,7 +283,7 @@
             this.bOpenOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bOpenOptions.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bOpenOptions.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
-            this.bOpenOptions.Location = new System.Drawing.Point(542, 560);
+            this.bOpenOptions.Location = new System.Drawing.Point(542, 587);
             this.bOpenOptions.Name = "bOpenOptions";
             this.bOpenOptions.Size = new System.Drawing.Size(119, 30);
             this.bOpenOptions.TabIndex = 7;
@@ -299,7 +299,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 599);
+            this.ClientSize = new System.Drawing.Size(679, 626);
             this.Controls.Add(this.bOpenOptions);
             this.Controls.Add(this.bRefresh);
             this.Controls.Add(this.bResetThirdParty);
@@ -311,7 +311,7 @@
             this.ForeColor = System.Drawing.Color.LightGray;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MinimumSize = new System.Drawing.Size(695, 638);
+            this.MinimumSize = new System.Drawing.Size(695, 660);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SPT Mini Launcher";
@@ -343,7 +343,7 @@
         private System.Windows.Forms.Label boxServersTitle;
         private System.Windows.Forms.Label boxServerPlaceholder;
         private System.Windows.Forms.Label boxSelectedServerPlaceholder;
-        private System.Windows.Forms.Label boxSelectedServerTitle;
+        public System.Windows.Forms.Label boxSelectedServerTitle;
         private System.Windows.Forms.Panel boxSelectedServerSeparator;
         private System.Windows.Forms.Label bResetApp;
         private System.Windows.Forms.Label bResetThirdParty;

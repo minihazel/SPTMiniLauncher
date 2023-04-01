@@ -24,7 +24,7 @@
     <UpdateRequired>false</UpdateRequired>
     <MapFileExtensions>false</MapFileExtensions>
     <OpenBrowserOnPublish>false</OpenBrowserOnPublish>
-    <ApplicationRevision>139</ApplicationRevision>
+    <ApplicationRevision>140</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
@@ -126,6 +126,12 @@
     <Compile Include="optionsWindow.Designer.cs">
       <DependentUpon>optionsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="profileSelector.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="profileSelector.Designer.cs">
+      <DependentUpon>profileSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">
@@ -139,6 +145,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="optionsWindow.resx">
       <DependentUpon>optionsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="profileSelector.resx">
+      <DependentUpon>profileSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
