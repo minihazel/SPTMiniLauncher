@@ -20,6 +20,7 @@ namespace SPTMiniLauncher
         public string selectedServer;
         public string boxSelectedServerTitle;
         public string fullProfilesPath;
+        public string selector;
 
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
@@ -90,6 +91,7 @@ namespace SPTMiniLauncher
                 }
             }
 
+            bSelection.Text = selector;
         }
 
         public void listProfiles(string path)
@@ -155,14 +157,21 @@ namespace SPTMiniLauncher
 
             if (lbl.Text != "")
             {
-                int index = lbl.Text.IndexOf(".json");
-                string output = lbl.Text.Substring(0, index + 5);
-
-                bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
-                if (profileExists)
+                if (bSelection.Text.ToLower().Contains("profile_open"))
                 {
-                    Process.Start(Path.Combine(fullProfilesPath, output));
-                    this.Close();
+                    int index = lbl.Text.IndexOf(".json");
+                    string output = lbl.Text.Substring(0, index + 5);
+
+                    bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
+                    if (profileExists)
+                    {
+                        Process.Start(Path.Combine(fullProfilesPath, output));
+                        this.Close();
+                    }
+                }
+                else if (bSelection.Text.ToLower().Contains("run_spt"))
+                {
+                    
                 }
 
             }

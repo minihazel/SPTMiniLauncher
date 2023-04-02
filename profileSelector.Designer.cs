@@ -32,6 +32,7 @@
             this.bCancel = new System.Windows.Forms.Label();
             this.panelProfiles = new System.Windows.Forms.GroupBox();
             this.panelProfilesPlaceholder = new System.Windows.Forms.Label();
+            this.bSelection = new System.Windows.Forms.Label();
             this.panelProfiles.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -79,18 +80,33 @@
             this.panelProfilesPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.panelProfilesPlaceholder.Visible = false;
             // 
+            // bSelection
+            // 
+            this.bSelection.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bSelection.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bSelection.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.bSelection.Location = new System.Drawing.Point(9, 294);
+            this.bSelection.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.bSelection.Name = "bSelection";
+            this.bSelection.Size = new System.Drawing.Size(331, 37);
+            this.bSelection.TabIndex = 10;
+            this.bSelection.Text = "Placeholder";
+            this.bSelection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bSelection.Visible = false;
+            // 
             // profileSelector
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(461, 340);
+            this.Controls.Add(this.bSelection);
             this.Controls.Add(this.panelProfiles);
             this.Controls.Add(this.bCancel);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(477, 379);
@@ -109,5 +125,6 @@
         private System.Windows.Forms.Label bCancel;
         private System.Windows.Forms.GroupBox panelProfiles;
         private System.Windows.Forms.Label panelProfilesPlaceholder;
+        private System.Windows.Forms.Label bSelection;
     }
 }

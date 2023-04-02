@@ -881,6 +881,8 @@ namespace SPTMiniLauncher
                         frm.selectedServer = selectedServer;
                         frm.boxSelectedServerTitle = boxSelectedServerTitle.Text;
                     }
+
+                    frm.selector = "profile_open";
                     frm.ShowDialog();
                 }
                 else
@@ -934,6 +936,22 @@ namespace SPTMiniLauncher
                                 WindowState = FormWindowState.Minimized;
                             }
 
+                            profileSelector frm = new profileSelector();
+                            if (isLoneServer)
+                            {
+                                frm.isTrue = true;
+                            }
+                            else
+                            {
+                                frm.isTrue = false;
+                                frm.selectedServer = selectedServer;
+                                frm.boxSelectedServerTitle = boxSelectedServerTitle.Text;
+                            }
+
+                            frm.selector = "run_spt";
+                            frm.ShowDialog();
+
+                            /*
                             runServer();
                             checkWorker();
 
@@ -947,6 +965,7 @@ namespace SPTMiniLauncher
                                 runtimer.Dispose();
                             });
                             runtimer.Start();
+                            */
                             break;
 
                         case "open server mods":
