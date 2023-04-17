@@ -936,6 +936,7 @@ namespace SPTMiniLauncher
                                 WindowState = FormWindowState.Minimized;
                             }
 
+                            /*
                             profileSelector frm = new profileSelector();
                             if (isLoneServer)
                             {
@@ -950,8 +951,9 @@ namespace SPTMiniLauncher
 
                             frm.selector = "run_spt";
                             frm.ShowDialog();
+                            */
 
-                            /*
+                            
                             runServer();
                             checkWorker();
 
@@ -965,7 +967,7 @@ namespace SPTMiniLauncher
                                 runtimer.Dispose();
                             });
                             runtimer.Start();
-                            */
+                            
                             break;
 
                         case "open server mods":
@@ -1632,6 +1634,23 @@ namespace SPTMiniLauncher
                                                 }
                                             }
                                             else if (p.ProcessName.ToLower() == "aki.launcher")
+                                            {
+                                                string dir = Directory.GetParent(p.MainModule.FileName).FullName;
+                                                if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
+                                                {
+                                                    try
+                                                    {
+                                                        p.Kill();
+                                                        confirm++;
+                                                    }
+                                                    catch (Exception err)
+                                                    {
+                                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                                    }
+                                                }
+                                            }
+                                            else if (p.ProcessName.ToLower() == "escapefromtarkov")
                                             {
                                                 string dir = Directory.GetParent(p.MainModule.FileName).FullName;
                                                 if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
