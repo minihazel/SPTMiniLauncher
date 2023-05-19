@@ -109,7 +109,7 @@ namespace SPTMiniLauncher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
         public bool clearCache {
             get {
                 return ((bool)(this["clearCache"]));
@@ -195,7 +195,7 @@ This tool has quite a few features. Via the control panel you can do the followi
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
         public bool displayStopConfirmation {
             get {
                 return ((bool)(this["displayStopConfirmation"]));

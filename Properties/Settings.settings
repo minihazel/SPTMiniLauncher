@@ -24,7 +24,7 @@
       <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="clearCache" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">True</Value>
+      <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="firstTimeMessage" Type="System.String" Scope="User">
       <Value Profile="(Default)">
@@ -65,7 +65,7 @@ This tool has quite a few features. Via the control panel you can do the followi
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="displayStopConfirmation" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+      <Value Profile="(Default)">True</Value>
     </Setting>
     <Setting Name="altCache" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>

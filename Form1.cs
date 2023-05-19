@@ -1861,7 +1861,7 @@ namespace SPTMiniLauncher
                                     catch (Exception err)
                                     {
                                         Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                 }
                             }
@@ -1878,7 +1878,7 @@ namespace SPTMiniLauncher
                                     catch (Exception err)
                                     {
                                         Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                 }
                             }
@@ -1895,7 +1895,7 @@ namespace SPTMiniLauncher
                                     catch (Exception err)
                                     {
                                         Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                 }
                             }
@@ -1955,7 +1955,7 @@ namespace SPTMiniLauncher
                                     catch (Exception err)
                                     {
                                         Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                 }
                             }
@@ -1972,7 +1972,7 @@ namespace SPTMiniLauncher
                                     catch (Exception err)
                                     {
                                         Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                 }
                             }
@@ -1989,7 +1989,7 @@ namespace SPTMiniLauncher
                                     catch (Exception err)
                                     {
                                         Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                        // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                     }
                                 }
                             }
@@ -2201,6 +2201,10 @@ namespace SPTMiniLauncher
 
         public void generateLogFile(string path)
         {
+            string logDir = Path.Combine(Environment.CurrentDirectory, "logs");
+            if (!Directory.Exists(logDir))
+                Directory.CreateDirectory(logDir);
+
             string logFileName = GenerateLogName();
             File.WriteAllText(Path.Combine(path, logFileName), akiServerOutputter.ToString());
 
@@ -2226,7 +2230,7 @@ namespace SPTMiniLauncher
             {
                 if (component is Label)
                 {
-                    if (component.Text.ToLower().StartsWith("loading spt"))
+                    if (component.Text.ToLower().StartsWith("loading spt") || component.Text.ToLower().StartsWith("spt is running"))
                         component.Invoke((MethodInvoker)(() => { component.Text = "Run SPT"; }));
                 }
             }
