@@ -1666,8 +1666,8 @@ namespace SPTMiniLauncher
             string currentDir = Directory.GetCurrentDirectory();
             if (isLoneServer)
             {
-                if (launchers.Length > 0)
-                    // killProcesses();
+                //if (launchers.Length > 0) { }
+                // killProcesses();
 
                 Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
                 Process akiServer = new Process();
@@ -1701,8 +1701,8 @@ namespace SPTMiniLauncher
             }
             else
             {
-                if (launchers.Length > 0)
-                    // killProcesses();
+                //if (launchers.Length > 0)
+                // killProcesses();
 
                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                 Directory.SetCurrentDirectory(selectedServer);
@@ -1745,8 +1745,8 @@ namespace SPTMiniLauncher
             string currentDir = Directory.GetCurrentDirectory();
             if (isLoneServer)
             {
-                if (launchers.Length > 0)
-                    // killProcesses();
+                //if (launchers.Length > 0)
+                // killProcesses();
 
                 Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
                 Process akiLauncher = new Process();
@@ -1775,8 +1775,8 @@ namespace SPTMiniLauncher
             }
             else
             {
-                if (launchers.Length > 0)
-                    // killProcesses();
+                //if (launchers.Length > 0)
+                // killProcesses();
 
                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                 Directory.SetCurrentDirectory(selectedServer);
