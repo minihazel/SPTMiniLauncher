@@ -156,5 +156,65 @@ This tool has quite a few features. Via the control panel you can do the followi
                 this["firstTimeMessage"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        public int startDetector {
+            get {
+                return ((int)(this["startDetector"]));
+            }
+            set {
+                this["startDetector"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public int endDetector {
+            get {
+                return ((int)(this["endDetector"]));
+            }
+            set {
+                this["endDetector"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool openLogOnQuit {
+            get {
+                return ((bool)(this["openLogOnQuit"]));
+            }
+            set {
+                this["openLogOnQuit"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool displayStopConfirmation {
+            get {
+                return ((bool)(this["displayStopConfirmation"]));
+            }
+            set {
+                this["displayStopConfirmation"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool altCache {
+            get {
+                return ((bool)(this["altCache"]));
+            }
+            set {
+                this["altCache"] = value;
+            }
+        }
     }
 }

@@ -21,6 +21,7 @@ namespace SPTMiniLauncher
 
         private void optionsWindow_Load(object sender, EventArgs e)
         {
+
             if (Properties.Settings.Default.minimizeToggle)
             {
                 bMinimize.Text = "Enabled";
@@ -47,12 +48,56 @@ namespace SPTMiniLauncher
             {
                 bEnableClearCache.Text = "Enabled";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
+
+                bEnableAltCache.Enabled = true;
             }
             else
             {
                 bEnableClearCache.Text = "Disabled";
                 bEnableClearCache.ForeColor = Color.IndianRed;
+
+                bEnableAltCache.Enabled = false;
             }
+
+            switch (Properties.Settings.Default.openLogOnQuit)
+            {
+                case true:
+                    bEnableOpenLog.Text = "Enabled";
+                    bEnableOpenLog.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bEnableOpenLog.Text = "Disabled";
+                    bEnableOpenLog.ForeColor = Color.IndianRed;
+                    break;
+            }
+
+            switch (Properties.Settings.Default.displayStopConfirmation)
+            {
+                case true:
+                    bEnableConfirmation.Text = "Enabled";
+                    bEnableConfirmation.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bEnableConfirmation.Text = "Disabled";
+                    bEnableConfirmation.ForeColor = Color.IndianRed;
+                    break;
+            }
+
+            switch (Properties.Settings.Default.altCache)
+            {
+                case true:
+                    bEnableAltCache.Text = "On SPT start";
+                    break;
+
+                case false:
+                    bEnableAltCache.Text = "On SPT stop";
+                    break;
+            }
+
+            bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
+            bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
         }
 
         private void bMinimize_Click(object sender, EventArgs e)
@@ -94,12 +139,16 @@ namespace SPTMiniLauncher
                 bEnableClearCache.Text = "Disabled";
                 bEnableClearCache.ForeColor = Color.IndianRed;
                 Properties.Settings.Default.clearCache = false;
+
+                bEnableAltCache.Enabled = false;
             }
             else
             {
                 bEnableClearCache.Text = "Enabled";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.clearCache = true;
+
+                bEnableAltCache.Enabled = true;
             }
         }
 
@@ -149,6 +198,98 @@ namespace SPTMiniLauncher
         private void optionsWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
             Properties.Settings.Default.Save();
+        }
+
+        private void bStartDetector_Click(object sender, EventArgs e)
+        {
+            if (bStartDetector.Text.Contains("1"))
+            {
+                bStartDetector.Text = "Start detector: 2 second(s)";
+                Properties.Settings.Default.startDetector = 2;
+            }
+            else if (bStartDetector.Text.Contains("2"))
+            {
+                bStartDetector.Text = "Start detector: 5 second(s)";
+                Properties.Settings.Default.startDetector = 5;
+            }
+            else if (bStartDetector.Text.Contains("5"))
+            {
+                bStartDetector.Text = "Start detector: 1 second(s)";
+                Properties.Settings.Default.startDetector = 1;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bEndDetector_Click(object sender, EventArgs e)
+        {
+            if (bEndDetector.Text.Contains("1"))
+            {
+                bEndDetector.Text = "End detector: 2 second(s)";
+                Properties.Settings.Default.endDetector = 2;
+            }
+            else if (bEndDetector.Text.Contains("2"))
+            {
+                bEndDetector.Text = "End detector: 5 second(s)";
+                Properties.Settings.Default.endDetector = 5;
+            }
+            else if (bEndDetector.Text.Contains("5"))
+            {
+                bEndDetector.Text = "End detector: 1 second(s)";
+                Properties.Settings.Default.endDetector = 1;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bEnableOpenLog_Click(object sender, EventArgs e)
+        {
+            if (bEnableOpenLog.Text.ToLower() == "enabled")
+            {
+                bEnableOpenLog.Text = "Disabled";
+                bEnableOpenLog.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.openLogOnQuit = false;
+            }
+            else
+            {
+                bEnableOpenLog.Text = "Enabled";
+                bEnableOpenLog.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.openLogOnQuit = true;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bEnableConfirmation_Click(object sender, EventArgs e)
+        {
+            if (bEnableConfirmation.Text.ToLower() == "enabled")
+            {
+                bEnableConfirmation.Text = "Disabled";
+                bEnableConfirmation.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.displayStopConfirmation = false;
+            }
+            else
+            {
+                bEnableConfirmation.Text = "Enabled";
+                bEnableConfirmation.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.displayStopConfirmation = true;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bEnableAltCache_Click(object sender, EventArgs e)
+        {
+            if (bEnableAltCache.Text.ToLower() == "on spt stop")
+            {
+                bEnableAltCache.Text = "On SPT start";
+                Properties.Settings.Default.altCache = true;
+            }
+            else
+            {
+                bEnableAltCache.Text = "On SPT stop";
+                Properties.Settings.Default.altCache = false;
+            }
         }
     }
 }

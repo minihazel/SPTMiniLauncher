@@ -39,10 +39,21 @@
             this.bRefresh = new System.Windows.Forms.Button();
             this.panelClearCache = new System.Windows.Forms.GroupBox();
             this.bEnableClearCache = new System.Windows.Forms.Button();
+            this.panelDetectors = new System.Windows.Forms.GroupBox();
+            this.bStartDetector = new System.Windows.Forms.Button();
+            this.bEndDetector = new System.Windows.Forms.Button();
+            this.panelLogFile = new System.Windows.Forms.GroupBox();
+            this.bEnableOpenLog = new System.Windows.Forms.Button();
+            this.panelConfirmationQuit = new System.Windows.Forms.GroupBox();
+            this.bEnableConfirmation = new System.Windows.Forms.Button();
+            this.bEnableAltCache = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
             this.panelClearCache.SuspendLayout();
+            this.panelDetectors.SuspendLayout();
+            this.panelLogFile.SuspendLayout();
+            this.panelConfirmationQuit.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -162,6 +173,7 @@
             // 
             // panelClearCache
             // 
+            this.panelClearCache.Controls.Add(this.bEnableAltCache);
             this.panelClearCache.Controls.Add(this.bEnableClearCache);
             this.panelClearCache.ForeColor = System.Drawing.Color.LightGray;
             this.panelClearCache.Location = new System.Drawing.Point(12, 172);
@@ -169,7 +181,7 @@
             this.panelClearCache.Size = new System.Drawing.Size(437, 65);
             this.panelClearCache.TabIndex = 3;
             this.panelClearCache.TabStop = false;
-            this.panelClearCache.Text = " Clear cache when running SPT ";
+            this.panelClearCache.Text = " Clear cache ";
             // 
             // bEnableClearCache
             // 
@@ -187,12 +199,129 @@
             this.bEnableClearCache.UseVisualStyleBackColor = true;
             this.bEnableClearCache.Click += new System.EventHandler(this.bEnableClearCache_Click);
             // 
+            // panelDetectors
+            // 
+            this.panelDetectors.Controls.Add(this.bEndDetector);
+            this.panelDetectors.Controls.Add(this.bStartDetector);
+            this.panelDetectors.ForeColor = System.Drawing.Color.LightGray;
+            this.panelDetectors.Location = new System.Drawing.Point(12, 332);
+            this.panelDetectors.Name = "panelDetectors";
+            this.panelDetectors.Size = new System.Drawing.Size(437, 65);
+            this.panelDetectors.TabIndex = 4;
+            this.panelDetectors.TabStop = false;
+            this.panelDetectors.Text = " Tarkov Detector Intervals (in seconds)";
+            // 
+            // bStartDetector
+            // 
+            this.bStartDetector.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bStartDetector.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bStartDetector.FlatAppearance.BorderSize = 0;
+            this.bStartDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bStartDetector.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bStartDetector.Location = new System.Drawing.Point(15, 23);
+            this.bStartDetector.Name = "bStartDetector";
+            this.bStartDetector.Size = new System.Drawing.Size(207, 30);
+            this.bStartDetector.TabIndex = 4;
+            this.bStartDetector.Text = "Start detector: 0.5 seconds";
+            this.bStartDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bStartDetector.UseVisualStyleBackColor = true;
+            this.bStartDetector.Click += new System.EventHandler(this.bStartDetector_Click);
+            // 
+            // bEndDetector
+            // 
+            this.bEndDetector.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEndDetector.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEndDetector.FlatAppearance.BorderSize = 0;
+            this.bEndDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEndDetector.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEndDetector.Location = new System.Drawing.Point(224, 23);
+            this.bEndDetector.Name = "bEndDetector";
+            this.bEndDetector.Size = new System.Drawing.Size(207, 30);
+            this.bEndDetector.TabIndex = 5;
+            this.bEndDetector.Text = "End detector: 0.5 seconds";
+            this.bEndDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEndDetector.UseVisualStyleBackColor = true;
+            this.bEndDetector.Click += new System.EventHandler(this.bEndDetector_Click);
+            // 
+            // panelLogFile
+            // 
+            this.panelLogFile.Controls.Add(this.bEnableOpenLog);
+            this.panelLogFile.ForeColor = System.Drawing.Color.LightGray;
+            this.panelLogFile.Location = new System.Drawing.Point(12, 412);
+            this.panelLogFile.Name = "panelLogFile";
+            this.panelLogFile.Size = new System.Drawing.Size(437, 65);
+            this.panelLogFile.TabIndex = 5;
+            this.panelLogFile.TabStop = false;
+            this.panelLogFile.Text = " Open log file on SPT quit ";
+            // 
+            // bEnableOpenLog
+            // 
+            this.bEnableOpenLog.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableOpenLog.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableOpenLog.FlatAppearance.BorderSize = 0;
+            this.bEnableOpenLog.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableOpenLog.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableOpenLog.Location = new System.Drawing.Point(15, 23);
+            this.bEnableOpenLog.Name = "bEnableOpenLog";
+            this.bEnableOpenLog.Size = new System.Drawing.Size(207, 30);
+            this.bEnableOpenLog.TabIndex = 4;
+            this.bEnableOpenLog.Text = "Disabled";
+            this.bEnableOpenLog.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableOpenLog.UseVisualStyleBackColor = true;
+            this.bEnableOpenLog.Click += new System.EventHandler(this.bEnableOpenLog_Click);
+            // 
+            // panelConfirmationQuit
+            // 
+            this.panelConfirmationQuit.Controls.Add(this.bEnableConfirmation);
+            this.panelConfirmationQuit.ForeColor = System.Drawing.Color.LightGray;
+            this.panelConfirmationQuit.Location = new System.Drawing.Point(12, 492);
+            this.panelConfirmationQuit.Name = "panelConfirmationQuit";
+            this.panelConfirmationQuit.Size = new System.Drawing.Size(437, 65);
+            this.panelConfirmationQuit.TabIndex = 6;
+            this.panelConfirmationQuit.TabStop = false;
+            this.panelConfirmationQuit.Text = " Confirmation pop-ups (Stop SPT && Clear Cache) ";
+            // 
+            // bEnableConfirmation
+            // 
+            this.bEnableConfirmation.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableConfirmation.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableConfirmation.FlatAppearance.BorderSize = 0;
+            this.bEnableConfirmation.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableConfirmation.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableConfirmation.Location = new System.Drawing.Point(15, 23);
+            this.bEnableConfirmation.Name = "bEnableConfirmation";
+            this.bEnableConfirmation.Size = new System.Drawing.Size(207, 30);
+            this.bEnableConfirmation.TabIndex = 4;
+            this.bEnableConfirmation.Text = "Disabled";
+            this.bEnableConfirmation.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableConfirmation.UseVisualStyleBackColor = true;
+            this.bEnableConfirmation.Click += new System.EventHandler(this.bEnableConfirmation_Click);
+            // 
+            // bEnableAltCache
+            // 
+            this.bEnableAltCache.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableAltCache.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableAltCache.FlatAppearance.BorderSize = 0;
+            this.bEnableAltCache.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableAltCache.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableAltCache.Location = new System.Drawing.Point(224, 23);
+            this.bEnableAltCache.Name = "bEnableAltCache";
+            this.bEnableAltCache.Size = new System.Drawing.Size(207, 30);
+            this.bEnableAltCache.TabIndex = 5;
+            this.bEnableAltCache.Text = "On SPT stop";
+            this.bEnableAltCache.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableAltCache.UseVisualStyleBackColor = true;
+            this.bEnableAltCache.Click += new System.EventHandler(this.bEnableAltCache_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(461, 340);
+            this.ClientSize = new System.Drawing.Size(461, 579);
+            this.Controls.Add(this.panelConfirmationQuit);
+            this.Controls.Add(this.panelLogFile);
+            this.Controls.Add(this.panelDetectors);
             this.Controls.Add(this.panelClearCache);
             this.Controls.Add(this.panelMisc);
             this.Controls.Add(this.panelEnableTimedAkiLauncher);
@@ -213,6 +342,9 @@
             this.panelEnableTimedAkiLauncher.ResumeLayout(false);
             this.panelMisc.ResumeLayout(false);
             this.panelClearCache.ResumeLayout(false);
+            this.panelDetectors.ResumeLayout(false);
+            this.panelLogFile.ResumeLayout(false);
+            this.panelConfirmationQuit.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -229,5 +361,13 @@
         private System.Windows.Forms.Button bResetThirdParty;
         private System.Windows.Forms.GroupBox panelClearCache;
         private System.Windows.Forms.Button bEnableClearCache;
+        private System.Windows.Forms.GroupBox panelDetectors;
+        private System.Windows.Forms.Button bStartDetector;
+        private System.Windows.Forms.Button bEndDetector;
+        private System.Windows.Forms.GroupBox panelLogFile;
+        private System.Windows.Forms.Button bEnableOpenLog;
+        private System.Windows.Forms.GroupBox panelConfirmationQuit;
+        private System.Windows.Forms.Button bEnableConfirmation;
+        private System.Windows.Forms.Button bEnableAltCache;
     }
 }
