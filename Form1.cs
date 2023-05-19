@@ -1667,7 +1667,7 @@ namespace SPTMiniLauncher
             if (isLoneServer)
             {
                 if (launchers.Length > 0)
-                    killProcesses();
+                    // killProcesses();
 
                 Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
                 Process akiServer = new Process();
@@ -1702,7 +1702,7 @@ namespace SPTMiniLauncher
             else
             {
                 if (launchers.Length > 0)
-                    killProcesses();
+                    // killProcesses();
 
                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                 Directory.SetCurrentDirectory(selectedServer);
@@ -1746,7 +1746,7 @@ namespace SPTMiniLauncher
             if (isLoneServer)
             {
                 if (launchers.Length > 0)
-                    killProcesses();
+                    // killProcesses();
 
                 Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
                 Process akiLauncher = new Process();
@@ -1776,7 +1776,7 @@ namespace SPTMiniLauncher
             else
             {
                 if (launchers.Length > 0)
-                    killProcesses();
+                    // killProcesses();
 
                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                 Directory.SetCurrentDirectory(selectedServer);
