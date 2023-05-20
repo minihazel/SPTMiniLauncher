@@ -85,13 +85,13 @@ namespace SPTMiniLauncher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool minimizeToggle {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int hideOptions {
             get {
-                return ((bool)(this["minimizeToggle"]));
+                return ((int)(this["hideOptions"]));
             }
             set {
-                this["minimizeToggle"] = value;
+                this["hideOptions"] = value;
             }
         }
         

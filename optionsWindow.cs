@@ -24,15 +24,22 @@ namespace SPTMiniLauncher
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
 
-            if (Properties.Settings.Default.minimizeToggle)
+            switch (Properties.Settings.Default.hideOptions)
             {
-                bMinimize.Text = "Enabled";
-                bMinimize.ForeColor = Color.DodgerBlue;
-            }
-            else
-            {
-                bMinimize.Text = "Disabled";
-                bMinimize.ForeColor = Color.IndianRed;
+                case 0:
+                    bHide.Text = "Disabled";
+                    bHide.ForeColor = Color.IndianRed;
+                    break;
+
+                case 1:
+                    bHide.Text = "Minimize Launcher";
+                    bHide.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case 2:
+                    bHide.Text = "Hide Launcher";
+                    bHide.ForeColor = Color.DodgerBlue;
+                    break;
             }
 
             if (Properties.Settings.Default.timedLauncherToggle)
@@ -140,18 +147,26 @@ namespace SPTMiniLauncher
 
         private void bMinimize_Click(object sender, EventArgs e)
         {
-            if (bMinimize.Text.ToLower() == "enabled")
+            if (bHide.Text.ToLower() == "disabled")
             {
-                bMinimize.Text = "Disabled";
-                bMinimize.ForeColor = Color.IndianRed;
-                Properties.Settings.Default.minimizeToggle = false;
+                bHide.Text = "Minimize Launcher";
+                bHide.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.hideOptions = 1;
             }
-            else
+            else if (bHide.Text.ToLower() == "minimize launcher")
             {
-                bMinimize.Text = "Enabled";
-                bMinimize.ForeColor = Color.DodgerBlue;
-                Properties.Settings.Default.minimizeToggle = true;
+                bHide.Text = "Close Launcher";
+                bHide.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.hideOptions = 2;
             }
+            else if (bHide.Text.ToLower() == "close launcher")
+            {
+                bHide.Text = "Disabled";
+                bHide.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.hideOptions = 0;
+            }
+
+            Properties.Settings.Default.Save();
         }
 
         private void bEnableTimed_Click(object sender, EventArgs e)
@@ -168,6 +183,8 @@ namespace SPTMiniLauncher
                 bEnableTimed.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.timedLauncherToggle = true;
             }
+
+            Properties.Settings.Default.Save();
         }
 
         private void bEnableClearCache_Click(object sender, EventArgs e)
@@ -188,6 +205,8 @@ namespace SPTMiniLauncher
 
                 bEnableAltCache.Enabled = true;
             }
+
+            Properties.Settings.Default.Save();
         }
 
         private void bRefresh_Click(object sender, EventArgs e)
@@ -380,6 +399,19 @@ namespace SPTMiniLauncher
                 bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.closeOnQuit = true;
             }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bLiveLike_Click(object sender, EventArgs e)
+        {
+            bHide.Text = "Close Launcher";
+            bHide.ForeColor = Color.DodgerBlue;
+            Properties.Settings.Default.hideOptions = 2;
+
+            bCloseOnSPTExit.Text = "Enabled";
+            bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+            Properties.Settings.Default.closeOnQuit = true;
 
             Properties.Settings.Default.Save();
         }

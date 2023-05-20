@@ -30,7 +30,7 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(optionsWindow));
             this.panelMinimizeOnSPTLaunch = new System.Windows.Forms.GroupBox();
-            this.bMinimize = new System.Windows.Forms.Button();
+            this.bHide = new System.Windows.Forms.Button();
             this.panelEnableTimedAkiLauncher = new System.Windows.Forms.GroupBox();
             this.bEnableTimed = new System.Windows.Forms.Button();
             this.panelMisc = new System.Windows.Forms.GroupBox();
@@ -38,21 +38,22 @@
             this.bReset = new System.Windows.Forms.Button();
             this.bRefresh = new System.Windows.Forms.Button();
             this.panelClearCache = new System.Windows.Forms.GroupBox();
+            this.bEnableAltCache = new System.Windows.Forms.Button();
             this.bEnableClearCache = new System.Windows.Forms.Button();
             this.panelDetectors = new System.Windows.Forms.GroupBox();
-            this.bStartDetector = new System.Windows.Forms.Button();
             this.bEndDetector = new System.Windows.Forms.Button();
+            this.bStartDetector = new System.Windows.Forms.Button();
             this.panelLogFile = new System.Windows.Forms.GroupBox();
             this.bEnableOpenLog = new System.Windows.Forms.Button();
             this.panelConfirmationQuit = new System.Windows.Forms.GroupBox();
             this.bEnableConfirmation = new System.Windows.Forms.Button();
-            this.bEnableAltCache = new System.Windows.Forms.Button();
             this.panelServerOutput = new System.Windows.Forms.GroupBox();
             this.bEnableServerOutput = new System.Windows.Forms.Button();
             this.panelServerError = new System.Windows.Forms.GroupBox();
             this.bEnableServerErrors = new System.Windows.Forms.Button();
             this.panelCloseOnExit = new System.Windows.Forms.GroupBox();
             this.bCloseOnSPTExit = new System.Windows.Forms.Button();
+            this.bLiveLike = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -67,30 +68,30 @@
             // 
             // panelMinimizeOnSPTLaunch
             // 
-            this.panelMinimizeOnSPTLaunch.Controls.Add(this.bMinimize);
+            this.panelMinimizeOnSPTLaunch.Controls.Add(this.bHide);
             this.panelMinimizeOnSPTLaunch.ForeColor = System.Drawing.Color.LightGray;
             this.panelMinimizeOnSPTLaunch.Location = new System.Drawing.Point(12, 12);
             this.panelMinimizeOnSPTLaunch.Name = "panelMinimizeOnSPTLaunch";
             this.panelMinimizeOnSPTLaunch.Size = new System.Drawing.Size(210, 65);
             this.panelMinimizeOnSPTLaunch.TabIndex = 0;
             this.panelMinimizeOnSPTLaunch.TabStop = false;
-            this.panelMinimizeOnSPTLaunch.Text = " Minimize on SPT launch ";
+            this.panelMinimizeOnSPTLaunch.Text = " SPT launch options";
             // 
-            // bMinimize
+            // bHide
             // 
-            this.bMinimize.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bMinimize.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bMinimize.FlatAppearance.BorderSize = 0;
-            this.bMinimize.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bMinimize.ForeColor = System.Drawing.Color.IndianRed;
-            this.bMinimize.Location = new System.Drawing.Point(15, 23);
-            this.bMinimize.Name = "bMinimize";
-            this.bMinimize.Size = new System.Drawing.Size(180, 30);
-            this.bMinimize.TabIndex = 2;
-            this.bMinimize.Text = "Disabled";
-            this.bMinimize.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bMinimize.UseVisualStyleBackColor = true;
-            this.bMinimize.Click += new System.EventHandler(this.bMinimize_Click);
+            this.bHide.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bHide.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bHide.FlatAppearance.BorderSize = 0;
+            this.bHide.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bHide.ForeColor = System.Drawing.Color.IndianRed;
+            this.bHide.Location = new System.Drawing.Point(15, 23);
+            this.bHide.Name = "bHide";
+            this.bHide.Size = new System.Drawing.Size(180, 30);
+            this.bHide.TabIndex = 2;
+            this.bHide.Text = "Disabled";
+            this.bHide.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bHide.UseVisualStyleBackColor = true;
+            this.bHide.Click += new System.EventHandler(this.bMinimize_Click);
             // 
             // panelEnableTimedAkiLauncher
             // 
@@ -192,6 +193,22 @@
             this.panelClearCache.TabStop = false;
             this.panelClearCache.Text = " Clear cache ";
             // 
+            // bEnableAltCache
+            // 
+            this.bEnableAltCache.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableAltCache.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableAltCache.FlatAppearance.BorderSize = 0;
+            this.bEnableAltCache.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableAltCache.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableAltCache.Location = new System.Drawing.Point(224, 23);
+            this.bEnableAltCache.Name = "bEnableAltCache";
+            this.bEnableAltCache.Size = new System.Drawing.Size(180, 30);
+            this.bEnableAltCache.TabIndex = 5;
+            this.bEnableAltCache.Text = "On SPT stop";
+            this.bEnableAltCache.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableAltCache.UseVisualStyleBackColor = true;
+            this.bEnableAltCache.Click += new System.EventHandler(this.bEnableAltCache_Click);
+            // 
             // bEnableClearCache
             // 
             this.bEnableClearCache.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -220,22 +237,6 @@
             this.panelDetectors.TabStop = false;
             this.panelDetectors.Text = " Tarkov Detector Intervals (in seconds)";
             // 
-            // bStartDetector
-            // 
-            this.bStartDetector.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bStartDetector.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bStartDetector.FlatAppearance.BorderSize = 0;
-            this.bStartDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bStartDetector.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bStartDetector.Location = new System.Drawing.Point(15, 23);
-            this.bStartDetector.Name = "bStartDetector";
-            this.bStartDetector.Size = new System.Drawing.Size(207, 30);
-            this.bStartDetector.TabIndex = 4;
-            this.bStartDetector.Text = "Start detector: 0.5 seconds";
-            this.bStartDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bStartDetector.UseVisualStyleBackColor = true;
-            this.bStartDetector.Click += new System.EventHandler(this.bStartDetector_Click);
-            // 
             // bEndDetector
             // 
             this.bEndDetector.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -251,6 +252,22 @@
             this.bEndDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bEndDetector.UseVisualStyleBackColor = true;
             this.bEndDetector.Click += new System.EventHandler(this.bEndDetector_Click);
+            // 
+            // bStartDetector
+            // 
+            this.bStartDetector.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bStartDetector.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bStartDetector.FlatAppearance.BorderSize = 0;
+            this.bStartDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bStartDetector.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bStartDetector.Location = new System.Drawing.Point(15, 23);
+            this.bStartDetector.Name = "bStartDetector";
+            this.bStartDetector.Size = new System.Drawing.Size(207, 30);
+            this.bStartDetector.TabIndex = 4;
+            this.bStartDetector.Text = "Start detector: 0.5 seconds";
+            this.bStartDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bStartDetector.UseVisualStyleBackColor = true;
+            this.bStartDetector.Click += new System.EventHandler(this.bStartDetector_Click);
             // 
             // panelLogFile
             // 
@@ -305,22 +322,6 @@
             this.bEnableConfirmation.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bEnableConfirmation.UseVisualStyleBackColor = true;
             this.bEnableConfirmation.Click += new System.EventHandler(this.bEnableConfirmation_Click);
-            // 
-            // bEnableAltCache
-            // 
-            this.bEnableAltCache.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bEnableAltCache.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bEnableAltCache.FlatAppearance.BorderSize = 0;
-            this.bEnableAltCache.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bEnableAltCache.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bEnableAltCache.Location = new System.Drawing.Point(224, 23);
-            this.bEnableAltCache.Name = "bEnableAltCache";
-            this.bEnableAltCache.Size = new System.Drawing.Size(180, 30);
-            this.bEnableAltCache.TabIndex = 5;
-            this.bEnableAltCache.Text = "On SPT stop";
-            this.bEnableAltCache.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bEnableAltCache.UseVisualStyleBackColor = true;
-            this.bEnableAltCache.Click += new System.EventHandler(this.bEnableAltCache_Click);
             // 
             // panelServerOutput
             // 
@@ -403,12 +404,27 @@
             this.bCloseOnSPTExit.UseVisualStyleBackColor = true;
             this.bCloseOnSPTExit.Click += new System.EventHandler(this.bCloseOnSPTExit_Click);
             // 
+            // bLiveLike
+            // 
+            this.bLiveLike.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bLiveLike.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.bLiveLike.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bLiveLike.ForeColor = System.Drawing.Color.LightGray;
+            this.bLiveLike.Location = new System.Drawing.Point(12, 572);
+            this.bLiveLike.Name = "bLiveLike";
+            this.bLiveLike.Size = new System.Drawing.Size(437, 30);
+            this.bLiveLike.TabIndex = 10;
+            this.bLiveLike.Text = "Enable Live-like game exiting";
+            this.bLiveLike.UseVisualStyleBackColor = true;
+            this.bLiveLike.Click += new System.EventHandler(this.bLiveLike_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(461, 577);
+            this.ClientSize = new System.Drawing.Size(461, 612);
+            this.Controls.Add(this.bLiveLike);
             this.Controls.Add(this.panelCloseOnExit);
             this.Controls.Add(this.panelServerError);
             this.Controls.Add(this.panelServerOutput);
@@ -449,7 +465,7 @@
 
         private System.Windows.Forms.GroupBox panelMinimizeOnSPTLaunch;
         private System.Windows.Forms.GroupBox panelEnableTimedAkiLauncher;
-        private System.Windows.Forms.Button bMinimize;
+        private System.Windows.Forms.Button bHide;
         private System.Windows.Forms.Button bEnableTimed;
         private System.Windows.Forms.GroupBox panelMisc;
         private System.Windows.Forms.Button bRefresh;
@@ -471,5 +487,6 @@
         private System.Windows.Forms.Button bEnableServerErrors;
         private System.Windows.Forms.GroupBox panelCloseOnExit;
         private System.Windows.Forms.Button bCloseOnSPTExit;
+        private System.Windows.Forms.Button bLiveLike;
     }
 }

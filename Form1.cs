@@ -650,7 +650,11 @@ namespace SPTMiniLauncher
                 Process[] processes = Process.GetProcessesByName(processName);
                 if (processes.Length == 0)
                 {
-                    flashLauncherWindow();
+                    if (Properties.Settings.Default.hideOptions == 0
+                        || Properties.Settings.Default.hideOptions == 1)
+                    {
+                        flashLauncherWindow();
+                    }
                     killProcesses();
                     if (TarkovEndDetector != null)
                         TarkovEndDetector.Dispose();
@@ -696,6 +700,21 @@ namespace SPTMiniLauncher
             else
             {
                 this.WindowState = FormWindowState.Minimized;
+            }
+        }
+
+        public void hideLauncherWindow()
+        {
+            if (this.InvokeRequired)
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.Hide();
+                });
+            }
+            else
+            {
+                this.Hide();
             }
         }
 
@@ -1035,8 +1054,12 @@ namespace SPTMiniLauncher
 
                         case "run spt":
 
-                            if (Properties.Settings.Default.minimizeToggle)
-                                minimizeLauncherWindow();
+                            switch (Properties.Settings.Default.hideOptions)
+                            {
+                                case 1:
+                                    minimizeLauncherWindow();
+                                    break;
+                            }
 
                             if (Properties.Settings.Default.clearCache && Properties.Settings.Default.altCache)
                             {
@@ -2270,6 +2293,9 @@ namespace SPTMiniLauncher
                         component.Invoke((MethodInvoker)(() => { component.Text = "SPT is running! Quit by clicking Stop SPT"; }));
                 }
             }
+
+            if (Properties.Settings.Default.hideOptions == 2)
+                hideLauncherWindow();
         }
 
         public void resetRunButton()
