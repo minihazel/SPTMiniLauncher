@@ -40,6 +40,7 @@
             this.panelClearCache = new System.Windows.Forms.GroupBox();
             this.bEnableClearCache = new System.Windows.Forms.Button();
             this.panelDetectors = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.bEndDetector = new System.Windows.Forms.Button();
             this.bStartDetector = new System.Windows.Forms.Button();
             this.panelLogFile = new System.Windows.Forms.GroupBox();
@@ -52,19 +53,26 @@
             this.bEnableServerErrors = new System.Windows.Forms.Button();
             this.panelCloseOnExit = new System.Windows.Forms.GroupBox();
             this.bCloseOnSPTExit = new System.Windows.Forms.Button();
-            this.bLiveLike = new System.Windows.Forms.Button();
+            this.bPreset1 = new System.Windows.Forms.Button();
             this.tabLauncher = new System.Windows.Forms.Button();
             this.tabSPTAKI = new System.Windows.Forms.Button();
             this.tabTarkov = new System.Windows.Forms.Button();
             this.panelLauncherSettings = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
             this.tabLauncherDesc = new System.Windows.Forms.Label();
             this.tabSPTDesc = new System.Windows.Forms.Label();
             this.tabTarkovDesc = new System.Windows.Forms.Label();
             this.panelSPTAKISettings = new System.Windows.Forms.Panel();
             this.panelTarkovSettings = new System.Windows.Forms.Panel();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.panel2 = new System.Windows.Forms.Panel();
-            this.panel3 = new System.Windows.Forms.Panel();
+            this.tabPresets = new System.Windows.Forms.Button();
+            this.panelPresets = new System.Windows.Forms.Panel();
+            this.descPreset1 = new System.Windows.Forms.Label();
+            this.descPreset2 = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.bPreset2 = new System.Windows.Forms.Button();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -78,13 +86,16 @@
             this.panelLauncherSettings.SuspendLayout();
             this.panelSPTAKISettings.SuspendLayout();
             this.panelTarkovSettings.SuspendLayout();
+            this.panelPresets.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
             // 
             this.panelMinimizeOnSPTLaunch.Controls.Add(this.bHide);
             this.panelMinimizeOnSPTLaunch.ForeColor = System.Drawing.Color.LightGray;
-            this.panelMinimizeOnSPTLaunch.Location = new System.Drawing.Point(3, 86);
+            this.panelMinimizeOnSPTLaunch.Location = new System.Drawing.Point(3, 92);
             this.panelMinimizeOnSPTLaunch.Name = "panelMinimizeOnSPTLaunch";
             this.panelMinimizeOnSPTLaunch.Size = new System.Drawing.Size(220, 65);
             this.panelMinimizeOnSPTLaunch.TabIndex = 0;
@@ -124,12 +135,12 @@
             this.bEnableTimed.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.bEnableTimed.FlatAppearance.BorderSize = 0;
             this.bEnableTimed.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bEnableTimed.ForeColor = System.Drawing.Color.IndianRed;
+            this.bEnableTimed.ForeColor = System.Drawing.Color.DodgerBlue;
             this.bEnableTimed.Location = new System.Drawing.Point(15, 23);
             this.bEnableTimed.Name = "bEnableTimed";
             this.bEnableTimed.Size = new System.Drawing.Size(180, 30);
             this.bEnableTimed.TabIndex = 3;
-            this.bEnableTimed.Text = "Disabled";
+            this.bEnableTimed.Text = "Enabled";
             this.bEnableTimed.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bEnableTimed.UseVisualStyleBackColor = true;
             this.bEnableTimed.Click += new System.EventHandler(this.bEnableTimed_Click);
@@ -140,9 +151,9 @@
             this.panelMisc.Controls.Add(this.bReset);
             this.panelMisc.Controls.Add(this.bRefresh);
             this.panelMisc.ForeColor = System.Drawing.Color.LightGray;
-            this.panelMisc.Location = new System.Drawing.Point(3, 253);
+            this.panelMisc.Location = new System.Drawing.Point(94, 271);
             this.panelMisc.Name = "panelMisc";
-            this.panelMisc.Size = new System.Drawing.Size(467, 65);
+            this.panelMisc.Size = new System.Drawing.Size(539, 65);
             this.panelMisc.TabIndex = 2;
             this.panelMisc.TabStop = false;
             this.panelMisc.Text = "Miscellaneous Launcher options";
@@ -154,7 +165,7 @@
             this.bResetThirdParty.FlatAppearance.BorderSize = 0;
             this.bResetThirdParty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bResetThirdParty.ForeColor = System.Drawing.Color.IndianRed;
-            this.bResetThirdParty.Location = new System.Drawing.Point(262, 23);
+            this.bResetThirdParty.Location = new System.Drawing.Point(353, 23);
             this.bResetThirdParty.Name = "bResetThirdParty";
             this.bResetThirdParty.Size = new System.Drawing.Size(180, 30);
             this.bResetThirdParty.TabIndex = 5;
@@ -170,11 +181,11 @@
             this.bReset.FlatAppearance.BorderSize = 0;
             this.bReset.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bReset.ForeColor = System.Drawing.Color.IndianRed;
-            this.bReset.Location = new System.Drawing.Point(138, 23);
+            this.bReset.Location = new System.Drawing.Point(171, 23);
             this.bReset.Name = "bReset";
-            this.bReset.Size = new System.Drawing.Size(108, 30);
+            this.bReset.Size = new System.Drawing.Size(176, 30);
             this.bReset.TabIndex = 4;
-            this.bReset.Text = "Reset";
+            this.bReset.Text = "Reset SPT Launcher";
             this.bReset.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bReset.UseVisualStyleBackColor = true;
             this.bReset.Click += new System.EventHandler(this.bReset_Click);
@@ -188,9 +199,9 @@
             this.bRefresh.ForeColor = System.Drawing.Color.DodgerBlue;
             this.bRefresh.Location = new System.Drawing.Point(15, 23);
             this.bRefresh.Name = "bRefresh";
-            this.bRefresh.Size = new System.Drawing.Size(108, 30);
+            this.bRefresh.Size = new System.Drawing.Size(150, 30);
             this.bRefresh.TabIndex = 3;
-            this.bRefresh.Text = "Refresh";
+            this.bRefresh.Text = "Refresh main UI";
             this.bRefresh.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bRefresh.UseVisualStyleBackColor = true;
             this.bRefresh.Click += new System.EventHandler(this.bRefresh_Click);
@@ -199,7 +210,7 @@
             // 
             this.panelClearCache.Controls.Add(this.bEnableClearCache);
             this.panelClearCache.ForeColor = System.Drawing.Color.LightGray;
-            this.panelClearCache.Location = new System.Drawing.Point(497, 86);
+            this.panelClearCache.Location = new System.Drawing.Point(497, 92);
             this.panelClearCache.Name = "panelClearCache";
             this.panelClearCache.Size = new System.Drawing.Size(220, 65);
             this.panelClearCache.TabIndex = 3;
@@ -224,6 +235,7 @@
             // 
             // panelDetectors
             // 
+            this.panelDetectors.Controls.Add(this.label1);
             this.panelDetectors.Controls.Add(this.bEndDetector);
             this.panelDetectors.Controls.Add(this.bStartDetector);
             this.panelDetectors.ForeColor = System.Drawing.Color.LightGray;
@@ -234,6 +246,17 @@
             this.panelDetectors.TabStop = false;
             this.panelDetectors.Text = "Tarkov auto-detection";
             // 
+            // label1
+            // 
+            this.label1.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.label1.Location = new System.Drawing.Point(226, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(194, 89);
+            this.label1.TabIndex = 16;
+            this.label1.Text = "How often the detector should scan for Tarkov\'s process starting and stopping.\r\n\r" +
+    "\nDon\'t change unless you know what you\'re doing!";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
             // bEndDetector
             // 
             this.bEndDetector.Cursor = System.Windows.Forms.Cursors.Hand;
@@ -241,7 +264,7 @@
             this.bEndDetector.FlatAppearance.BorderSize = 0;
             this.bEndDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bEndDetector.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bEndDetector.Location = new System.Drawing.Point(12, 69);
+            this.bEndDetector.Location = new System.Drawing.Point(12, 66);
             this.bEndDetector.Name = "bEndDetector";
             this.bEndDetector.Size = new System.Drawing.Size(207, 30);
             this.bEndDetector.TabIndex = 5;
@@ -257,21 +280,20 @@
             this.bStartDetector.FlatAppearance.BorderSize = 0;
             this.bStartDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bStartDetector.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bStartDetector.Location = new System.Drawing.Point(12, 33);
+            this.bStartDetector.Location = new System.Drawing.Point(12, 30);
             this.bStartDetector.Name = "bStartDetector";
             this.bStartDetector.Size = new System.Drawing.Size(207, 30);
             this.bStartDetector.TabIndex = 4;
             this.bStartDetector.Text = "Start detector: 0.5 seconds";
             this.bStartDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bStartDetector.UseVisualStyleBackColor = true;
-            this.bStartDetector.Visible = false;
             this.bStartDetector.Click += new System.EventHandler(this.bStartDetector_Click);
             // 
             // panelLogFile
             // 
             this.panelLogFile.Controls.Add(this.bEnableOpenLog);
             this.panelLogFile.ForeColor = System.Drawing.Color.LightGray;
-            this.panelLogFile.Location = new System.Drawing.Point(250, 170);
+            this.panelLogFile.Location = new System.Drawing.Point(250, 182);
             this.panelLogFile.Name = "panelLogFile";
             this.panelLogFile.Size = new System.Drawing.Size(220, 65);
             this.panelLogFile.TabIndex = 5;
@@ -325,7 +347,7 @@
             // 
             this.panelServerOutput.Controls.Add(this.bEnableServerOutput);
             this.panelServerOutput.ForeColor = System.Drawing.Color.LightGray;
-            this.panelServerOutput.Location = new System.Drawing.Point(250, 86);
+            this.panelServerOutput.Location = new System.Drawing.Point(250, 92);
             this.panelServerOutput.Name = "panelServerOutput";
             this.panelServerOutput.Size = new System.Drawing.Size(220, 65);
             this.panelServerOutput.TabIndex = 7;
@@ -379,7 +401,7 @@
             // 
             this.panelCloseOnExit.Controls.Add(this.bCloseOnSPTExit);
             this.panelCloseOnExit.ForeColor = System.Drawing.Color.LightGray;
-            this.panelCloseOnExit.Location = new System.Drawing.Point(3, 170);
+            this.panelCloseOnExit.Location = new System.Drawing.Point(3, 182);
             this.panelCloseOnExit.Name = "panelCloseOnExit";
             this.panelCloseOnExit.Size = new System.Drawing.Size(220, 65);
             this.panelCloseOnExit.TabIndex = 9;
@@ -402,33 +424,35 @@
             this.bCloseOnSPTExit.UseVisualStyleBackColor = true;
             this.bCloseOnSPTExit.Click += new System.EventHandler(this.bCloseOnSPTExit_Click);
             // 
-            // bLiveLike
+            // bPreset1
             // 
-            this.bLiveLike.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bLiveLike.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
-            this.bLiveLike.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bLiveLike.ForeColor = System.Drawing.Color.LightGray;
-            this.bLiveLike.Location = new System.Drawing.Point(3, 329);
-            this.bLiveLike.Name = "bLiveLike";
-            this.bLiveLike.Size = new System.Drawing.Size(268, 30);
-            this.bLiveLike.TabIndex = 10;
-            this.bLiveLike.Text = "Enable Live-like game exiting";
-            this.bLiveLike.UseVisualStyleBackColor = true;
-            this.bLiveLike.Click += new System.EventHandler(this.bLiveLike_Click);
+            this.bPreset1.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bPreset1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.bPreset1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bPreset1.ForeColor = System.Drawing.Color.LightGray;
+            this.bPreset1.Location = new System.Drawing.Point(15, 30);
+            this.bPreset1.Name = "bPreset1";
+            this.bPreset1.Size = new System.Drawing.Size(220, 50);
+            this.bPreset1.TabIndex = 10;
+            this.bPreset1.Text = "Apply Live-like settings";
+            this.bPreset1.UseVisualStyleBackColor = true;
+            this.bPreset1.Click += new System.EventHandler(this.bPreset1_Click);
             // 
             // tabLauncher
             // 
+            this.tabLauncher.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.tabLauncher.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabLauncher.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.tabLauncher.FlatAppearance.BorderSize = 0;
             this.tabLauncher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabLauncher.ForeColor = System.Drawing.Color.LightGray;
-            this.tabLauncher.Location = new System.Drawing.Point(12, 21);
+            this.tabLauncher.Location = new System.Drawing.Point(180, 21);
             this.tabLauncher.Name = "tabLauncher";
             this.tabLauncher.Size = new System.Drawing.Size(150, 35);
             this.tabLauncher.TabIndex = 11;
             this.tabLauncher.Text = "Launcher settings";
             this.tabLauncher.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tabLauncher.UseVisualStyleBackColor = true;
+            this.tabLauncher.UseVisualStyleBackColor = false;
             this.tabLauncher.Click += new System.EventHandler(this.tabLauncher_Click);
             // 
             // tabSPTAKI
@@ -438,7 +462,7 @@
             this.tabSPTAKI.FlatAppearance.BorderSize = 0;
             this.tabSPTAKI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabSPTAKI.ForeColor = System.Drawing.Color.LightGray;
-            this.tabSPTAKI.Location = new System.Drawing.Point(168, 21);
+            this.tabSPTAKI.Location = new System.Drawing.Point(336, 21);
             this.tabSPTAKI.Name = "tabSPTAKI";
             this.tabSPTAKI.Size = new System.Drawing.Size(150, 35);
             this.tabSPTAKI.TabIndex = 12;
@@ -454,7 +478,7 @@
             this.tabTarkov.FlatAppearance.BorderSize = 0;
             this.tabTarkov.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabTarkov.ForeColor = System.Drawing.Color.LightGray;
-            this.tabTarkov.Location = new System.Drawing.Point(324, 21);
+            this.tabTarkov.Location = new System.Drawing.Point(492, 21);
             this.tabTarkov.Name = "tabTarkov";
             this.tabTarkov.Size = new System.Drawing.Size(150, 35);
             this.tabTarkov.TabIndex = 13;
@@ -471,33 +495,54 @@
             this.panelLauncherSettings.Controls.Add(this.panelConfirmationQuit);
             this.panelLauncherSettings.Controls.Add(this.panelServerOutput);
             this.panelLauncherSettings.Controls.Add(this.panelLogFile);
-            this.panelLauncherSettings.Controls.Add(this.bLiveLike);
             this.panelLauncherSettings.Controls.Add(this.panelCloseOnExit);
             this.panelLauncherSettings.Controls.Add(this.panelServerError);
             this.panelLauncherSettings.Controls.Add(this.panelClearCache);
             this.panelLauncherSettings.Controls.Add(this.panelMinimizeOnSPTLaunch);
             this.panelLauncherSettings.Controls.Add(this.panelMisc);
-            this.panelLauncherSettings.Location = new System.Drawing.Point(12, 124);
+            this.panelLauncherSettings.Location = new System.Drawing.Point(12, 145);
             this.panelLauncherSettings.Name = "panelLauncherSettings";
-            this.panelLauncherSettings.Size = new System.Drawing.Size(798, 362);
+            this.panelLauncherSettings.Size = new System.Drawing.Size(798, 348);
             this.panelLauncherSettings.TabIndex = 14;
+            // 
+            // panel3
+            // 
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Location = new System.Drawing.Point(3, 261);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(714, 1);
+            this.panel3.TabIndex = 19;
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Location = new System.Drawing.Point(3, 171);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(714, 1);
+            this.panel2.TabIndex = 18;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Location = new System.Drawing.Point(3, 81);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(714, 1);
+            this.panel1.TabIndex = 10;
             // 
             // tabLauncherDesc
             // 
             this.tabLauncherDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.tabLauncherDesc.Location = new System.Drawing.Point(12, 64);
+            this.tabLauncherDesc.Location = new System.Drawing.Point(180, 64);
             this.tabLauncherDesc.Name = "tabLauncherDesc";
-            this.tabLauncherDesc.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.tabLauncherDesc.Size = new System.Drawing.Size(150, 48);
             this.tabLauncherDesc.TabIndex = 15;
-            this.tabLauncherDesc.Text = "Settings for the SPT Launcher";
+            this.tabLauncherDesc.Text = "Settings and options for the SPT Launcher";
             // 
             // tabSPTDesc
             // 
             this.tabSPTDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.tabSPTDesc.Location = new System.Drawing.Point(165, 64);
+            this.tabSPTDesc.Location = new System.Drawing.Point(333, 64);
             this.tabSPTDesc.Name = "tabSPTDesc";
-            this.tabSPTDesc.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.tabSPTDesc.Size = new System.Drawing.Size(153, 48);
             this.tabSPTDesc.TabIndex = 16;
             this.tabSPTDesc.Text = "Settings and configurations related to SPT-AKI and its Server and Launcher";
@@ -505,9 +550,8 @@
             // tabTarkovDesc
             // 
             this.tabTarkovDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.tabTarkovDesc.Location = new System.Drawing.Point(321, 64);
+            this.tabTarkovDesc.Location = new System.Drawing.Point(489, 64);
             this.tabTarkovDesc.Name = "tabTarkovDesc";
-            this.tabTarkovDesc.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
             this.tabTarkovDesc.Size = new System.Drawing.Size(153, 48);
             this.tabTarkovDesc.TabIndex = 17;
             this.tabTarkovDesc.Text = "Settings and configurations for Escape From Tarkov";
@@ -515,49 +559,110 @@
             // panelSPTAKISettings
             // 
             this.panelSPTAKISettings.Controls.Add(this.panelEnableTimedAkiLauncher);
-            this.panelSPTAKISettings.Location = new System.Drawing.Point(12, 124);
+            this.panelSPTAKISettings.Location = new System.Drawing.Point(12, 145);
             this.panelSPTAKISettings.Name = "panelSPTAKISettings";
-            this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 362);
+            this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 348);
             this.panelSPTAKISettings.TabIndex = 15;
             // 
             // panelTarkovSettings
             // 
             this.panelTarkovSettings.Controls.Add(this.panelDetectors);
-            this.panelTarkovSettings.Location = new System.Drawing.Point(12, 124);
+            this.panelTarkovSettings.Location = new System.Drawing.Point(12, 145);
             this.panelTarkovSettings.Name = "panelTarkovSettings";
-            this.panelTarkovSettings.Size = new System.Drawing.Size(798, 362);
+            this.panelTarkovSettings.Size = new System.Drawing.Size(798, 348);
             this.panelTarkovSettings.TabIndex = 16;
             // 
-            // panel1
+            // tabPresets
             // 
-            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel1.Location = new System.Drawing.Point(3, 78);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(714, 1);
-            this.panel1.TabIndex = 10;
+            this.tabPresets.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tabPresets.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.tabPresets.FlatAppearance.BorderSize = 0;
+            this.tabPresets.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tabPresets.ForeColor = System.Drawing.Color.LightGray;
+            this.tabPresets.Location = new System.Drawing.Point(648, 21);
+            this.tabPresets.Name = "tabPresets";
+            this.tabPresets.Size = new System.Drawing.Size(150, 35);
+            this.tabPresets.TabIndex = 18;
+            this.tabPresets.Text = "Presets";
+            this.tabPresets.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabPresets.UseVisualStyleBackColor = true;
+            this.tabPresets.Click += new System.EventHandler(this.tabPresets_Click);
             // 
-            // panel2
+            // panelPresets
             // 
-            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel2.Location = new System.Drawing.Point(3, 162);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(714, 1);
-            this.panel2.TabIndex = 18;
+            this.panelPresets.Controls.Add(this.descPreset1);
+            this.panelPresets.Controls.Add(this.descPreset2);
+            this.panelPresets.Controls.Add(this.groupBox2);
+            this.panelPresets.Controls.Add(this.groupBox1);
+            this.panelPresets.Location = new System.Drawing.Point(12, 145);
+            this.panelPresets.Name = "panelPresets";
+            this.panelPresets.Size = new System.Drawing.Size(798, 348);
+            this.panelPresets.TabIndex = 19;
             // 
-            // panel3
+            // descPreset1
             // 
-            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel3.Location = new System.Drawing.Point(3, 246);
-            this.panel3.Name = "panel3";
-            this.panel3.Size = new System.Drawing.Size(714, 1);
-            this.panel3.TabIndex = 19;
+            this.descPreset1.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.descPreset1.Location = new System.Drawing.Point(3, 115);
+            this.descPreset1.Name = "descPreset1";
+            this.descPreset1.Size = new System.Drawing.Size(290, 57);
+            this.descPreset1.TabIndex = 18;
+            this.descPreset1.Text = "This preset aims to make launching and exiting SPT in its entirety fluid and seam" +
+    "less.";
+            this.descPreset1.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // descPreset2
+            // 
+            this.descPreset2.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.descPreset2.Location = new System.Drawing.Point(324, 115);
+            this.descPreset2.Name = "descPreset2";
+            this.descPreset2.Size = new System.Drawing.Size(290, 57);
+            this.descPreset2.TabIndex = 17;
+            this.descPreset2.Text = "This preset is useful for a manual feel or if you need to troubleshoot.";
+            this.descPreset2.TextAlign = System.Drawing.ContentAlignment.TopCenter;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.bPreset2);
+            this.groupBox2.ForeColor = System.Drawing.Color.LightGray;
+            this.groupBox2.Location = new System.Drawing.Point(324, 3);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(290, 100);
+            this.groupBox2.TabIndex = 12;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "\"Vanilla behavior\" preset";
+            // 
+            // bPreset2
+            // 
+            this.bPreset2.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bPreset2.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
+            this.bPreset2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bPreset2.ForeColor = System.Drawing.Color.LightGray;
+            this.bPreset2.Location = new System.Drawing.Point(15, 30);
+            this.bPreset2.Name = "bPreset2";
+            this.bPreset2.Size = new System.Drawing.Size(220, 50);
+            this.bPreset2.TabIndex = 10;
+            this.bPreset2.Text = "Apply vanilla behavior settings";
+            this.bPreset2.UseVisualStyleBackColor = true;
+            this.bPreset2.Click += new System.EventHandler(this.bPreset2_Click);
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.bPreset1);
+            this.groupBox1.ForeColor = System.Drawing.Color.LightGray;
+            this.groupBox1.Location = new System.Drawing.Point(3, 3);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(290, 100);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "\"Live-like\" preset";
             // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(822, 504);
+            this.ClientSize = new System.Drawing.Size(822, 517);
+            this.Controls.Add(this.tabPresets);
             this.Controls.Add(this.tabTarkovDesc);
             this.Controls.Add(this.tabSPTDesc);
             this.Controls.Add(this.tabLauncherDesc);
@@ -567,6 +672,7 @@
             this.Controls.Add(this.panelLauncherSettings);
             this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
+            this.Controls.Add(this.panelPresets);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -576,7 +682,7 @@
             this.MinimizeBox = false;
             this.Name = "optionsWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Options";
+            this.Text = " ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.optionsWindow_FormClosing);
             this.Load += new System.EventHandler(this.optionsWindow_Load);
             this.panelMinimizeOnSPTLaunch.ResumeLayout(false);
@@ -592,6 +698,9 @@
             this.panelLauncherSettings.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
             this.panelTarkovSettings.ResumeLayout(false);
+            this.panelPresets.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -621,7 +730,7 @@
         private System.Windows.Forms.Button bEnableServerErrors;
         private System.Windows.Forms.GroupBox panelCloseOnExit;
         private System.Windows.Forms.Button bCloseOnSPTExit;
-        private System.Windows.Forms.Button bLiveLike;
+        private System.Windows.Forms.Button bPreset1;
         private System.Windows.Forms.Button tabLauncher;
         private System.Windows.Forms.Button tabSPTAKI;
         private System.Windows.Forms.Button tabTarkov;
@@ -634,5 +743,13 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button tabPresets;
+        private System.Windows.Forms.Panel panelPresets;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Button bPreset2;
+        private System.Windows.Forms.Label descPreset2;
+        private System.Windows.Forms.Label descPreset1;
     }
 }

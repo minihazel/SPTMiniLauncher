@@ -1023,7 +1023,7 @@ namespace SPTMiniLauncher
                     {
                         case "clear cache":
 
-                            if (Properties.Settings.Default.displayStopConfirmation)
+                            if (Properties.Settings.Default.displayConfirmationMessage)
                             {
                                 if (MessageBox.Show("Clear cache?\n\nThis will make the Server load significantly slower next launch.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
@@ -1615,7 +1615,7 @@ namespace SPTMiniLauncher
 
                         case "stop spt (if running)":
 
-                            if (Properties.Settings.Default.displayStopConfirmation)
+                            if (Properties.Settings.Default.displayConfirmationMessage)
                             {
                                 if (MessageBox.Show("Quit SPT?\n\nThis will close the Aki Server, Aki Launcher and EFT", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
@@ -1704,84 +1704,85 @@ namespace SPTMiniLauncher
         {
             string launcherProcess = "Aki.Server";
             Process[] launchers = Process.GetProcessesByName(launcherProcess);
-
             string currentDir = Directory.GetCurrentDirectory();
-            if (isLoneServer)
+
+            if (Properties.Settings.Default.timedLauncherToggle)
             {
-                //if (launchers.Length > 0) { }
-                // killProcesses();
-
-                Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                Process akiServer = new Process();
-
-                akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                akiServer.StartInfo.FileName = "Aki.Server.exe";
-                akiServer.StartInfo.CreateNoWindow = true;
-                akiServer.StartInfo.UseShellExecute = false;
-                akiServer.StartInfo.RedirectStandardOutput = true;
-                akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-
-                akiServer.OutputDataReceived += akiServer_OutputDataReceived;
-                akiServer.Exited += akiServer_Exited;
-
-                try
+                if (isLoneServer)
                 {
-                    if (akiServerOutputter != null)
-                        akiServerOutputter.Clear();
+                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                    Process akiServer = new Process();
 
-                    akiServerOutputter = new StringBuilder();
-                    akiServer.Start();
-                    akiServer.BeginOutputReadLine();
-                    checkWorker();
+                    akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                    akiServer.StartInfo.FileName = "Aki.Server.exe";
+                    akiServer.StartInfo.CreateNoWindow = true;
+                    akiServer.StartInfo.UseShellExecute = false;
+                    akiServer.StartInfo.RedirectStandardOutput = true;
+                    akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
 
-                    if (Properties.Settings.Default.serverOutputting)
-                        outputwindow.Show();
+                    akiServer.OutputDataReceived += akiServer_OutputDataReceived;
+                    akiServer.Exited += akiServer_Exited;
+
+                    try
+                    {
+                        if (akiServerOutputter != null)
+                            akiServerOutputter.Clear();
+
+                        akiServerOutputter = new StringBuilder();
+                        akiServer.Start();
+                        akiServer.BeginOutputReadLine();
+                        checkWorker();
+
+                        if (Properties.Settings.Default.serverOutputting)
+                            outputwindow.Show();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
                 }
-                catch (Exception err)
+                else
                 {
-                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    Directory.SetCurrentDirectory(selectedServer);
+                    Process akiServer = new Process();
+
+                    akiServer.StartInfo.WorkingDirectory = selectedServer;
+                    akiServer.StartInfo.FileName = "Aki.Server.exe";
+                    akiServer.StartInfo.CreateNoWindow = true;
+                    akiServer.StartInfo.UseShellExecute = false;
+                    akiServer.StartInfo.RedirectStandardOutput = true;
+                    akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+
+                    akiServer.OutputDataReceived += akiServer_OutputDataReceived;
+                    akiServer.Exited += akiServer_Exited;
+
+                    try
+                    {
+                        if (akiServerOutputter != null)
+                            akiServerOutputter.Clear();
+
+                        akiServerOutputter = new StringBuilder();
+                        akiServer.Start();
+                        akiServer.BeginOutputReadLine();
+                        checkWorker();
+
+                        if (Properties.Settings.Default.serverOutputting)
+                            outputwindow.Show();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
                 }
-                Directory.SetCurrentDirectory(currentDir);
             }
             else
             {
-                //if (launchers.Length > 0)
-                // killProcesses();
 
-                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                Directory.SetCurrentDirectory(selectedServer);
-                Process akiServer = new Process();
-
-                akiServer.StartInfo.WorkingDirectory = selectedServer;
-                akiServer.StartInfo.FileName = "Aki.Server.exe";
-                akiServer.StartInfo.CreateNoWindow = true;
-                akiServer.StartInfo.UseShellExecute = false;
-                akiServer.StartInfo.RedirectStandardOutput = true;
-                akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-
-                akiServer.OutputDataReceived += akiServer_OutputDataReceived;
-                akiServer.Exited += akiServer_Exited;
-
-                try
-                {
-                    if (akiServerOutputter != null)
-                        akiServerOutputter.Clear();
-
-                    akiServerOutputter = new StringBuilder();
-                    akiServer.Start();
-                    akiServer.BeginOutputReadLine();
-                    checkWorker();
-
-                    if (Properties.Settings.Default.serverOutputting)
-                        outputwindow.Show();
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                }
-                Directory.SetCurrentDirectory(currentDir);
             }
         }
 

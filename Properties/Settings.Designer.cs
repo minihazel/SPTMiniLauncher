@@ -158,7 +158,7 @@ This tool has quite a few features. Via the control panel you can do the followi
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("2")]
         public int startDetector {
             get {
                 return ((int)(this["startDetector"]));
@@ -195,12 +195,12 @@ This tool has quite a few features. Via the control panel you can do the followi
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool displayStopConfirmation {
+        public bool displayConfirmationMessage {
             get {
-                return ((bool)(this["displayStopConfirmation"]));
+                return ((bool)(this["displayConfirmationMessage"]));
             }
             set {
-                this["displayStopConfirmation"] = value;
+                this["displayConfirmationMessage"] = value;
             }
         }
         

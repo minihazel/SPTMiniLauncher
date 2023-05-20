@@ -14,6 +14,9 @@ namespace SPTMiniLauncher
 {
     public partial class optionsWindow : Form
     {
+        public Color selectedColor = Color.FromArgb(255, 38, 38, 38);
+        public Color idleColor = Color.FromArgb(255, 28, 28, 28);
+
         public optionsWindow()
         {
             InitializeComponent();
@@ -80,7 +83,7 @@ namespace SPTMiniLauncher
                     break;
             }
 
-            switch (Properties.Settings.Default.displayStopConfirmation)
+            switch (Properties.Settings.Default.displayConfirmationMessage)
             {
                 case true:
                     bEnableConfirmation.Text = "Enabled";
@@ -190,25 +193,32 @@ namespace SPTMiniLauncher
 
         private void bEnableClearCache_Click(object sender, EventArgs e)
         {
-            if (bEnableClearCache.Text.ToLower() == "enabled")
-            {
-                bEnableClearCache.Text = "Disabled";
-                bEnableClearCache.ForeColor = Color.IndianRed;
-                Properties.Settings.Default.clearCache = false;
-                Properties.Settings.Default.altCache = false;
-            }
-            else if (bEnableClearCache.Text.ToLower() == "disabled")
+            if (bEnableClearCache.Text.ToLower() == "disabled")
             {
                 bEnableClearCache.Text = "On SPT start";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.clearCache = true;
                 Properties.Settings.Default.altCache = true;
             }
-            else if (bEnableClearCache.Text.ToLower() == "disabled")
+            else if (bEnableClearCache.Text.ToLower() == "on spt start")
             {
                 bEnableClearCache.Text = "On SPT stop";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.clearCache = true;
+                Properties.Settings.Default.altCache = false;
+            }
+            else if (bEnableClearCache.Text.ToLower() == "on spt stop")
+            {
+                bEnableClearCache.Text = "Enabled";
+                bEnableClearCache.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.clearCache = true;
+                Properties.Settings.Default.altCache = false;
+            }
+            else if (bEnableClearCache.Text.ToLower() == "enabled")
+            {
+                bEnableClearCache.Text = "Disabled";
+                bEnableClearCache.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.clearCache = false;
                 Properties.Settings.Default.altCache = false;
             }
 
@@ -248,10 +258,12 @@ namespace SPTMiniLauncher
         private void bResetThirdParty_Click(object sender, EventArgs e)
         {
             Form1 frm = new Form1();
-            if (MessageBox.Show("Reset third party apps?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to reset the connection with third party apps?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 Properties.Settings.Default.profile_editor_path = "";
                 Properties.Settings.Default.svm_path = "";
+                Properties.Settings.Default.loe_path = "";
+                Properties.Settings.Default.realism_path = "";
                 Properties.Settings.Default.Save();
                 frm.showError("Reset successful");
                 Application.Restart();
@@ -330,13 +342,13 @@ namespace SPTMiniLauncher
             {
                 bEnableConfirmation.Text = "Disabled";
                 bEnableConfirmation.ForeColor = Color.IndianRed;
-                Properties.Settings.Default.displayStopConfirmation = false;
+                Properties.Settings.Default.displayConfirmationMessage = false;
             }
             else
             {
                 bEnableConfirmation.Text = "Enabled";
                 bEnableConfirmation.ForeColor = Color.DodgerBlue;
-                Properties.Settings.Default.displayStopConfirmation = true;
+                Properties.Settings.Default.displayConfirmationMessage = true;
             }
 
             Properties.Settings.Default.Save();
@@ -401,63 +413,130 @@ namespace SPTMiniLauncher
             Properties.Settings.Default.Save();
         }
 
-        private void bLiveLike_Click(object sender, EventArgs e)
-        {
-            bHide.Text = "Close Launcher";
-            bHide.ForeColor = Color.DodgerBlue;
-            Properties.Settings.Default.hideOptions = 2;
-
-            bCloseOnSPTExit.Text = "Enabled";
-            bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
-            Properties.Settings.Default.closeOnQuit = true;
-
-            Properties.Settings.Default.Save();
-        }
-
         private void tabLauncher_Click(object sender, EventArgs e)
         {
-            tabLauncher.FlatStyle = FlatStyle.Flat;
-            tabLauncher.FlatAppearance.BorderSize = 1;
-            tabLauncher.FlatAppearance.BorderColor = Color.DodgerBlue;
+            tabLauncher.BackColor = selectedColor;
+            tabSPTAKI.BackColor = idleColor;
+            tabTarkov.BackColor = idleColor;
+            tabPresets.BackColor = idleColor;
+
             panelLauncherSettings.BringToFront();
-
-            tabSPTAKI.FlatStyle = FlatStyle.Flat;
-            tabSPTAKI.FlatAppearance.BorderSize = 0;
-
-            tabTarkov.FlatStyle = FlatStyle.Flat;
-            tabTarkov.FlatAppearance.BorderSize = 0;
-
             tabLauncherDesc.Select();
         }
 
         private void tabSPTAKI_Click(object sender, EventArgs e)
         {
-            tabLauncher.FlatStyle = FlatStyle.Flat;
-            tabLauncher.FlatAppearance.BorderSize = 0;
+            tabLauncher.BackColor = idleColor;
+            tabSPTAKI.BackColor = selectedColor;
+            tabTarkov.BackColor = idleColor;
+            tabPresets.BackColor = idleColor;
 
-            tabSPTAKI.FlatStyle = FlatStyle.Flat;
-            tabSPTAKI.FlatAppearance.BorderSize = 1;
             panelSPTAKISettings.BringToFront();
-
-            tabTarkov.FlatStyle = FlatStyle.Flat;
-            tabTarkov.FlatAppearance.BorderSize = 0;
-
             tabLauncherDesc.Select();
         }
 
         private void tabTarkov_Click(object sender, EventArgs e)
         {
-            tabLauncher.FlatStyle = FlatStyle.Flat;
-            tabLauncher.FlatAppearance.BorderSize = 0;
+            tabLauncher.BackColor = idleColor;
+            tabSPTAKI.BackColor = idleColor;
+            tabTarkov.BackColor = selectedColor;
+            tabPresets.BackColor = idleColor;
 
-            tabSPTAKI.FlatStyle = FlatStyle.Flat;
-            tabSPTAKI.FlatAppearance.BorderSize = 0;
             panelTarkovSettings.BringToFront();
-
-            tabTarkov.FlatStyle = FlatStyle.Flat;
-            tabTarkov.FlatAppearance.BorderSize = 1;
-
             tabLauncherDesc.Select();
+        }
+
+        private void tabPresets_Click(object sender, EventArgs e)
+        {
+            tabLauncher.BackColor = idleColor;
+            tabSPTAKI.BackColor = idleColor;
+            tabTarkov.BackColor = idleColor;
+            tabPresets.BackColor = selectedColor;
+
+            panelPresets.BringToFront();
+            tabLauncherDesc.Select();
+        }
+
+        private void bPreset1_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.displayConfirmationMessage)
+            {
+                if (MessageBox.Show($"Are you sure you want to apply the Live-like preset?\n\n\n{descPreset1.Text}", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    bEnableTimed.Text = "Enabled";
+                    bEnableTimed.ForeColor = Color.DodgerBlue;
+
+                    bHide.Text = "Close Launcher";
+                    bHide.ForeColor = Color.DodgerBlue;
+
+                    bCloseOnSPTExit.Text = "Enabled";
+                    bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+
+                    Properties.Settings.Default.hideOptions = 2;
+                    Properties.Settings.Default.closeOnQuit = true;
+                    Properties.Settings.Default.timedLauncherToggle = true;
+
+                    Properties.Settings.Default.Save();
+                }
+            }
+            else
+            {
+                bEnableTimed.Text = "Enabled";
+                bEnableTimed.ForeColor = Color.DodgerBlue;
+
+                bHide.Text = "Close Launcher";
+                bHide.ForeColor = Color.DodgerBlue;
+
+                bCloseOnSPTExit.Text = "Enabled";
+                bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+
+                Properties.Settings.Default.hideOptions = 2;
+                Properties.Settings.Default.closeOnQuit = true;
+                Properties.Settings.Default.timedLauncherToggle = true;
+
+                Properties.Settings.Default.Save();
+            }
+        }
+
+        private void bPreset2_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.displayConfirmationMessage)
+            {
+                if (MessageBox.Show($"Are you sure you want to apply the Vanilla behavior preset?\n\n\n{descPreset2.Text}", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    bEnableTimed.Text = "Disabled";
+                    bEnableTimed.ForeColor = Color.IndianRed;
+
+                    bHide.Text = "Disabled";
+                    bHide.ForeColor = Color.IndianRed;
+
+                    bCloseOnSPTExit.Text = "Disabled";
+                    bCloseOnSPTExit.ForeColor = Color.IndianRed;
+
+                    Properties.Settings.Default.hideOptions = 0;
+                    Properties.Settings.Default.closeOnQuit = false;
+                    Properties.Settings.Default.timedLauncherToggle = false;
+
+                    Properties.Settings.Default.Save();
+                }
+            }
+            else
+            {
+                bEnableTimed.Text = "Disabled";
+                bEnableTimed.ForeColor = Color.IndianRed;
+
+                bHide.Text = "Disabled";
+                bHide.ForeColor = Color.IndianRed;
+
+                bCloseOnSPTExit.Text = "Disabled";
+                bCloseOnSPTExit.ForeColor = Color.IndianRed;
+
+                Properties.Settings.Default.hideOptions = 0;
+                Properties.Settings.Default.closeOnQuit = false;
+                Properties.Settings.Default.timedLauncherToggle = false;
+
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }
