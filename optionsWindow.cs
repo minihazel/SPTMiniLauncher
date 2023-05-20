@@ -43,7 +43,7 @@ namespace SPTMiniLauncher
                     break;
 
                 case 2:
-                    bHide.Text = "Hide Launcher";
+                    bHide.Text = "Close Launcher";
                     bHide.ForeColor = Color.DodgerBlue;
                     break;
             }
