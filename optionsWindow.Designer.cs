@@ -124,7 +124,7 @@
             this.panelEnableTimedAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
             this.panelEnableTimedAkiLauncher.Location = new System.Drawing.Point(3, 3);
             this.panelEnableTimedAkiLauncher.Name = "panelEnableTimedAkiLauncher";
-            this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(210, 65);
+            this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(220, 65);
             this.panelEnableTimedAkiLauncher.TabIndex = 1;
             this.panelEnableTimedAkiLauncher.TabStop = false;
             this.panelEnableTimedAkiLauncher.Text = "Enable timed Aki Launcher";
@@ -430,7 +430,7 @@
             this.bPreset1.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
             this.bPreset1.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bPreset1.ForeColor = System.Drawing.Color.LightGray;
-            this.bPreset1.Location = new System.Drawing.Point(15, 30);
+            this.bPreset1.Location = new System.Drawing.Point(35, 30);
             this.bPreset1.Name = "bPreset1";
             this.bPreset1.Size = new System.Drawing.Size(220, 50);
             this.bPreset1.TabIndex = 10;
@@ -637,7 +637,7 @@
             this.bPreset2.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
             this.bPreset2.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bPreset2.ForeColor = System.Drawing.Color.LightGray;
-            this.bPreset2.Location = new System.Drawing.Point(15, 30);
+            this.bPreset2.Location = new System.Drawing.Point(35, 30);
             this.bPreset2.Name = "bPreset2";
             this.bPreset2.Size = new System.Drawing.Size(220, 50);
             this.bPreset2.TabIndex = 10;

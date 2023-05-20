@@ -23,12 +23,12 @@
     <Setting Name="timedLauncherToggle" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
-    <Setting Name="clearCache" Type="System.Boolean" Scope="User">
-      <Value Profile="(Default)">False</Value>
+    <Setting Name="clearCache" Type="System.Int32" Scope="User">
+      <Value Profile="(Default)">0</Value>
     </Setting>
     <Setting Name="firstTimeMessage" Type="System.String" Scope="User">
       <Value Profile="(Default)">
-Welcome to my SPT Mini Launcher!
+Welcome to my SPT Launcher!
 It looks like it's your first time running this launcher, or you just downloaded a new update of it.
 
 This tool has quite a few features. Via the control panel you can do the following:
@@ -51,7 +51,6 @@ This tool has quite a few features. Via the control panel you can do the followi
 - Launch Load Order Editor (if detected)
 
 - Launch Profile Editor (if detected)
-
 - Launch SVM (if detected)- Launch SPT Realism (if detected)</Value>
     </Setting>
     <Setting Name="startDetector" Type="System.Int32" Scope="User">

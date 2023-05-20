@@ -109,10 +109,10 @@ namespace SPTMiniLauncher.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("False")]
-        public bool clearCache {
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int clearCache {
             get {
-                return ((bool)(this["clearCache"]));
+                return ((int)(this["clearCache"]));
             }
             set {
                 this["clearCache"] = value;
@@ -122,7 +122,7 @@ namespace SPTMiniLauncher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute(@"
-Welcome to my SPT Mini Launcher!
+Welcome to my SPT Launcher!
 It looks like it's your first time running this launcher, or you just downloaded a new update of it.
 
 This tool has quite a few features. Via the control panel you can do the following:
@@ -145,7 +145,6 @@ This tool has quite a few features. Via the control panel you can do the followi
 - Launch Load Order Editor (if detected)
 
 - Launch Profile Editor (if detected)
-
 - Launch SVM (if detected)- Launch SPT Realism (if detected)")]
         public string firstTimeMessage {
             get {

@@ -59,15 +59,23 @@ namespace SPTMiniLauncher
                 bEnableTimed.ForeColor = Color.IndianRed;
             }
 
-            if (Properties.Settings.Default.clearCache)
+
+            switch (Properties.Settings.Default.clearCache)
             {
-                bEnableClearCache.Text = "Enabled";
-                bEnableClearCache.ForeColor = Color.DodgerBlue;
-            }
-            else
-            {
-                bEnableClearCache.Text = "Disabled";
-                bEnableClearCache.ForeColor = Color.IndianRed;
+                case 0:
+                    bEnableClearCache.Text = "Disabled";
+                    bEnableClearCache.ForeColor = Color.IndianRed;
+                    break;
+
+                case 1:
+                    bEnableClearCache.Text = "On SPT start";
+                    bEnableClearCache.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case 2:
+                    bEnableClearCache.Text = "On SPT stop";
+                    bEnableClearCache.ForeColor = Color.DodgerBlue;
+                    break;
             }
 
             switch (Properties.Settings.Default.openLogOnQuit)
@@ -93,19 +101,6 @@ namespace SPTMiniLauncher
                 case false:
                     bEnableConfirmation.Text = "Disabled";
                     bEnableConfirmation.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.altCache)
-            {
-                case true:
-                    bEnableClearCache.Text = "On SPT start";
-                    bEnableClearCache.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableClearCache.Text = "On SPT stop";
-                    bEnableClearCache.ForeColor = Color.DodgerBlue;
                     break;
             }
 
@@ -197,28 +192,21 @@ namespace SPTMiniLauncher
             {
                 bEnableClearCache.Text = "On SPT start";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
-                Properties.Settings.Default.clearCache = true;
+                Properties.Settings.Default.clearCache = 1;
                 Properties.Settings.Default.altCache = true;
             }
             else if (bEnableClearCache.Text.ToLower() == "on spt start")
             {
                 bEnableClearCache.Text = "On SPT stop";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
-                Properties.Settings.Default.clearCache = true;
+                Properties.Settings.Default.clearCache = 2;
                 Properties.Settings.Default.altCache = false;
             }
             else if (bEnableClearCache.Text.ToLower() == "on spt stop")
             {
-                bEnableClearCache.Text = "Enabled";
-                bEnableClearCache.ForeColor = Color.DodgerBlue;
-                Properties.Settings.Default.clearCache = true;
-                Properties.Settings.Default.altCache = false;
-            }
-            else if (bEnableClearCache.Text.ToLower() == "enabled")
-            {
                 bEnableClearCache.Text = "Disabled";
                 bEnableClearCache.ForeColor = Color.IndianRed;
-                Properties.Settings.Default.clearCache = false;
+                Properties.Settings.Default.clearCache = 0;
                 Properties.Settings.Default.altCache = false;
             }
 
@@ -265,7 +253,7 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.loe_path = "";
                 Properties.Settings.Default.realism_path = "";
                 Properties.Settings.Default.Save();
-                frm.showError("Reset successful");
+                frm.showError("Reset successful!");
                 Application.Restart();
             }
         }
@@ -277,7 +265,7 @@ namespace SPTMiniLauncher
 
         private void bStartDetector_Click(object sender, EventArgs e)
         {
-            /*
+            
             if (bStartDetector.Text.Contains("1"))
             {
                 bStartDetector.Text = "Start detector: 2 second(s)";
@@ -293,7 +281,7 @@ namespace SPTMiniLauncher
                 bStartDetector.Text = "Start detector: 1 second(s)";
                 Properties.Settings.Default.startDetector = 1;
             }
-            */
+            
             Properties.Settings.Default.Save();
         }
 

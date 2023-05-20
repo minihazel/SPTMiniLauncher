@@ -1061,7 +1061,7 @@ namespace SPTMiniLauncher
                                     break;
                             }
 
-                            if (Properties.Settings.Default.clearCache && Properties.Settings.Default.altCache)
+                            if (Properties.Settings.Default.clearCache == 1)
                             {
                                 if (isLoneServer)
                                 {
@@ -1894,7 +1894,7 @@ namespace SPTMiniLauncher
                 {
                     try
                     {
-                        if (Properties.Settings.Default.clearCache && !Properties.Settings.Default.altCache)
+                        if (Properties.Settings.Default.clearCache == 2)
                         {
                             string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
                             if (Directory.Exists(cacheFolder))
@@ -1988,7 +1988,7 @@ namespace SPTMiniLauncher
                 {
                     try
                     {
-                        if (Properties.Settings.Default.clearCache && !Properties.Settings.Default.altCache)
+                        if (Properties.Settings.Default.clearCache == 2)
                         {
                             string cacheFolder = Path.Combine(selectedServer, "user\\cache");
                             if (Directory.Exists(cacheFolder))
