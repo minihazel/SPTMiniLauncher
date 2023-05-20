@@ -55,7 +55,7 @@ This tool has quite a few features. Via the control panel you can do the followi
 - Launch SVM (if detected)- Launch SPT Realism (if detected)</Value>
     </Setting>
     <Setting Name="startDetector" Type="System.Int32" Scope="User">
-      <Value Profile="(Default)">2</Value>
+      <Value Profile="(Default)">1</Value>
     </Setting>
     <Setting Name="endDetector" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">1</Value>

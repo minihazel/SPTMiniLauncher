@@ -158,7 +158,7 @@ This tool has quite a few features. Via the control panel you can do the followi
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("2")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public int startDetector {
             get {
                 return ((int)(this["startDetector"]));

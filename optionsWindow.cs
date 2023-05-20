@@ -21,6 +21,9 @@ namespace SPTMiniLauncher
 
         private void optionsWindow_Load(object sender, EventArgs e)
         {
+            panelLauncherSettings.BringToFront();
+            tabLauncherDesc.Select();
+
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
 
@@ -57,15 +60,11 @@ namespace SPTMiniLauncher
             {
                 bEnableClearCache.Text = "Enabled";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
-
-                bEnableAltCache.Enabled = true;
             }
             else
             {
                 bEnableClearCache.Text = "Disabled";
                 bEnableClearCache.ForeColor = Color.IndianRed;
-
-                bEnableAltCache.Enabled = false;
             }
 
             switch (Properties.Settings.Default.openLogOnQuit)
@@ -97,11 +96,13 @@ namespace SPTMiniLauncher
             switch (Properties.Settings.Default.altCache)
             {
                 case true:
-                    bEnableAltCache.Text = "On SPT start";
+                    bEnableClearCache.Text = "On SPT start";
+                    bEnableClearCache.ForeColor = Color.DodgerBlue;
                     break;
 
                 case false:
-                    bEnableAltCache.Text = "On SPT stop";
+                    bEnableClearCache.Text = "On SPT stop";
+                    bEnableClearCache.ForeColor = Color.DodgerBlue;
                     break;
             }
 
@@ -194,16 +195,21 @@ namespace SPTMiniLauncher
                 bEnableClearCache.Text = "Disabled";
                 bEnableClearCache.ForeColor = Color.IndianRed;
                 Properties.Settings.Default.clearCache = false;
-
-                bEnableAltCache.Enabled = false;
+                Properties.Settings.Default.altCache = false;
             }
-            else
+            else if (bEnableClearCache.Text.ToLower() == "disabled")
             {
-                bEnableClearCache.Text = "Enabled";
+                bEnableClearCache.Text = "On SPT start";
                 bEnableClearCache.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.clearCache = true;
-
-                bEnableAltCache.Enabled = true;
+                Properties.Settings.Default.altCache = true;
+            }
+            else if (bEnableClearCache.Text.ToLower() == "disabled")
+            {
+                bEnableClearCache.Text = "On SPT stop";
+                bEnableClearCache.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.clearCache = true;
+                Properties.Settings.Default.altCache = false;
             }
 
             Properties.Settings.Default.Save();
@@ -259,6 +265,7 @@ namespace SPTMiniLauncher
 
         private void bStartDetector_Click(object sender, EventArgs e)
         {
+            /*
             if (bStartDetector.Text.Contains("1"))
             {
                 bStartDetector.Text = "Start detector: 2 second(s)";
@@ -274,7 +281,7 @@ namespace SPTMiniLauncher
                 bStartDetector.Text = "Start detector: 1 second(s)";
                 Properties.Settings.Default.startDetector = 1;
             }
-
+            */
             Properties.Settings.Default.Save();
         }
 
@@ -337,16 +344,7 @@ namespace SPTMiniLauncher
 
         private void bEnableAltCache_Click(object sender, EventArgs e)
         {
-            if (bEnableAltCache.Text.ToLower() == "on spt stop")
-            {
-                bEnableAltCache.Text = "On SPT start";
-                Properties.Settings.Default.altCache = true;
-            }
-            else
-            {
-                bEnableAltCache.Text = "On SPT stop";
-                Properties.Settings.Default.altCache = false;
-            }
+            
         }
 
         private void bEnableServerOutput_Click(object sender, EventArgs e)
@@ -414,6 +412,52 @@ namespace SPTMiniLauncher
             Properties.Settings.Default.closeOnQuit = true;
 
             Properties.Settings.Default.Save();
+        }
+
+        private void tabLauncher_Click(object sender, EventArgs e)
+        {
+            tabLauncher.FlatStyle = FlatStyle.Flat;
+            tabLauncher.FlatAppearance.BorderSize = 1;
+            tabLauncher.FlatAppearance.BorderColor = Color.DodgerBlue;
+            panelLauncherSettings.BringToFront();
+
+            tabSPTAKI.FlatStyle = FlatStyle.Flat;
+            tabSPTAKI.FlatAppearance.BorderSize = 0;
+
+            tabTarkov.FlatStyle = FlatStyle.Flat;
+            tabTarkov.FlatAppearance.BorderSize = 0;
+
+            tabLauncherDesc.Select();
+        }
+
+        private void tabSPTAKI_Click(object sender, EventArgs e)
+        {
+            tabLauncher.FlatStyle = FlatStyle.Flat;
+            tabLauncher.FlatAppearance.BorderSize = 0;
+
+            tabSPTAKI.FlatStyle = FlatStyle.Flat;
+            tabSPTAKI.FlatAppearance.BorderSize = 1;
+            panelSPTAKISettings.BringToFront();
+
+            tabTarkov.FlatStyle = FlatStyle.Flat;
+            tabTarkov.FlatAppearance.BorderSize = 0;
+
+            tabLauncherDesc.Select();
+        }
+
+        private void tabTarkov_Click(object sender, EventArgs e)
+        {
+            tabLauncher.FlatStyle = FlatStyle.Flat;
+            tabLauncher.FlatAppearance.BorderSize = 0;
+
+            tabSPTAKI.FlatStyle = FlatStyle.Flat;
+            tabSPTAKI.FlatAppearance.BorderSize = 0;
+            panelTarkovSettings.BringToFront();
+
+            tabTarkov.FlatStyle = FlatStyle.Flat;
+            tabTarkov.FlatAppearance.BorderSize = 1;
+
+            tabLauncherDesc.Select();
         }
     }
 }

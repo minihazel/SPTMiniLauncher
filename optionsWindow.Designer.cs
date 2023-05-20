@@ -38,7 +38,6 @@
             this.bReset = new System.Windows.Forms.Button();
             this.bRefresh = new System.Windows.Forms.Button();
             this.panelClearCache = new System.Windows.Forms.GroupBox();
-            this.bEnableAltCache = new System.Windows.Forms.Button();
             this.bEnableClearCache = new System.Windows.Forms.Button();
             this.panelDetectors = new System.Windows.Forms.GroupBox();
             this.bEndDetector = new System.Windows.Forms.Button();
@@ -54,6 +53,18 @@
             this.panelCloseOnExit = new System.Windows.Forms.GroupBox();
             this.bCloseOnSPTExit = new System.Windows.Forms.Button();
             this.bLiveLike = new System.Windows.Forms.Button();
+            this.tabLauncher = new System.Windows.Forms.Button();
+            this.tabSPTAKI = new System.Windows.Forms.Button();
+            this.tabTarkov = new System.Windows.Forms.Button();
+            this.panelLauncherSettings = new System.Windows.Forms.Panel();
+            this.tabLauncherDesc = new System.Windows.Forms.Label();
+            this.tabSPTDesc = new System.Windows.Forms.Label();
+            this.tabTarkovDesc = new System.Windows.Forms.Label();
+            this.panelSPTAKISettings = new System.Windows.Forms.Panel();
+            this.panelTarkovSettings = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this.panel3 = new System.Windows.Forms.Panel();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -64,18 +75,21 @@
             this.panelServerOutput.SuspendLayout();
             this.panelServerError.SuspendLayout();
             this.panelCloseOnExit.SuspendLayout();
+            this.panelLauncherSettings.SuspendLayout();
+            this.panelSPTAKISettings.SuspendLayout();
+            this.panelTarkovSettings.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
             // 
             this.panelMinimizeOnSPTLaunch.Controls.Add(this.bHide);
             this.panelMinimizeOnSPTLaunch.ForeColor = System.Drawing.Color.LightGray;
-            this.panelMinimizeOnSPTLaunch.Location = new System.Drawing.Point(12, 12);
+            this.panelMinimizeOnSPTLaunch.Location = new System.Drawing.Point(3, 86);
             this.panelMinimizeOnSPTLaunch.Name = "panelMinimizeOnSPTLaunch";
-            this.panelMinimizeOnSPTLaunch.Size = new System.Drawing.Size(210, 65);
+            this.panelMinimizeOnSPTLaunch.Size = new System.Drawing.Size(220, 65);
             this.panelMinimizeOnSPTLaunch.TabIndex = 0;
             this.panelMinimizeOnSPTLaunch.TabStop = false;
-            this.panelMinimizeOnSPTLaunch.Text = " SPT launch options";
+            this.panelMinimizeOnSPTLaunch.Text = "SPT launch options";
             // 
             // bHide
             // 
@@ -97,12 +111,12 @@
             // 
             this.panelEnableTimedAkiLauncher.Controls.Add(this.bEnableTimed);
             this.panelEnableTimedAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
-            this.panelEnableTimedAkiLauncher.Location = new System.Drawing.Point(239, 12);
+            this.panelEnableTimedAkiLauncher.Location = new System.Drawing.Point(3, 3);
             this.panelEnableTimedAkiLauncher.Name = "panelEnableTimedAkiLauncher";
             this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(210, 65);
             this.panelEnableTimedAkiLauncher.TabIndex = 1;
             this.panelEnableTimedAkiLauncher.TabStop = false;
-            this.panelEnableTimedAkiLauncher.Text = " Enable timed Aki Launcher ";
+            this.panelEnableTimedAkiLauncher.Text = "Enable timed Aki Launcher";
             // 
             // bEnableTimed
             // 
@@ -126,12 +140,12 @@
             this.panelMisc.Controls.Add(this.bReset);
             this.panelMisc.Controls.Add(this.bRefresh);
             this.panelMisc.ForeColor = System.Drawing.Color.LightGray;
-            this.panelMisc.Location = new System.Drawing.Point(12, 172);
+            this.panelMisc.Location = new System.Drawing.Point(3, 253);
             this.panelMisc.Name = "panelMisc";
-            this.panelMisc.Size = new System.Drawing.Size(437, 65);
+            this.panelMisc.Size = new System.Drawing.Size(467, 65);
             this.panelMisc.TabIndex = 2;
             this.panelMisc.TabStop = false;
-            this.panelMisc.Text = " Misc. ";
+            this.panelMisc.Text = "Miscellaneous Launcher options";
             // 
             // bResetThirdParty
             // 
@@ -140,9 +154,9 @@
             this.bResetThirdParty.FlatAppearance.BorderSize = 0;
             this.bResetThirdParty.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bResetThirdParty.ForeColor = System.Drawing.Color.IndianRed;
-            this.bResetThirdParty.Location = new System.Drawing.Point(261, 23);
+            this.bResetThirdParty.Location = new System.Drawing.Point(262, 23);
             this.bResetThirdParty.Name = "bResetThirdParty";
-            this.bResetThirdParty.Size = new System.Drawing.Size(170, 30);
+            this.bResetThirdParty.Size = new System.Drawing.Size(180, 30);
             this.bResetThirdParty.TabIndex = 5;
             this.bResetThirdParty.Text = "Reset third party apps";
             this.bResetThirdParty.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -183,31 +197,14 @@
             // 
             // panelClearCache
             // 
-            this.panelClearCache.Controls.Add(this.bEnableAltCache);
             this.panelClearCache.Controls.Add(this.bEnableClearCache);
             this.panelClearCache.ForeColor = System.Drawing.Color.LightGray;
-            this.panelClearCache.Location = new System.Drawing.Point(12, 92);
+            this.panelClearCache.Location = new System.Drawing.Point(497, 86);
             this.panelClearCache.Name = "panelClearCache";
-            this.panelClearCache.Size = new System.Drawing.Size(437, 65);
+            this.panelClearCache.Size = new System.Drawing.Size(220, 65);
             this.panelClearCache.TabIndex = 3;
             this.panelClearCache.TabStop = false;
-            this.panelClearCache.Text = " Clear cache ";
-            // 
-            // bEnableAltCache
-            // 
-            this.bEnableAltCache.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bEnableAltCache.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bEnableAltCache.FlatAppearance.BorderSize = 0;
-            this.bEnableAltCache.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bEnableAltCache.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bEnableAltCache.Location = new System.Drawing.Point(224, 23);
-            this.bEnableAltCache.Name = "bEnableAltCache";
-            this.bEnableAltCache.Size = new System.Drawing.Size(180, 30);
-            this.bEnableAltCache.TabIndex = 5;
-            this.bEnableAltCache.Text = "On SPT stop";
-            this.bEnableAltCache.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bEnableAltCache.UseVisualStyleBackColor = true;
-            this.bEnableAltCache.Click += new System.EventHandler(this.bEnableAltCache_Click);
+            this.panelClearCache.Text = "Clear cache options";
             // 
             // bEnableClearCache
             // 
@@ -230,12 +227,12 @@
             this.panelDetectors.Controls.Add(this.bEndDetector);
             this.panelDetectors.Controls.Add(this.bStartDetector);
             this.panelDetectors.ForeColor = System.Drawing.Color.LightGray;
-            this.panelDetectors.Location = new System.Drawing.Point(12, 252);
+            this.panelDetectors.Location = new System.Drawing.Point(3, 3);
             this.panelDetectors.Name = "panelDetectors";
-            this.panelDetectors.Size = new System.Drawing.Size(437, 65);
+            this.panelDetectors.Size = new System.Drawing.Size(437, 121);
             this.panelDetectors.TabIndex = 4;
             this.panelDetectors.TabStop = false;
-            this.panelDetectors.Text = " Tarkov Detector Intervals (in seconds)";
+            this.panelDetectors.Text = "Tarkov auto-detection";
             // 
             // bEndDetector
             // 
@@ -244,7 +241,7 @@
             this.bEndDetector.FlatAppearance.BorderSize = 0;
             this.bEndDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bEndDetector.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bEndDetector.Location = new System.Drawing.Point(224, 23);
+            this.bEndDetector.Location = new System.Drawing.Point(12, 69);
             this.bEndDetector.Name = "bEndDetector";
             this.bEndDetector.Size = new System.Drawing.Size(207, 30);
             this.bEndDetector.TabIndex = 5;
@@ -260,25 +257,26 @@
             this.bStartDetector.FlatAppearance.BorderSize = 0;
             this.bStartDetector.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bStartDetector.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bStartDetector.Location = new System.Drawing.Point(15, 23);
+            this.bStartDetector.Location = new System.Drawing.Point(12, 33);
             this.bStartDetector.Name = "bStartDetector";
             this.bStartDetector.Size = new System.Drawing.Size(207, 30);
             this.bStartDetector.TabIndex = 4;
             this.bStartDetector.Text = "Start detector: 0.5 seconds";
             this.bStartDetector.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bStartDetector.UseVisualStyleBackColor = true;
+            this.bStartDetector.Visible = false;
             this.bStartDetector.Click += new System.EventHandler(this.bStartDetector_Click);
             // 
             // panelLogFile
             // 
             this.panelLogFile.Controls.Add(this.bEnableOpenLog);
             this.panelLogFile.ForeColor = System.Drawing.Color.LightGray;
-            this.panelLogFile.Location = new System.Drawing.Point(12, 492);
+            this.panelLogFile.Location = new System.Drawing.Point(250, 170);
             this.panelLogFile.Name = "panelLogFile";
-            this.panelLogFile.Size = new System.Drawing.Size(210, 65);
+            this.panelLogFile.Size = new System.Drawing.Size(220, 65);
             this.panelLogFile.TabIndex = 5;
             this.panelLogFile.TabStop = false;
-            this.panelLogFile.Text = " Open log file on SPT quit ";
+            this.panelLogFile.Text = "Open log file on SPT quit";
             // 
             // bEnableOpenLog
             // 
@@ -300,12 +298,12 @@
             // 
             this.panelConfirmationQuit.Controls.Add(this.bEnableConfirmation);
             this.panelConfirmationQuit.ForeColor = System.Drawing.Color.LightGray;
-            this.panelConfirmationQuit.Location = new System.Drawing.Point(12, 332);
+            this.panelConfirmationQuit.Location = new System.Drawing.Point(3, 3);
             this.panelConfirmationQuit.Name = "panelConfirmationQuit";
-            this.panelConfirmationQuit.Size = new System.Drawing.Size(437, 65);
+            this.panelConfirmationQuit.Size = new System.Drawing.Size(220, 65);
             this.panelConfirmationQuit.TabIndex = 6;
             this.panelConfirmationQuit.TabStop = false;
-            this.panelConfirmationQuit.Text = " Confirmation pop-ups (Stop SPT && Clear Cache) ";
+            this.panelConfirmationQuit.Text = "Confirmation pop-ups";
             // 
             // bEnableConfirmation
             // 
@@ -327,12 +325,12 @@
             // 
             this.panelServerOutput.Controls.Add(this.bEnableServerOutput);
             this.panelServerOutput.ForeColor = System.Drawing.Color.LightGray;
-            this.panelServerOutput.Location = new System.Drawing.Point(12, 412);
+            this.panelServerOutput.Location = new System.Drawing.Point(250, 86);
             this.panelServerOutput.Name = "panelServerOutput";
-            this.panelServerOutput.Size = new System.Drawing.Size(210, 65);
+            this.panelServerOutput.Size = new System.Drawing.Size(220, 65);
             this.panelServerOutput.TabIndex = 7;
             this.panelServerOutput.TabStop = false;
-            this.panelServerOutput.Text = " Automatic server console ";
+            this.panelServerOutput.Text = "Display server data on start";
             // 
             // bEnableServerOutput
             // 
@@ -354,9 +352,9 @@
             // 
             this.panelServerError.Controls.Add(this.bEnableServerErrors);
             this.panelServerError.ForeColor = System.Drawing.Color.LightGray;
-            this.panelServerError.Location = new System.Drawing.Point(239, 412);
+            this.panelServerError.Location = new System.Drawing.Point(250, 3);
             this.panelServerError.Name = "panelServerError";
-            this.panelServerError.Size = new System.Drawing.Size(210, 65);
+            this.panelServerError.Size = new System.Drawing.Size(220, 65);
             this.panelServerError.TabIndex = 8;
             this.panelServerError.TabStop = false;
             this.panelServerError.Text = " Server error pop-ups ";
@@ -381,12 +379,12 @@
             // 
             this.panelCloseOnExit.Controls.Add(this.bCloseOnSPTExit);
             this.panelCloseOnExit.ForeColor = System.Drawing.Color.LightGray;
-            this.panelCloseOnExit.Location = new System.Drawing.Point(239, 492);
+            this.panelCloseOnExit.Location = new System.Drawing.Point(3, 170);
             this.panelCloseOnExit.Name = "panelCloseOnExit";
-            this.panelCloseOnExit.Size = new System.Drawing.Size(210, 65);
+            this.panelCloseOnExit.Size = new System.Drawing.Size(220, 65);
             this.panelCloseOnExit.TabIndex = 9;
             this.panelCloseOnExit.TabStop = false;
-            this.panelCloseOnExit.Text = " Close on SPT exit ";
+            this.panelCloseOnExit.Text = "Close Launcher on SPT quit";
             // 
             // bCloseOnSPTExit
             // 
@@ -410,31 +408,165 @@
             this.bLiveLike.FlatAppearance.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(100)))), ((int)(((byte)(100)))));
             this.bLiveLike.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bLiveLike.ForeColor = System.Drawing.Color.LightGray;
-            this.bLiveLike.Location = new System.Drawing.Point(12, 572);
+            this.bLiveLike.Location = new System.Drawing.Point(3, 329);
             this.bLiveLike.Name = "bLiveLike";
-            this.bLiveLike.Size = new System.Drawing.Size(437, 30);
+            this.bLiveLike.Size = new System.Drawing.Size(268, 30);
             this.bLiveLike.TabIndex = 10;
             this.bLiveLike.Text = "Enable Live-like game exiting";
             this.bLiveLike.UseVisualStyleBackColor = true;
             this.bLiveLike.Click += new System.EventHandler(this.bLiveLike_Click);
+            // 
+            // tabLauncher
+            // 
+            this.tabLauncher.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tabLauncher.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.tabLauncher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tabLauncher.ForeColor = System.Drawing.Color.LightGray;
+            this.tabLauncher.Location = new System.Drawing.Point(12, 21);
+            this.tabLauncher.Name = "tabLauncher";
+            this.tabLauncher.Size = new System.Drawing.Size(150, 35);
+            this.tabLauncher.TabIndex = 11;
+            this.tabLauncher.Text = "Launcher settings";
+            this.tabLauncher.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabLauncher.UseVisualStyleBackColor = true;
+            this.tabLauncher.Click += new System.EventHandler(this.tabLauncher_Click);
+            // 
+            // tabSPTAKI
+            // 
+            this.tabSPTAKI.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tabSPTAKI.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.tabSPTAKI.FlatAppearance.BorderSize = 0;
+            this.tabSPTAKI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tabSPTAKI.ForeColor = System.Drawing.Color.LightGray;
+            this.tabSPTAKI.Location = new System.Drawing.Point(168, 21);
+            this.tabSPTAKI.Name = "tabSPTAKI";
+            this.tabSPTAKI.Size = new System.Drawing.Size(150, 35);
+            this.tabSPTAKI.TabIndex = 12;
+            this.tabSPTAKI.Text = "SPT-AKI settings";
+            this.tabSPTAKI.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabSPTAKI.UseVisualStyleBackColor = true;
+            this.tabSPTAKI.Click += new System.EventHandler(this.tabSPTAKI_Click);
+            // 
+            // tabTarkov
+            // 
+            this.tabTarkov.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tabTarkov.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.tabTarkov.FlatAppearance.BorderSize = 0;
+            this.tabTarkov.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tabTarkov.ForeColor = System.Drawing.Color.LightGray;
+            this.tabTarkov.Location = new System.Drawing.Point(324, 21);
+            this.tabTarkov.Name = "tabTarkov";
+            this.tabTarkov.Size = new System.Drawing.Size(150, 35);
+            this.tabTarkov.TabIndex = 13;
+            this.tabTarkov.Text = "Tarkov settings";
+            this.tabTarkov.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tabTarkov.UseVisualStyleBackColor = true;
+            this.tabTarkov.Click += new System.EventHandler(this.tabTarkov_Click);
+            // 
+            // panelLauncherSettings
+            // 
+            this.panelLauncherSettings.Controls.Add(this.panel3);
+            this.panelLauncherSettings.Controls.Add(this.panel2);
+            this.panelLauncherSettings.Controls.Add(this.panel1);
+            this.panelLauncherSettings.Controls.Add(this.panelConfirmationQuit);
+            this.panelLauncherSettings.Controls.Add(this.panelServerOutput);
+            this.panelLauncherSettings.Controls.Add(this.panelLogFile);
+            this.panelLauncherSettings.Controls.Add(this.bLiveLike);
+            this.panelLauncherSettings.Controls.Add(this.panelCloseOnExit);
+            this.panelLauncherSettings.Controls.Add(this.panelServerError);
+            this.panelLauncherSettings.Controls.Add(this.panelClearCache);
+            this.panelLauncherSettings.Controls.Add(this.panelMinimizeOnSPTLaunch);
+            this.panelLauncherSettings.Controls.Add(this.panelMisc);
+            this.panelLauncherSettings.Location = new System.Drawing.Point(12, 124);
+            this.panelLauncherSettings.Name = "panelLauncherSettings";
+            this.panelLauncherSettings.Size = new System.Drawing.Size(798, 362);
+            this.panelLauncherSettings.TabIndex = 14;
+            // 
+            // tabLauncherDesc
+            // 
+            this.tabLauncherDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.tabLauncherDesc.Location = new System.Drawing.Point(12, 64);
+            this.tabLauncherDesc.Name = "tabLauncherDesc";
+            this.tabLauncherDesc.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.tabLauncherDesc.Size = new System.Drawing.Size(150, 48);
+            this.tabLauncherDesc.TabIndex = 15;
+            this.tabLauncherDesc.Text = "Settings for the SPT Launcher";
+            // 
+            // tabSPTDesc
+            // 
+            this.tabSPTDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.tabSPTDesc.Location = new System.Drawing.Point(165, 64);
+            this.tabSPTDesc.Name = "tabSPTDesc";
+            this.tabSPTDesc.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.tabSPTDesc.Size = new System.Drawing.Size(153, 48);
+            this.tabSPTDesc.TabIndex = 16;
+            this.tabSPTDesc.Text = "Settings and configurations related to SPT-AKI and its Server and Launcher";
+            // 
+            // tabTarkovDesc
+            // 
+            this.tabTarkovDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
+            this.tabTarkovDesc.Location = new System.Drawing.Point(321, 64);
+            this.tabTarkovDesc.Name = "tabTarkovDesc";
+            this.tabTarkovDesc.Padding = new System.Windows.Forms.Padding(3, 0, 0, 0);
+            this.tabTarkovDesc.Size = new System.Drawing.Size(153, 48);
+            this.tabTarkovDesc.TabIndex = 17;
+            this.tabTarkovDesc.Text = "Settings and configurations for Escape From Tarkov";
+            // 
+            // panelSPTAKISettings
+            // 
+            this.panelSPTAKISettings.Controls.Add(this.panelEnableTimedAkiLauncher);
+            this.panelSPTAKISettings.Location = new System.Drawing.Point(12, 124);
+            this.panelSPTAKISettings.Name = "panelSPTAKISettings";
+            this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 362);
+            this.panelSPTAKISettings.TabIndex = 15;
+            // 
+            // panelTarkovSettings
+            // 
+            this.panelTarkovSettings.Controls.Add(this.panelDetectors);
+            this.panelTarkovSettings.Location = new System.Drawing.Point(12, 124);
+            this.panelTarkovSettings.Name = "panelTarkovSettings";
+            this.panelTarkovSettings.Size = new System.Drawing.Size(798, 362);
+            this.panelTarkovSettings.TabIndex = 16;
+            // 
+            // panel1
+            // 
+            this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel1.Location = new System.Drawing.Point(3, 78);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(714, 1);
+            this.panel1.TabIndex = 10;
+            // 
+            // panel2
+            // 
+            this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Location = new System.Drawing.Point(3, 162);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(714, 1);
+            this.panel2.TabIndex = 18;
+            // 
+            // panel3
+            // 
+            this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel3.Location = new System.Drawing.Point(3, 246);
+            this.panel3.Name = "panel3";
+            this.panel3.Size = new System.Drawing.Size(714, 1);
+            this.panel3.TabIndex = 19;
             // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(461, 612);
-            this.Controls.Add(this.bLiveLike);
-            this.Controls.Add(this.panelCloseOnExit);
-            this.Controls.Add(this.panelServerError);
-            this.Controls.Add(this.panelServerOutput);
-            this.Controls.Add(this.panelConfirmationQuit);
-            this.Controls.Add(this.panelLogFile);
-            this.Controls.Add(this.panelDetectors);
-            this.Controls.Add(this.panelClearCache);
-            this.Controls.Add(this.panelMisc);
-            this.Controls.Add(this.panelEnableTimedAkiLauncher);
-            this.Controls.Add(this.panelMinimizeOnSPTLaunch);
+            this.ClientSize = new System.Drawing.Size(822, 504);
+            this.Controls.Add(this.tabTarkovDesc);
+            this.Controls.Add(this.tabSPTDesc);
+            this.Controls.Add(this.tabLauncherDesc);
+            this.Controls.Add(this.tabTarkov);
+            this.Controls.Add(this.tabSPTAKI);
+            this.Controls.Add(this.tabLauncher);
+            this.Controls.Add(this.panelLauncherSettings);
+            this.Controls.Add(this.panelTarkovSettings);
+            this.Controls.Add(this.panelSPTAKISettings);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -457,6 +589,9 @@
             this.panelServerOutput.ResumeLayout(false);
             this.panelServerError.ResumeLayout(false);
             this.panelCloseOnExit.ResumeLayout(false);
+            this.panelLauncherSettings.ResumeLayout(false);
+            this.panelSPTAKISettings.ResumeLayout(false);
+            this.panelTarkovSettings.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -480,7 +615,6 @@
         private System.Windows.Forms.Button bEnableOpenLog;
         private System.Windows.Forms.GroupBox panelConfirmationQuit;
         private System.Windows.Forms.Button bEnableConfirmation;
-        private System.Windows.Forms.Button bEnableAltCache;
         private System.Windows.Forms.GroupBox panelServerOutput;
         private System.Windows.Forms.Button bEnableServerOutput;
         private System.Windows.Forms.GroupBox panelServerError;
@@ -488,5 +622,17 @@
         private System.Windows.Forms.GroupBox panelCloseOnExit;
         private System.Windows.Forms.Button bCloseOnSPTExit;
         private System.Windows.Forms.Button bLiveLike;
+        private System.Windows.Forms.Button tabLauncher;
+        private System.Windows.Forms.Button tabSPTAKI;
+        private System.Windows.Forms.Button tabTarkov;
+        private System.Windows.Forms.Panel panelLauncherSettings;
+        private System.Windows.Forms.Label tabLauncherDesc;
+        private System.Windows.Forms.Label tabSPTDesc;
+        private System.Windows.Forms.Label tabTarkovDesc;
+        private System.Windows.Forms.Panel panelSPTAKISettings;
+        private System.Windows.Forms.Panel panelTarkovSettings;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel panel3;
     }
 }
