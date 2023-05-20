@@ -21,6 +21,8 @@ namespace SPTMiniLauncher
 
         private void optionsWindow_Load(object sender, EventArgs e)
         {
+            bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
+            bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
 
             if (Properties.Settings.Default.minimizeToggle)
             {
@@ -122,8 +124,18 @@ namespace SPTMiniLauncher
                     break;
             }
 
-            bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
-            bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
+            switch (Properties.Settings.Default.closeOnQuit)
+            {
+                case true:
+                    bCloseOnSPTExit.Text = "Enabled";
+                    bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bCloseOnSPTExit.Text = "Disabled";
+                    bCloseOnSPTExit.ForeColor = Color.IndianRed;
+                    break;
+            }
         }
 
         private void bMinimize_Click(object sender, EventArgs e)
@@ -349,6 +361,24 @@ namespace SPTMiniLauncher
                 bEnableServerErrors.Text = "Enabled";
                 bEnableServerErrors.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.serverErrorMessages = true;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bCloseOnSPTExit_Click(object sender, EventArgs e)
+        {
+            if (bCloseOnSPTExit.Text.ToLower() == "enabled")
+            {
+                bCloseOnSPTExit.Text = "Disabled";
+                bCloseOnSPTExit.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.closeOnQuit = false;
+            }
+            else
+            {
+                bCloseOnSPTExit.Text = "Enabled";
+                bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.closeOnQuit = true;
             }
 
             Properties.Settings.Default.Save();

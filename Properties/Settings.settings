@@ -33,27 +33,26 @@ It looks like it's your first time running this launcher, or you just downloaded
 
 This tool has quite a few features. Via the control panel you can do the following:
 
-- Launch SPT   (cache will be automatically cleared)
+- Launch SPT
 
-- Quit and exit SPT   (cache will be automatically cleared)
+- Quit and exit SPT
 
 - Clear cache
+
 
 - Open client and server mods folders
 
 - Open the load order file (post-3.5 installations only)
-   \__ Load Order Editor manages this for you (third party app)
+  Load Order Editor manages this for you (third party app)
 
 - Manage mods
-   \__ Client mods can only be viewed and removed. Server mods can be viewed, removed and added.
+  Client mods can only be viewed and removed. Server mods can be viewed, removed and added.
   
 - Launch Load Order Editor (if detected)
 
 - Launch Profile Editor (if detected)
 
-- Launch SVM (if detected)
-
-- Launch SPT Realism (if detected)</Value>
+- Launch SVM (if detected)- Launch SPT Realism (if detected)</Value>
     </Setting>
     <Setting Name="startDetector" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">2</Value>
@@ -74,6 +73,9 @@ This tool has quite a few features. Via the control panel you can do the followi
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="serverErrorMessages" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="closeOnQuit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>

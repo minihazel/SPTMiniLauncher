@@ -95,16 +95,15 @@ namespace SPTMiniLauncher
         private void Form1_Load(object sender, EventArgs e)
         {
             settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
-            firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
+            // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
 
             messageBoard form = new messageBoard();
             RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
             Label messageTitle = (Label)form.Controls["messageTitle"];
             messageTitle.ForeColor = Color.LightGray;
 
-            if (File.Exists(settingsFile) && File.Exists(firstTime))
+            if (File.Exists(settingsFile))
             {
-
                 string readSettings = File.ReadAllText(settingsFile);
                 JObject settingsObject = JObject.Parse(readSettings);
 
@@ -651,8 +650,8 @@ namespace SPTMiniLauncher
                 Process[] processes = Process.GetProcessesByName(processName);
                 if (processes.Length == 0)
                 {
-                    killProcesses();
                     flashLauncherWindow();
+                    killProcesses();
                     if (TarkovEndDetector != null)
                         TarkovEndDetector.Dispose();
 
@@ -1060,6 +1059,7 @@ namespace SPTMiniLauncher
 
                             controlWindow wn = new controlWindow();
                             wn.isTrue = isLoneServer;
+                            wn.selectedServer = boxSelectedServerTitle.Text;
                             wn.ShowDialog();
                             break;
 
@@ -2062,8 +2062,12 @@ namespace SPTMiniLauncher
                     TarkovProcessDetector.Dispose();
 
                 generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
+
                 resetRunButton();
                 clearOutput();
+
+                if (Properties.Settings.Default.closeOnQuit)
+                    Application.Exit();
 
             }
             catch (Exception err)
@@ -2285,9 +2289,9 @@ namespace SPTMiniLauncher
             if (outputwindow != null && outputwindow.IsHandleCreated)
             {
                 RichTextBox sptOutputWindow = outputwindow.sptOutputWindow;
-                sptOutputWindow.Clear();
+                sptOutputWindow.Invoke((MethodInvoker)(() => { sptOutputWindow.Clear(); }));
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.modProblem = false; }));
-                outputwindow.Hide();
+                outputwindow.Invoke((MethodInvoker)(() => { outputwindow.Hide(); }));
             }
         }
 

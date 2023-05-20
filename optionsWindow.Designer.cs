@@ -51,6 +51,8 @@
             this.bEnableServerOutput = new System.Windows.Forms.Button();
             this.panelServerError = new System.Windows.Forms.GroupBox();
             this.bEnableServerErrors = new System.Windows.Forms.Button();
+            this.panelCloseOnExit = new System.Windows.Forms.GroupBox();
+            this.bCloseOnSPTExit = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -60,6 +62,7 @@
             this.panelConfirmationQuit.SuspendLayout();
             this.panelServerOutput.SuspendLayout();
             this.panelServerError.SuspendLayout();
+            this.panelCloseOnExit.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -325,10 +328,10 @@
             this.panelServerOutput.ForeColor = System.Drawing.Color.LightGray;
             this.panelServerOutput.Location = new System.Drawing.Point(12, 412);
             this.panelServerOutput.Name = "panelServerOutput";
-            this.panelServerOutput.Size = new System.Drawing.Size(437, 65);
+            this.panelServerOutput.Size = new System.Drawing.Size(210, 65);
             this.panelServerOutput.TabIndex = 7;
             this.panelServerOutput.TabStop = false;
-            this.panelServerOutput.Text = " Automatic server console display ";
+            this.panelServerOutput.Text = " Automatic server console ";
             // 
             // bEnableServerOutput
             // 
@@ -350,7 +353,7 @@
             // 
             this.panelServerError.Controls.Add(this.bEnableServerErrors);
             this.panelServerError.ForeColor = System.Drawing.Color.LightGray;
-            this.panelServerError.Location = new System.Drawing.Point(239, 492);
+            this.panelServerError.Location = new System.Drawing.Point(239, 412);
             this.panelServerError.Name = "panelServerError";
             this.panelServerError.Size = new System.Drawing.Size(210, 65);
             this.panelServerError.TabIndex = 8;
@@ -373,12 +376,40 @@
             this.bEnableServerErrors.UseVisualStyleBackColor = true;
             this.bEnableServerErrors.Click += new System.EventHandler(this.bEnableServerErrors_Click);
             // 
+            // panelCloseOnExit
+            // 
+            this.panelCloseOnExit.Controls.Add(this.bCloseOnSPTExit);
+            this.panelCloseOnExit.ForeColor = System.Drawing.Color.LightGray;
+            this.panelCloseOnExit.Location = new System.Drawing.Point(239, 492);
+            this.panelCloseOnExit.Name = "panelCloseOnExit";
+            this.panelCloseOnExit.Size = new System.Drawing.Size(210, 65);
+            this.panelCloseOnExit.TabIndex = 9;
+            this.panelCloseOnExit.TabStop = false;
+            this.panelCloseOnExit.Text = " Close on SPT exit ";
+            // 
+            // bCloseOnSPTExit
+            // 
+            this.bCloseOnSPTExit.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bCloseOnSPTExit.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bCloseOnSPTExit.FlatAppearance.BorderSize = 0;
+            this.bCloseOnSPTExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bCloseOnSPTExit.ForeColor = System.Drawing.Color.IndianRed;
+            this.bCloseOnSPTExit.Location = new System.Drawing.Point(15, 23);
+            this.bCloseOnSPTExit.Name = "bCloseOnSPTExit";
+            this.bCloseOnSPTExit.Size = new System.Drawing.Size(180, 30);
+            this.bCloseOnSPTExit.TabIndex = 4;
+            this.bCloseOnSPTExit.Text = "Disabled";
+            this.bCloseOnSPTExit.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bCloseOnSPTExit.UseVisualStyleBackColor = true;
+            this.bCloseOnSPTExit.Click += new System.EventHandler(this.bCloseOnSPTExit_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(461, 577);
+            this.Controls.Add(this.panelCloseOnExit);
             this.Controls.Add(this.panelServerError);
             this.Controls.Add(this.panelServerOutput);
             this.Controls.Add(this.panelConfirmationQuit);
@@ -409,6 +440,7 @@
             this.panelConfirmationQuit.ResumeLayout(false);
             this.panelServerOutput.ResumeLayout(false);
             this.panelServerError.ResumeLayout(false);
+            this.panelCloseOnExit.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -437,5 +469,7 @@
         private System.Windows.Forms.Button bEnableServerOutput;
         private System.Windows.Forms.GroupBox panelServerError;
         private System.Windows.Forms.Button bEnableServerErrors;
+        private System.Windows.Forms.GroupBox panelCloseOnExit;
+        private System.Windows.Forms.Button bCloseOnSPTExit;
     }
 }

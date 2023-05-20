@@ -32,8 +32,9 @@ namespace SPTMiniLauncher
             }
             else
             {
-                selectedServer = mainForm.boxSelectedServerTitle.Text;
                 fullServerPath = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
+                Debug.WriteLine(selectedServer);
+                Debug.WriteLine(fullServerPath);
             }
 
             AssignEvents();
