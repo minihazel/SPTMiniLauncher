@@ -102,6 +102,12 @@
     <Reference Include="WindowsFormsIntegration" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="controlWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="controlWindow.Designer.cs">
+      <DependentUpon>controlWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -126,6 +132,12 @@
     <Compile Include="optionsWindow.Designer.cs">
       <DependentUpon>optionsWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="outputWindow.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="outputWindow.Designer.cs">
+      <DependentUpon>outputWindow.cs</DependentUpon>
+    </Compile>
     <Compile Include="profileSelector.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -134,6 +146,9 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <EmbeddedResource Include="controlWindow.resx">
+      <DependentUpon>controlWindow.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
@@ -145,6 +160,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="optionsWindow.resx">
       <DependentUpon>optionsWindow.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="outputWindow.resx">
+      <DependentUpon>outputWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="profileSelector.resx">
       <DependentUpon>profileSelector.cs</DependentUpon>

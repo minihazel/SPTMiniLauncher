@@ -46,6 +46,7 @@
             this.bResetThirdParty = new System.Windows.Forms.Label();
             this.bRefresh = new System.Windows.Forms.Label();
             this.bOpenOptions = new System.Windows.Forms.Label();
+            this.bToggleOutputWindow = new System.Windows.Forms.Label();
             this.boxPathBox.SuspendLayout();
             this.boxServers.SuspendLayout();
             this.boxSelectedServer.SuspendLayout();
@@ -135,7 +136,7 @@
             this.boxServers.Controls.Add(this.boxServersSeparator);
             this.boxServers.Location = new System.Drawing.Point(17, 87);
             this.boxServers.Name = "boxServers";
-            this.boxServers.Size = new System.Drawing.Size(314, 497);
+            this.boxServers.Size = new System.Drawing.Size(314, 522);
             this.boxServers.TabIndex = 1;
             // 
             // boxServerPlaceholder
@@ -186,7 +187,7 @@
             this.boxSelectedServer.Controls.Add(this.boxSelectedServerSeparator);
             this.boxSelectedServer.Location = new System.Drawing.Point(347, 87);
             this.boxSelectedServer.Name = "boxSelectedServer";
-            this.boxSelectedServer.Size = new System.Drawing.Size(314, 497);
+            this.boxSelectedServer.Size = new System.Drawing.Size(314, 522);
             this.boxSelectedServer.TabIndex = 2;
             // 
             // boxSelectedServerPlaceholder
@@ -236,7 +237,7 @@
             this.bResetApp.AutoSize = true;
             this.bResetApp.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetApp.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetApp.Location = new System.Drawing.Point(75, 604);
+            this.bResetApp.Location = new System.Drawing.Point(75, 629);
             this.bResetApp.Name = "bResetApp";
             this.bResetApp.Size = new System.Drawing.Size(36, 13);
             this.bResetApp.TabIndex = 3;
@@ -252,7 +253,7 @@
             this.bResetThirdParty.AutoSize = true;
             this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetThirdParty.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetThirdParty.Location = new System.Drawing.Point(126, 604);
+            this.bResetThirdParty.Location = new System.Drawing.Point(126, 629);
             this.bResetThirdParty.Name = "bResetThirdParty";
             this.bResetThirdParty.Size = new System.Drawing.Size(119, 13);
             this.bResetThirdParty.TabIndex = 4;
@@ -268,7 +269,7 @@
             this.bRefresh.AutoSize = true;
             this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bRefresh.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bRefresh.Location = new System.Drawing.Point(14, 604);
+            this.bRefresh.Location = new System.Drawing.Point(14, 629);
             this.bRefresh.Name = "bRefresh";
             this.bRefresh.Size = new System.Drawing.Size(46, 13);
             this.bRefresh.TabIndex = 5;
@@ -283,7 +284,7 @@
             this.bOpenOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bOpenOptions.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bOpenOptions.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
-            this.bOpenOptions.Location = new System.Drawing.Point(542, 587);
+            this.bOpenOptions.Location = new System.Drawing.Point(542, 612);
             this.bOpenOptions.Name = "bOpenOptions";
             this.bOpenOptions.Size = new System.Drawing.Size(119, 30);
             this.bOpenOptions.TabIndex = 7;
@@ -293,13 +294,29 @@
             this.bOpenOptions.MouseEnter += new System.EventHandler(this.bOpenOptions_MouseEnter);
             this.bOpenOptions.MouseLeave += new System.EventHandler(this.bOpenOptions_MouseLeave);
             // 
+            // bToggleOutputWindow
+            // 
+            this.bToggleOutputWindow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bToggleOutputWindow.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bToggleOutputWindow.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.bToggleOutputWindow.Location = new System.Drawing.Point(347, 612);
+            this.bToggleOutputWindow.Name = "bToggleOutputWindow";
+            this.bToggleOutputWindow.Size = new System.Drawing.Size(189, 30);
+            this.bToggleOutputWindow.TabIndex = 8;
+            this.bToggleOutputWindow.Text = "Toggle output window";
+            this.bToggleOutputWindow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.bToggleOutputWindow.Click += new System.EventHandler(this.bToggleOutputWindow_Click);
+            this.bToggleOutputWindow.MouseEnter += new System.EventHandler(this.bToggleOutputWindow_MouseEnter);
+            this.bToggleOutputWindow.MouseLeave += new System.EventHandler(this.bToggleOutputWindow_MouseLeave);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 626);
+            this.ClientSize = new System.Drawing.Size(679, 651);
+            this.Controls.Add(this.bToggleOutputWindow);
             this.Controls.Add(this.bOpenOptions);
             this.Controls.Add(this.bRefresh);
             this.Controls.Add(this.bResetThirdParty);
@@ -311,16 +328,18 @@
             this.ForeColor = System.Drawing.Color.LightGray;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            this.MinimumSize = new System.Drawing.Size(695, 660);
+            this.MinimumSize = new System.Drawing.Size(695, 690);
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "SPT Mini Launcher";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form1_FormClosing);
             this.Load += new System.EventHandler(this.Form1_Load);
+            this.LocationChanged += new System.EventHandler(this.Form1_LocationChanged);
             this.DragDrop += new System.Windows.Forms.DragEventHandler(this.Form1_DragDrop);
             this.DragEnter += new System.Windows.Forms.DragEventHandler(this.Form1_DragEnter);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
+            this.Resize += new System.EventHandler(this.Form1_Resize);
             this.boxPathBox.ResumeLayout(false);
             this.boxPathBox.PerformLayout();
             this.boxServers.ResumeLayout(false);
@@ -349,6 +368,7 @@
         private System.Windows.Forms.Label bResetThirdParty;
         private System.Windows.Forms.Label bRefresh;
         private System.Windows.Forms.Label bOpenOptions;
+        private System.Windows.Forms.Label bToggleOutputWindow;
     }
 }
 

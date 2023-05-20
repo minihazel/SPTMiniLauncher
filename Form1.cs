@@ -43,6 +43,8 @@ namespace SPTMiniLauncher
         public Process server;
         public Process launcher;
 
+        public outputWindow outputwindow;
+
         // background working
         BackgroundWorker CheckServerWorker;
         public BackgroundWorker TarkovProcessDetector;
@@ -59,6 +61,7 @@ namespace SPTMiniLauncher
             "- MODS -",
             "Open server mods",
             "Open profile -",
+            "Open control panel",
             "Open modloader JSON",
             "Open client mods",
             "- THIRDPARTY -",
@@ -76,6 +79,7 @@ namespace SPTMiniLauncher
             "- MODS -",
             "Open server mods",
             "Open profile -",
+            "Open control panel",
             "Open client mods",
             "- THIRDPARTY -",
             "Open Profile Editor",
@@ -100,6 +104,7 @@ namespace SPTMiniLauncher
 
             if (File.Exists(settingsFile) && File.Exists(firstTime))
             {
+
                 string readSettings = File.ReadAllText(settingsFile);
                 JObject settingsObject = JObject.Parse(readSettings);
 
@@ -115,6 +120,10 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
+                    outputwindow = new outputWindow();
+                    outputwindow.Visible = false;
+                    outputwindow.Owner = this;
+
                     if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
                     {
                         boxPath.Text = Properties.Settings.Default.server_path;
@@ -125,11 +134,13 @@ namespace SPTMiniLauncher
                                 Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
                             {
                                 isLoneServer = true;
+                                outputwindow.isTrue = true;
                                 listAllServers(boxPath.Text);
                             }
                             else
                             {
                                 isLoneServer = false;
+                                outputwindow.isTrue = false;
                                 listAllServers(boxPath.Text);
                             }
                         }
@@ -142,6 +153,7 @@ namespace SPTMiniLauncher
                         {
                             // actual app is in an SPT installation folder
                             isLoneServer = true;
+                            outputwindow.isTrue = true;
                             // boxPath.Text = Environment.CurrentDirectory;
                             Properties.Settings.Default.server_path = boxPath.Text;
                             Properties.Settings.Default.Save();
@@ -315,14 +327,14 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.loe_path = loepath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[11] = "Open Load Order Editor (LOE)";
+                serverOptionsStreets[12] = "Open Load Order Editor (LOE)";
             }
             else
             {
                 Properties.Settings.Default.loe_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[11] = "LOE not detected - click to download";
+                serverOptionsStreets[12] = "LOE not detected - click to download";
             }
 
             // perform profile editor check
@@ -334,8 +346,8 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.profile_editor_path = Path.Combine(progFiles, "SPT-AKI Profile Editor");
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[12] = "Open Profile Editor";
-                serverOptions[10] = "Open Profile Editor";
+                serverOptionsStreets[13] = "Open Profile Editor";
+                serverOptions[11] = "Open Profile Editor";
             }
             else if (Properties.Settings.Default.profile_editor_path != null || Properties.Settings.Default.profile_editor_path != "")
             {
@@ -346,8 +358,8 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.profile_editor_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[12] = "Profile Editor not detected - click to fix";
-                serverOptions[10] = "Profile Editor not detected - click to fix";
+                serverOptionsStreets[13] = "Profile Editor not detected - click to fix";
+                serverOptions[11] = "Profile Editor not detected - click to fix";
             }
 
             // server value modifier (svm)
@@ -359,16 +371,16 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.svm_path = svmpath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[13] = "Open Server Value Modifier (SVM)";
-                serverOptions[11] = "Open Server Value Modifier (SVM)";
+                serverOptionsStreets[14] = "Open Server Value Modifier (SVM)";
+                serverOptions[12] = "Open Server Value Modifier (SVM)";
             }
             else
             {
                 Properties.Settings.Default.svm_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[13] = "SVM not detected - click to download";
-                serverOptions[11] = "SVM not detected - click to download";
+                serverOptionsStreets[14] = "SVM not detected - click to download";
+                serverOptions[12] = "SVM not detected - click to download";
             }
 
             // spt realism
@@ -380,16 +392,16 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.realism_path = realismpath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[14] = "Open SPT Realism";
-                serverOptions[12] = "Open SPT Realism";
+                serverOptionsStreets[15] = "Open SPT Realism";
+                serverOptions[13] = "Open SPT Realism";
             }
             else
             {
                 Properties.Settings.Default.realism_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[14] = "SPT Realism not detected - click to download";
-                serverOptions[12] = "SPT Realism not detected - click to download";
+                serverOptionsStreets[15] = "SPT Realism not detected - click to download";
+                serverOptions[13] = "SPT Realism not detected - click to download";
             }
         }
 
@@ -1044,6 +1056,13 @@ namespace SPTMiniLauncher
                             label.Text = "Loading SPT, this may take a few";
                             break;
 
+                        case "open control panel":
+
+                            controlWindow wn = new controlWindow();
+                            wn.isTrue = isLoneServer;
+                            wn.ShowDialog();
+                            break;
+
                         case "open server mods":
 
                             if ((Control.MouseButtons & MouseButtons.Right) != 0)
@@ -1691,6 +1710,9 @@ namespace SPTMiniLauncher
                     akiServer.Start();
                     akiServer.BeginOutputReadLine();
                     checkWorker();
+
+                    if (Properties.Settings.Default.serverOutputting)
+                        outputwindow.Show();
                 }
                 catch (Exception err)
                 {
@@ -1727,6 +1749,9 @@ namespace SPTMiniLauncher
                     akiServer.Start();
                     akiServer.BeginOutputReadLine();
                     checkWorker();
+
+                    if (Properties.Settings.Default.serverOutputting)
+                        outputwindow.Show();
                 }
                 catch (Exception err)
                 {
@@ -1807,15 +1832,32 @@ namespace SPTMiniLauncher
 
         public void akiServer_OutputDataReceived(object sender, DataReceivedEventArgs e)
         {
-            string res = e.Data;
-            if (!string.IsNullOrEmpty(res))
+            if (outputwindow != null && outputwindow.IsHandleCreated)
             {
-                res = Regex.Replace(res, @"\[[0-1];[0-9][a-z]|\[[0-9][0-9][a-z]|\[[0-9][a-z]|\[[0-9][A-Z]", String.Empty);
+                RichTextBox sptOutputWindow = outputwindow.sptOutputWindow;
+
+                if (sptOutputWindow != null)
+                {
+                    string res = e.Data;
+                    if (!string.IsNullOrEmpty(res))
+                    {
+                        res = Regex.Replace(res, @"\[[0-1];[0-9][a-z]|\[[0-9][0-9][a-z]|\[[0-9][a-z]|\[[0-9][A-Z]", String.Empty);
+                    }
+
+                    sptOutputWindow.Invoke((MethodInvoker)(() => { sptOutputWindow.AppendText($"{res}\n"); }));
+                    outputwindow.Invoke((MethodInvoker)(() => { outputwindow.scrollTextForm(); }));
+
+                    akiServerOutputter.AppendLine(res);
+                }
             }
-            akiServerOutputter.AppendLine(res);
+
         }
 
         private void akiServer_Exited(object sender, EventArgs e)
+        {
+        }
+
+        public void killLauncher()
         {
         }
 
@@ -2021,6 +2063,8 @@ namespace SPTMiniLauncher
 
                 generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
                 resetRunButton();
+                clearOutput();
+
             }
             catch (Exception err)
             {
@@ -2233,6 +2277,17 @@ namespace SPTMiniLauncher
                     if (component.Text.ToLower().StartsWith("loading spt") || component.Text.ToLower().StartsWith("spt is running"))
                         component.Invoke((MethodInvoker)(() => { component.Text = "Run SPT"; }));
                 }
+            }
+        }
+
+        public void clearOutput()
+        {
+            if (outputwindow != null && outputwindow.IsHandleCreated)
+            {
+                RichTextBox sptOutputWindow = outputwindow.sptOutputWindow;
+                sptOutputWindow.Clear();
+                outputwindow.Invoke((MethodInvoker)(() => { outputwindow.modProblem = false; }));
+                outputwindow.Hide();
             }
         }
 
@@ -2606,6 +2661,47 @@ namespace SPTMiniLauncher
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             Properties.Settings.Default.Save();
+        }
+
+        private void bToggleOutputWindow_Click(object sender, EventArgs e)
+        {
+            if (outputwindow != null)
+            {
+                if (!outputwindow.Visible)
+                {
+                    outputwindow.Show();
+                }
+                else
+                {
+                    outputwindow.Hide();
+                }
+            }
+        }
+
+        private void bToggleOutputWindow_MouseEnter(object sender, EventArgs e)
+        {
+            bToggleOutputWindow.ForeColor = Color.DodgerBlue;
+        }
+
+        private void bToggleOutputWindow_MouseLeave(object sender, EventArgs e)
+        {
+            bToggleOutputWindow.ForeColor = Color.LightGray;
+        }
+
+        private void Form1_LocationChanged(object sender, EventArgs e)
+        {
+            if (outputwindow != null && outputwindow.IsHandleCreated)
+            {
+                outputwindow.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+            }
+        }
+
+        private void Form1_Resize(object sender, EventArgs e)
+        {
+            if (outputwindow != null && !outputwindow.IsDisposed)
+            {
+                outputwindow.SetBounds(this.Right, this.Top, outputwindow.Width, this.Height);
+            }
         }
     }
 }

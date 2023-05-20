@@ -96,6 +96,32 @@ namespace SPTMiniLauncher
                     break;
             }
 
+            switch (Properties.Settings.Default.serverOutputting)
+            {
+                case true:
+                    bEnableServerOutput.Text = "Enabled";
+                    bEnableServerOutput.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bEnableServerOutput.Text = "Disabled";
+                    bEnableServerOutput.ForeColor = Color.IndianRed;
+                    break;
+            }
+
+            switch (Properties.Settings.Default.serverErrorMessages)
+            {
+                case true:
+                    bEnableServerErrors.Text = "Enabled";
+                    bEnableServerErrors.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bEnableServerErrors.Text = "Disabled";
+                    bEnableServerErrors.ForeColor = Color.IndianRed;
+                    break;
+            }
+
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
         }
@@ -290,6 +316,42 @@ namespace SPTMiniLauncher
                 bEnableAltCache.Text = "On SPT stop";
                 Properties.Settings.Default.altCache = false;
             }
+        }
+
+        private void bEnableServerOutput_Click(object sender, EventArgs e)
+        {
+            if (bEnableServerOutput.Text.ToLower() == "enabled")
+            {
+                bEnableServerOutput.Text = "Disabled";
+                bEnableServerOutput.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.serverOutputting = false;
+            }
+            else
+            {
+                bEnableServerOutput.Text = "Enabled";
+                bEnableServerOutput.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.serverOutputting = true;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bEnableServerErrors_Click(object sender, EventArgs e)
+        {
+            if (bEnableServerErrors.Text.ToLower() == "enabled")
+            {
+                bEnableServerErrors.Text = "Disabled";
+                bEnableServerErrors.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.serverErrorMessages = false;
+            }
+            else
+            {
+                bEnableServerErrors.Text = "Enabled";
+                bEnableServerErrors.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.serverErrorMessages = true;
+            }
+
+            Properties.Settings.Default.Save();
         }
     }
 }

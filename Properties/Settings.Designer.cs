@@ -216,5 +216,29 @@ This tool has quite a few features. Via the control panel you can do the followi
                 this["altCache"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool serverOutputting {
+            get {
+                return ((bool)(this["serverOutputting"]));
+            }
+            set {
+                this["serverOutputting"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool serverErrorMessages {
+            get {
+                return ((bool)(this["serverErrorMessages"]));
+            }
+            set {
+                this["serverErrorMessages"] = value;
+            }
+        }
     }
 }
