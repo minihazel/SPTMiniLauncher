@@ -59,6 +59,20 @@ namespace SPTMiniLauncher
                 bEnableTimed.ForeColor = Color.IndianRed;
             }
 
+            switch (Properties.Settings.Default.tarkovDetector)
+            {
+                case false:
+                    bEnableTarkovDetection.Text = "Disabled";
+                    bEnableTarkovDetection.ForeColor = Color.IndianRed;
+                    bEndDetector.Enabled = false;
+                    break;
+
+                case true:
+                    bEnableTarkovDetection.Text = "Enabled";
+                    bEnableTarkovDetection.ForeColor = Color.DodgerBlue;
+                    bEndDetector.Enabled = true;
+                    break;
+            }
 
             switch (Properties.Settings.Default.clearCache)
             {
@@ -457,12 +471,12 @@ namespace SPTMiniLauncher
                     bHide.Text = "Close Launcher";
                     bHide.ForeColor = Color.DodgerBlue;
 
-                    bCloseOnSPTExit.Text = "Enabled";
-                    bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+                    bEnableTarkovDetection.Text = "Enabled";
+                    bEnableTarkovDetection.ForeColor = Color.DodgerBlue;
+                    bEndDetector.Enabled = true;
 
                     Properties.Settings.Default.hideOptions = 2;
-                    Properties.Settings.Default.closeOnQuit = true;
-                    Properties.Settings.Default.timedLauncherToggle = true;
+                    Properties.Settings.Default.tarkovDetector = true;
 
                     Properties.Settings.Default.Save();
                 }
@@ -475,12 +489,8 @@ namespace SPTMiniLauncher
                 bHide.Text = "Close Launcher";
                 bHide.ForeColor = Color.DodgerBlue;
 
-                bCloseOnSPTExit.Text = "Enabled";
-                bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
-
                 Properties.Settings.Default.hideOptions = 2;
-                Properties.Settings.Default.closeOnQuit = true;
-                Properties.Settings.Default.timedLauncherToggle = true;
+                Properties.Settings.Default.tarkovDetector = true;
 
                 Properties.Settings.Default.Save();
             }
@@ -501,8 +511,13 @@ namespace SPTMiniLauncher
                     bCloseOnSPTExit.Text = "Disabled";
                     bCloseOnSPTExit.ForeColor = Color.IndianRed;
 
+                    bEnableTarkovDetection.Text = "Disabled";
+                    bEnableTarkovDetection.ForeColor = Color.IndianRed;
+                    bEndDetector.Enabled = false;
+
                     Properties.Settings.Default.hideOptions = 0;
                     Properties.Settings.Default.closeOnQuit = false;
+                    Properties.Settings.Default.tarkovDetector = false;
                     Properties.Settings.Default.timedLauncherToggle = false;
 
                     Properties.Settings.Default.Save();
@@ -521,10 +536,31 @@ namespace SPTMiniLauncher
 
                 Properties.Settings.Default.hideOptions = 0;
                 Properties.Settings.Default.closeOnQuit = false;
-                Properties.Settings.Default.timedLauncherToggle = false;
+                Properties.Settings.Default.tarkovDetector = false;
+                Properties.Settings.Default.timedLauncherToggle = true;
 
                 Properties.Settings.Default.Save();
             }
+        }
+
+        private void bEnableTarkovDetection_Click(object sender, EventArgs e)
+        {
+            if (bEnableTarkovDetection.Text.ToLower() == "enabled")
+            {
+                bEnableTarkovDetection.Text = "Disabled";
+                bEnableTarkovDetection.ForeColor = Color.IndianRed;
+                bEndDetector.Enabled = false;
+                Properties.Settings.Default.tarkovDetector = false;
+            }
+            else
+            {
+                bEnableTarkovDetection.Text = "Enabled";
+                bEnableTarkovDetection.ForeColor = Color.DodgerBlue;
+                bEndDetector.Enabled = true;
+                Properties.Settings.Default.tarkovDetector = true;
+            }
+
+            Properties.Settings.Default.Save();
         }
     }
 }

@@ -77,5 +77,8 @@ This tool has quite a few features. Via the control panel you can do the followi
     <Setting Name="closeOnQuit" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
+    <Setting Name="tarkovDetector" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">True</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

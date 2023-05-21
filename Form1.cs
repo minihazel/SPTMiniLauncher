@@ -44,11 +44,13 @@ namespace SPTMiniLauncher
         public Process launcher;
 
         public outputWindow outputwindow;
+        private List<string> globalProcesses;
 
         // background working
         BackgroundWorker CheckServerWorker;
         public BackgroundWorker TarkovProcessDetector;
         public BackgroundWorker TarkovEndDetector;
+        public BackgroundWorker globalProcessDetector;
         public StringBuilder akiServerOutputter;
 
         // Lists
@@ -104,6 +106,7 @@ namespace SPTMiniLauncher
 
             if (File.Exists(settingsFile))
             {
+                globalProcesses = new List<string> { "Aki.Server", "Aki.Launcher", "EscapeFromTarkov" };
                 string readSettings = File.ReadAllText(settingsFile);
                 JObject settingsObject = JObject.Parse(readSettings);
 
@@ -529,6 +532,7 @@ namespace SPTMiniLauncher
             {
                 lbl.BackColor = listSelectedcolor;
                 boxSelectedServerTitle.Text = lbl.Text;
+
                 TarkovProcessDetector = new BackgroundWorker();
                 TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
                 TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
@@ -620,10 +624,13 @@ namespace SPTMiniLauncher
                 Process[] processes = Process.GetProcessesByName(processName);
                 if (processes.Length > 0)
                 {
-                    TarkovEndDetector = new BackgroundWorker();
-                    TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
-                    TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
-                    TarkovEndDetector.RunWorkerAsync();
+                    if (Properties.Settings.Default.tarkovDetector)
+                    {
+                        TarkovEndDetector = new BackgroundWorker();
+                        TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
+                        TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
+                        TarkovEndDetector.RunWorkerAsync();
+                    }
 
                     if (TarkovProcessDetector != null)
                         TarkovProcessDetector.Dispose();
@@ -642,28 +649,92 @@ namespace SPTMiniLauncher
                 TarkovProcessDetector.Dispose();
         }
 
+        public void globalProcessDetector_DoWork(object sender, DoWorkEventArgs e)
+        {
+            if (globalProcessDetector.CancellationPending)
+            {
+                e.Cancel = true;
+                return;
+            }
+
+            while (!globalProcessDetector.CancellationPending)
+            {
+                string aki_server = globalProcesses[0];
+                string aki_launcher = globalProcesses[1];
+                string eft = globalProcesses[2];
+
+                bool isServerRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(aki_server, StringComparison.OrdinalIgnoreCase));
+                bool isLauncherRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(aki_launcher, StringComparison.OrdinalIgnoreCase));
+                bool isEFTRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(eft, StringComparison.OrdinalIgnoreCase));
+
+                if (!isServerRunning && !isLauncherRunning && !isEFTRunning)
+                {
+                    OnAllProcessesTerminated();
+                    globalProcessDetector.CancelAsync();
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                }
+            }
+        }
+
+        public void globalProcessDetector_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (globalProcessDetector != null)
+                globalProcessDetector.Dispose();
+        }
+
+        private void OnAllProcessesTerminated()
+        {
+            generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
+            clearOutput();
+
+            if (TarkovProcessDetector != null)
+                TarkovProcessDetector.Dispose();
+
+            if (globalProcessDetector != null)
+            {
+                globalProcessDetector.Dispose();
+            }
+
+            Debug.WriteLine("Aki Server, Aki Launcher && EFT all terminated manually, committing to fallback");
+
+            if (Properties.Settings.Default.hideOptions > 0)
+            {
+                flashLauncherWindow();
+            }
+
+            resetRunButton();
+            if (Properties.Settings.Default.closeOnQuit)
+                Application.Exit();
+        }
+
         public void TarkovEndDetector_DoWork(object sender, DoWorkEventArgs e)
         {
-            string processName = "EscapeFromTarkov";
-            while (true)
+            if (Properties.Settings.Default.tarkovDetector)
             {
-                Process[] processes = Process.GetProcessesByName(processName);
-                if (processes.Length == 0)
+                string processName = "EscapeFromTarkov";
+                while (true)
                 {
-                    if (Properties.Settings.Default.hideOptions == 0
-                        || Properties.Settings.Default.hideOptions == 1)
+                    Process[] processes = Process.GetProcessesByName(processName);
+                    if (processes.Length == 0)
                     {
-                        flashLauncherWindow();
+                        if (Properties.Settings.Default.hideOptions == 1
+                            || Properties.Settings.Default.hideOptions == 2)
+                        {
+                            flashLauncherWindow();
+                        }
+                        killProcesses();
+                        if (TarkovEndDetector != null)
+                            TarkovEndDetector.Dispose();
+
+                        break;
                     }
-                    killProcesses();
-                    if (TarkovEndDetector != null)
-                        TarkovEndDetector.Dispose();
 
-                    break;
+                    int interval = Convert.ToInt32(Properties.Settings.Default.endDetector);
+                    System.Threading.Thread.Sleep(interval);
                 }
-
-                int interval = Convert.ToInt32(Properties.Settings.Default.endDetector);
-                System.Threading.Thread.Sleep(interval);
             }
         }
 
@@ -679,11 +750,13 @@ namespace SPTMiniLauncher
             {
                 this.Invoke((MethodInvoker)delegate
                 {
+                    this.Show();
                     this.WindowState = FormWindowState.Normal;
                 });
             }
             else
             {
+                this.Show();
                 this.WindowState = FormWindowState.Normal;
             }
         }
@@ -1782,8 +1855,60 @@ namespace SPTMiniLauncher
             }
             else
             {
+                if (isLoneServer)
+                {
+                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                    Process akiServer = new Process();
 
+                    akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                    akiServer.StartInfo.FileName = "Aki.Server.exe";
+                    akiServer.StartInfo.CreateNoWindow = false;
+                    akiServer.StartInfo.UseShellExecute = false;
+                    akiServer.StartInfo.RedirectStandardOutput = false;
+
+                    try
+                    {
+                        akiServer.Start();
+                        checkWorker();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
+                }
+                else
+                {
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    Directory.SetCurrentDirectory(selectedServer);
+                    Process akiServer = new Process();
+
+                    akiServer.StartInfo.WorkingDirectory = selectedServer;
+                    akiServer.StartInfo.FileName = "Aki.Server.exe";
+                    akiServer.StartInfo.CreateNoWindow = false;
+                    akiServer.StartInfo.UseShellExecute = false;
+                    akiServer.StartInfo.RedirectStandardOutput = false;
+
+                    try
+                    {
+                        akiServer.Start();
+                        checkWorker();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                    Directory.SetCurrentDirectory(currentDir);
+                }
             }
+
+            globalProcessDetector = new BackgroundWorker();
+            globalProcessDetector.WorkerSupportsCancellation = true;
+            globalProcessDetector.DoWork += globalProcessDetector_DoWork;
+            globalProcessDetector.RunWorkerCompleted += globalProcessDetector_RunWorkerCompleted;
+            globalProcessDetector.RunWorkerAsync();
         }
 
         public void runLauncher()
@@ -1794,9 +1919,6 @@ namespace SPTMiniLauncher
             string currentDir = Directory.GetCurrentDirectory();
             if (isLoneServer)
             {
-                //if (launchers.Length > 0)
-                // killProcesses();
-
                 Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
                 Process akiLauncher = new Process();
 
@@ -1824,9 +1946,6 @@ namespace SPTMiniLauncher
             }
             else
             {
-                //if (launchers.Length > 0)
-                // killProcesses();
-
                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                 Directory.SetCurrentDirectory(selectedServer);
                 Process akiLauncher = new Process();
@@ -2076,6 +2195,9 @@ namespace SPTMiniLauncher
 
             try
             {
+                if (globalProcessDetector != null)
+                    globalProcessDetector.Dispose();
+
                 if (CheckServerWorker != null)
                     CheckServerWorker.Dispose();
 
@@ -2092,7 +2214,6 @@ namespace SPTMiniLauncher
 
                 if (Properties.Settings.Default.closeOnQuit)
                     Application.Exit();
-
             }
             catch (Exception err)
             {
@@ -2102,6 +2223,26 @@ namespace SPTMiniLauncher
 
         public void checkWorker()
         {
+            CheckServerWorker = new BackgroundWorker();
+            if (CheckServerWorker != null)
+                CheckServerWorker.Dispose();
+
+            CheckServerWorker.WorkerSupportsCancellation = true;
+            CheckServerWorker.WorkerReportsProgress = false;
+
+            CheckServerWorker.DoWork += CheckServerWorker_DoWork;
+            CheckServerWorker.RunWorkerCompleted += CheckServerWorker_RunWorkerCompleted;
+
+            try
+            {
+                CheckServerWorker.RunWorkerAsync();
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error: {ex.Message}");
+            }
+
+            /*
             if (Properties.Settings.Default.timedLauncherToggle)
             {
                 CheckServerWorker = new BackgroundWorker();
@@ -2127,6 +2268,7 @@ namespace SPTMiniLauncher
             {
                 runLauncher();
             }
+            */
         }
 
         private void CheckServerWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -2148,7 +2290,7 @@ namespace SPTMiniLauncher
                 }
 
                 int port = akiPort; // the port to check
-                int timeout = 360000; // the maximum time to wait for the port to open in milliseconds
+                int timeout = 120000; // the maximum time to wait for the port to open in milliseconds
                 int delay = 1000; // the delay between port checks in milliseconds
                 int elapsed = 0; // the time elapsed since starting to check the port
 
@@ -2161,7 +2303,7 @@ namespace SPTMiniLauncher
                         if (CheckServerWorker != null)
                             CheckServerWorker.Dispose();
 
-                        showError("We could not detect the Aki Launcher after 20 seconds.\n" +
+                        showError("We could not detect the Aki Launcher after 2 minutes.\n" +
                                   "\n" +
                                   "Max duration reached, launching SPT-AKI.");
 
@@ -2192,7 +2334,7 @@ namespace SPTMiniLauncher
                 }
 
                 int port = akiPort; // the port to check
-                int timeout = 360000; // the maximum time to wait for the port to open in milliseconds
+                int timeout = 120000; // the maximum time to wait for the port to open in milliseconds
                 int delay = 1000; // the delay between port checks in milliseconds
                 int elapsed = 0; // the time elapsed since starting to check the port
 
@@ -2205,7 +2347,7 @@ namespace SPTMiniLauncher
                         if (CheckServerWorker != null)
                             CheckServerWorker.Dispose();
 
-                        showError("We could not detect the Aki Launcher after 20 seconds.\n" +
+                        showError("We could not detect the Aki Launcher after 2 minutes.\n" +
                                   "\n" +
                                   "Max duration reached, launching SPT-AKI.");
 
@@ -2273,15 +2415,18 @@ namespace SPTMiniLauncher
 
         public void generateLogFile(string path)
         {
-            string logDir = Path.Combine(Environment.CurrentDirectory, "logs");
-            if (!Directory.Exists(logDir))
-                Directory.CreateDirectory(logDir);
+            if (akiServerOutputter != null)
+            {
+                string logDir = Path.Combine(Environment.CurrentDirectory, "logs");
+                if (!Directory.Exists(logDir))
+                    Directory.CreateDirectory(logDir);
 
-            string logFileName = GenerateLogName();
-            File.WriteAllText(Path.Combine(path, logFileName), akiServerOutputter.ToString());
+                string logFileName = GenerateLogName();
+                File.WriteAllText(Path.Combine(path, logFileName), akiServerOutputter.ToString());
 
-            if (Properties.Settings.Default.openLogOnQuit)
-                Process.Start(Path.Combine(path, logFileName));
+                if (Properties.Settings.Default.openLogOnQuit)
+                    Process.Start(Path.Combine(path, logFileName));
+            }
         }
 
         public void confirmLaunched()
@@ -2296,7 +2441,14 @@ namespace SPTMiniLauncher
             }
 
             if (Properties.Settings.Default.hideOptions == 2)
+            {
                 hideLauncherWindow();
+                if (outputwindow != null && outputwindow.IsHandleCreated)
+                {
+                    if (Properties.Settings.Default.serverOutputting)
+                        outputwindow.Invoke((MethodInvoker)(() => { outputwindow.Hide(); }));
+                }
+            }
         }
 
         public void resetRunButton()
@@ -2696,17 +2848,6 @@ namespace SPTMiniLauncher
 
         private void bToggleOutputWindow_Click(object sender, EventArgs e)
         {
-            if (outputwindow != null)
-            {
-                if (!outputwindow.Visible)
-                {
-                    outputwindow.Show();
-                }
-                else
-                {
-                    outputwindow.Hide();
-                }
-            }
         }
 
         private void bToggleOutputWindow_MouseEnter(object sender, EventArgs e)
@@ -2732,6 +2873,21 @@ namespace SPTMiniLauncher
             if (outputwindow != null && !outputwindow.IsDisposed)
             {
                 outputwindow.SetBounds(this.Right, this.Top, outputwindow.Width, this.Height);
+            }
+        }
+
+        private void bToggleOutputWindow_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (outputwindow != null)
+            {
+                if (!outputwindow.Visible)
+                {
+                    outputwindow.Show();
+                }
+                else
+                {
+                    outputwindow.Hide();
+                }
             }
         }
     }

@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(optionsWindow));
             this.panelMinimizeOnSPTLaunch = new System.Windows.Forms.GroupBox();
             this.bHide = new System.Windows.Forms.Button();
@@ -73,6 +74,10 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.bPreset2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.panelTarkovDetector = new System.Windows.Forms.GroupBox();
+            this.bEnableTarkovDetection = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -89,6 +94,7 @@
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panelTarkovDetector.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -100,7 +106,9 @@
             this.panelMinimizeOnSPTLaunch.Size = new System.Drawing.Size(220, 65);
             this.panelMinimizeOnSPTLaunch.TabIndex = 0;
             this.panelMinimizeOnSPTLaunch.TabStop = false;
-            this.panelMinimizeOnSPTLaunch.Text = "SPT launch options";
+            this.panelMinimizeOnSPTLaunch.Text = "SPT Launcher start display";
+            this.optionsToolTip.SetToolTip(this.panelMinimizeOnSPTLaunch, "If enabled, SPT Launcher will minimize (alternatively close) while SPT is running" +
+        ".");
             // 
             // bHide
             // 
@@ -128,6 +136,8 @@
             this.panelEnableTimedAkiLauncher.TabIndex = 1;
             this.panelEnableTimedAkiLauncher.TabStop = false;
             this.panelEnableTimedAkiLauncher.Text = "Enable timed Aki Launcher";
+            this.optionsToolTip.SetToolTip(this.panelEnableTimedAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
+        "p SPT to be used in order to exit properly.");
             // 
             // bEnableTimed
             // 
@@ -216,6 +226,7 @@
             this.panelClearCache.TabIndex = 3;
             this.panelClearCache.TabStop = false;
             this.panelClearCache.Text = "Clear cache options";
+            this.optionsToolTip.SetToolTip(this.panelClearCache, "If enabled, SPT Launcher will clear the server cache for your specified server.");
             // 
             // bEnableClearCache
             // 
@@ -299,6 +310,8 @@
             this.panelLogFile.TabIndex = 5;
             this.panelLogFile.TabStop = false;
             this.panelLogFile.Text = "Open log file on SPT quit";
+            this.optionsToolTip.SetToolTip(this.panelLogFile, "If enabled, SPT Launcher will open the newly generated log file after SPT closes." +
+        "\r\n\r\n(Requires SPT-AKI settings -> Enable Timed Aki Launcher)");
             // 
             // bEnableOpenLog
             // 
@@ -325,7 +338,9 @@
             this.panelConfirmationQuit.Size = new System.Drawing.Size(220, 65);
             this.panelConfirmationQuit.TabIndex = 6;
             this.panelConfirmationQuit.TabStop = false;
-            this.panelConfirmationQuit.Text = "Confirmation pop-ups";
+            this.panelConfirmationQuit.Text = "Button confirmation pop-ups";
+            this.optionsToolTip.SetToolTip(this.panelConfirmationQuit, "If enabled, clicking \'Stop SPT\' and \'Clear Cache\' will ask for confirmation to av" +
+        "oid mis-clicks.");
             // 
             // bEnableConfirmation
             // 
@@ -352,7 +367,9 @@
             this.panelServerOutput.Size = new System.Drawing.Size(220, 65);
             this.panelServerOutput.TabIndex = 7;
             this.panelServerOutput.TabStop = false;
-            this.panelServerOutput.Text = "Display server data on start";
+            this.panelServerOutput.Text = "Display server output on start";
+            this.optionsToolTip.SetToolTip(this.panelServerOutput, "If enabled, an external window will output the Aki Server\'s data for convenient v" +
+        "iewing.\r\n\r\n(Requires SPT-AKI settings -> Enable Timed Aki Launcher)");
             // 
             // bEnableServerOutput
             // 
@@ -380,6 +397,8 @@
             this.panelServerError.TabIndex = 8;
             this.panelServerError.TabStop = false;
             this.panelServerError.Text = " Server error pop-ups ";
+            this.optionsToolTip.SetToolTip(this.panelServerError, "If enabled, if the external output window receives an error, SPT Launcher will no" +
+        "tify with a message.");
             // 
             // bEnableServerErrors
             // 
@@ -407,6 +426,7 @@
             this.panelCloseOnExit.TabIndex = 9;
             this.panelCloseOnExit.TabStop = false;
             this.panelCloseOnExit.Text = "Close Launcher on SPT quit";
+            this.optionsToolTip.SetToolTip(this.panelCloseOnExit, "If enabled, SPT Launcher will close when the Aki Server & Launcher close.");
             // 
             // bCloseOnSPTExit
             // 
@@ -558,6 +578,7 @@
             // 
             // panelSPTAKISettings
             // 
+            this.panelSPTAKISettings.Controls.Add(this.label2);
             this.panelSPTAKISettings.Controls.Add(this.panelEnableTimedAkiLauncher);
             this.panelSPTAKISettings.Location = new System.Drawing.Point(12, 145);
             this.panelSPTAKISettings.Name = "panelSPTAKISettings";
@@ -566,6 +587,7 @@
             // 
             // panelTarkovSettings
             // 
+            this.panelTarkovSettings.Controls.Add(this.panelTarkovDetector);
             this.panelTarkovSettings.Controls.Add(this.panelDetectors);
             this.panelTarkovSettings.Location = new System.Drawing.Point(12, 145);
             this.panelTarkovSettings.Name = "panelTarkovSettings";
@@ -656,6 +678,53 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "\"Live-like\" preset";
             // 
+            // panelTarkovDetector
+            // 
+            this.panelTarkovDetector.Controls.Add(this.bEnableTarkovDetection);
+            this.panelTarkovDetector.ForeColor = System.Drawing.Color.LightGray;
+            this.panelTarkovDetector.Location = new System.Drawing.Point(3, 134);
+            this.panelTarkovDetector.Name = "panelTarkovDetector";
+            this.panelTarkovDetector.Size = new System.Drawing.Size(220, 65);
+            this.panelTarkovDetector.TabIndex = 8;
+            this.panelTarkovDetector.TabStop = false;
+            this.panelTarkovDetector.Text = "Allow Tarkov auto-detection";
+            this.optionsToolTip.SetToolTip(this.panelTarkovDetector, "If enabled, quitting Tarkov will automatically be detected. Can be used alongside" +
+        " the internal Aki Server.");
+            // 
+            // bEnableTarkovDetection
+            // 
+            this.bEnableTarkovDetection.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableTarkovDetection.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableTarkovDetection.FlatAppearance.BorderSize = 0;
+            this.bEnableTarkovDetection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableTarkovDetection.ForeColor = System.Drawing.Color.IndianRed;
+            this.bEnableTarkovDetection.Location = new System.Drawing.Point(15, 23);
+            this.bEnableTarkovDetection.Name = "bEnableTarkovDetection";
+            this.bEnableTarkovDetection.Size = new System.Drawing.Size(180, 30);
+            this.bEnableTarkovDetection.TabIndex = 4;
+            this.bEnableTarkovDetection.Text = "Disabled";
+            this.bEnableTarkovDetection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableTarkovDetection.UseVisualStyleBackColor = true;
+            this.bEnableTarkovDetection.Click += new System.EventHandler(this.bEnableTarkovDetection_Click);
+            // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Bahnschrift Light", 9F);
+            this.label2.Location = new System.Drawing.Point(3, 71);
+            this.label2.Name = "label2";
+            this.label2.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.label2.Size = new System.Drawing.Size(220, 97);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Enabling this setting will run the Aki Server internally.\r\n\r\nClicking \'Stop SPT\' " +
+    "while the Aki Server is running will close it.";
+            // 
+            // optionsToolTip
+            // 
+            this.optionsToolTip.AutoPopDelay = 30000;
+            this.optionsToolTip.InitialDelay = 500;
+            this.optionsToolTip.ReshowDelay = 100;
+            this.optionsToolTip.ToolTipTitle = "Setting";
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -669,10 +738,10 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
+            this.Controls.Add(this.panelPresets);
             this.Controls.Add(this.panelLauncherSettings);
             this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
-            this.Controls.Add(this.panelPresets);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -682,7 +751,7 @@
             this.MinimizeBox = false;
             this.Name = "optionsWindow";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = " ";
+            this.Text = " Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.optionsWindow_FormClosing);
             this.Load += new System.EventHandler(this.optionsWindow_Load);
             this.panelMinimizeOnSPTLaunch.ResumeLayout(false);
@@ -701,6 +770,7 @@
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.panelTarkovDetector.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -751,5 +821,9 @@
         private System.Windows.Forms.Button bPreset2;
         private System.Windows.Forms.Label descPreset2;
         private System.Windows.Forms.Label descPreset1;
+        private System.Windows.Forms.GroupBox panelTarkovDetector;
+        private System.Windows.Forms.Button bEnableTarkovDetection;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.ToolTip optionsToolTip;
     }
 }

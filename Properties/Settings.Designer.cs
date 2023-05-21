@@ -250,5 +250,17 @@ This tool has quite a few features. Via the control panel you can do the followi
                 this["closeOnQuit"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool tarkovDetector {
+            get {
+                return ((bool)(this["tarkovDetector"]));
+            }
+            set {
+                this["tarkovDetector"] = value;
+            }
+        }
     }
 }
