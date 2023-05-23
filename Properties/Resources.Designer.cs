@@ -59,5 +59,33 @@ namespace SPTMiniLauncher.Properties {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Welcome to my SPT Launcher!
+        ///It looks like it&apos;s your first time running this launcher, or you just downloaded a new update of it.
+        ///
+        ///This tool has quite a few features. Via the interface you can do the following:
+        ///
+        ///- Launch SPT
+        ///  Includes various customizable options
+        ///
+        ///- Quit and exit SPT
+        ///
+        ///- Clear cache
+        ///
+        ///- Open the control panel
+        ///  This serves as a navigation hub for various important locations and files
+        ///
+        ///- Open client and server mods folders
+        ///
+        ///- Open server folder
+        ///
+        ///- Open the load order file (p [rest of string was truncated]&quot;;.
+        /// </summary>
+        internal static string firstTimeMessage {
+            get {
+                return ResourceManager.GetString("firstTimeMessage", resourceCulture);
+            }
+        }
     }
 }

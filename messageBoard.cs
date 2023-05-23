@@ -98,5 +98,9 @@ namespace SPTMiniLauncher
         {
             messageTitle.Select();
         }
+
+        private void messageBox_MouseMove(object sender, MouseEventArgs e)
+        {
+        }
     }
 }

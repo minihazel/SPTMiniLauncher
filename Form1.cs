@@ -96,6 +96,7 @@ namespace SPTMiniLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            boxPath.Text = "";
             outputwindow = new outputWindow();
             outputwindow.Visible = false;
             outputwindow.Owner = this;
@@ -104,7 +105,6 @@ namespace SPTMiniLauncher
             // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
 
             messageBoard form = new messageBoard();
-            form.Size = new Size(623, 595);
             RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
             Label messageTitle = (Label)form.Controls["messageTitle"];
             messageTitle.ForeColor = Color.LightGray;
@@ -122,6 +122,7 @@ namespace SPTMiniLauncher
                     messageTitle.Text = "First time setup";
                     messageBox.Text = Properties.Settings.Default.firstTimeMessage; /* File.ReadAllText(firstTime); */
 
+                    form.Size = new Size(623, 730);
                     form.ShowDialog();
                     File.WriteAllText(settingsFile, settingsObject.ToString());
                 }
@@ -182,6 +183,7 @@ namespace SPTMiniLauncher
             {
                 messageTitle.Text = "Settings file was not detected!";
                 messageBox.Text = $"We could not detect the settings file. Please restart so that the launcher can generate it!";
+                form.Size = new Size(623, 200);
                 form.ShowDialog();
             }
 
