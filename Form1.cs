@@ -104,6 +104,7 @@ namespace SPTMiniLauncher
             // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
 
             messageBoard form = new messageBoard();
+            form.Size = new Size(623, 595);
             RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
             Label messageTitle = (Label)form.Controls["messageTitle"];
             messageTitle.ForeColor = Color.LightGray;
