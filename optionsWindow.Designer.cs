@@ -66,7 +66,10 @@
             this.tabSPTDesc = new System.Windows.Forms.Label();
             this.tabTarkovDesc = new System.Windows.Forms.Label();
             this.panelSPTAKISettings = new System.Windows.Forms.Panel();
+            this.label2 = new System.Windows.Forms.Label();
             this.panelTarkovSettings = new System.Windows.Forms.Panel();
+            this.panelTarkovDetector = new System.Windows.Forms.GroupBox();
+            this.bEnableTarkovDetection = new System.Windows.Forms.Button();
             this.tabPresets = new System.Windows.Forms.Button();
             this.panelPresets = new System.Windows.Forms.Panel();
             this.descPreset1 = new System.Windows.Forms.Label();
@@ -74,9 +77,6 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.bPreset2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.panelTarkovDetector = new System.Windows.Forms.GroupBox();
-            this.bEnableTarkovDetection = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
             this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
@@ -91,10 +91,10 @@
             this.panelLauncherSettings.SuspendLayout();
             this.panelSPTAKISettings.SuspendLayout();
             this.panelTarkovSettings.SuspendLayout();
+            this.panelTarkovDetector.SuspendLayout();
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panelTarkovDetector.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -585,6 +585,17 @@
             this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 348);
             this.panelSPTAKISettings.TabIndex = 15;
             // 
+            // label2
+            // 
+            this.label2.Font = new System.Drawing.Font("Bahnschrift Light", 9F);
+            this.label2.Location = new System.Drawing.Point(3, 71);
+            this.label2.Name = "label2";
+            this.label2.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.label2.Size = new System.Drawing.Size(220, 97);
+            this.label2.TabIndex = 17;
+            this.label2.Text = "Enabling this setting will run the Aki Server internally.\r\n\r\nClicking \'Stop SPT\' " +
+    "while the Aki Server is running will close it.";
+            // 
             // panelTarkovSettings
             // 
             this.panelTarkovSettings.Controls.Add(this.panelTarkovDetector);
@@ -593,6 +604,35 @@
             this.panelTarkovSettings.Name = "panelTarkovSettings";
             this.panelTarkovSettings.Size = new System.Drawing.Size(798, 348);
             this.panelTarkovSettings.TabIndex = 16;
+            // 
+            // panelTarkovDetector
+            // 
+            this.panelTarkovDetector.Controls.Add(this.bEnableTarkovDetection);
+            this.panelTarkovDetector.ForeColor = System.Drawing.Color.LightGray;
+            this.panelTarkovDetector.Location = new System.Drawing.Point(3, 134);
+            this.panelTarkovDetector.Name = "panelTarkovDetector";
+            this.panelTarkovDetector.Size = new System.Drawing.Size(220, 65);
+            this.panelTarkovDetector.TabIndex = 8;
+            this.panelTarkovDetector.TabStop = false;
+            this.panelTarkovDetector.Text = "Allow Tarkov auto-detection";
+            this.optionsToolTip.SetToolTip(this.panelTarkovDetector, "If enabled, quitting Tarkov will automatically be detected. Can be used alongside" +
+        " the internal Aki Server.");
+            // 
+            // bEnableTarkovDetection
+            // 
+            this.bEnableTarkovDetection.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableTarkovDetection.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableTarkovDetection.FlatAppearance.BorderSize = 0;
+            this.bEnableTarkovDetection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableTarkovDetection.ForeColor = System.Drawing.Color.IndianRed;
+            this.bEnableTarkovDetection.Location = new System.Drawing.Point(15, 23);
+            this.bEnableTarkovDetection.Name = "bEnableTarkovDetection";
+            this.bEnableTarkovDetection.Size = new System.Drawing.Size(180, 30);
+            this.bEnableTarkovDetection.TabIndex = 4;
+            this.bEnableTarkovDetection.Text = "Disabled";
+            this.bEnableTarkovDetection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableTarkovDetection.UseVisualStyleBackColor = true;
+            this.bEnableTarkovDetection.Click += new System.EventHandler(this.bEnableTarkovDetection_Click);
             // 
             // tabPresets
             // 
@@ -678,46 +718,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "\"Live-like\" preset";
             // 
-            // panelTarkovDetector
-            // 
-            this.panelTarkovDetector.Controls.Add(this.bEnableTarkovDetection);
-            this.panelTarkovDetector.ForeColor = System.Drawing.Color.LightGray;
-            this.panelTarkovDetector.Location = new System.Drawing.Point(3, 134);
-            this.panelTarkovDetector.Name = "panelTarkovDetector";
-            this.panelTarkovDetector.Size = new System.Drawing.Size(220, 65);
-            this.panelTarkovDetector.TabIndex = 8;
-            this.panelTarkovDetector.TabStop = false;
-            this.panelTarkovDetector.Text = "Allow Tarkov auto-detection";
-            this.optionsToolTip.SetToolTip(this.panelTarkovDetector, "If enabled, quitting Tarkov will automatically be detected. Can be used alongside" +
-        " the internal Aki Server.");
-            // 
-            // bEnableTarkovDetection
-            // 
-            this.bEnableTarkovDetection.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bEnableTarkovDetection.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bEnableTarkovDetection.FlatAppearance.BorderSize = 0;
-            this.bEnableTarkovDetection.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bEnableTarkovDetection.ForeColor = System.Drawing.Color.IndianRed;
-            this.bEnableTarkovDetection.Location = new System.Drawing.Point(15, 23);
-            this.bEnableTarkovDetection.Name = "bEnableTarkovDetection";
-            this.bEnableTarkovDetection.Size = new System.Drawing.Size(180, 30);
-            this.bEnableTarkovDetection.TabIndex = 4;
-            this.bEnableTarkovDetection.Text = "Disabled";
-            this.bEnableTarkovDetection.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bEnableTarkovDetection.UseVisualStyleBackColor = true;
-            this.bEnableTarkovDetection.Click += new System.EventHandler(this.bEnableTarkovDetection_Click);
-            // 
-            // label2
-            // 
-            this.label2.Font = new System.Drawing.Font("Bahnschrift Light", 9F);
-            this.label2.Location = new System.Drawing.Point(3, 71);
-            this.label2.Name = "label2";
-            this.label2.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
-            this.label2.Size = new System.Drawing.Size(220, 97);
-            this.label2.TabIndex = 17;
-            this.label2.Text = "Enabling this setting will run the Aki Server internally.\r\n\r\nClicking \'Stop SPT\' " +
-    "while the Aki Server is running will close it.";
-            // 
             // optionsToolTip
             // 
             this.optionsToolTip.AutoPopDelay = 30000;
@@ -738,10 +738,10 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
-            this.Controls.Add(this.panelPresets);
             this.Controls.Add(this.panelLauncherSettings);
             this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
+            this.Controls.Add(this.panelPresets);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -767,10 +767,10 @@
             this.panelLauncherSettings.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
             this.panelTarkovSettings.ResumeLayout(false);
+            this.panelTarkovDetector.ResumeLayout(false);
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.panelTarkovDetector.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

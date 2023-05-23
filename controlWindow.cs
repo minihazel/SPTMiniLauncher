@@ -66,7 +66,6 @@ namespace SPTMiniLauncher
         private void globalLabel_Click(object sender, EventArgs e)
         {
             Button btn = (Button)sender;
-            this.Close();
         }
 
         private void globalLabel_MouseEnter(object sender, EventArgs e)

@@ -96,6 +96,10 @@ namespace SPTMiniLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            outputwindow = new outputWindow();
+            outputwindow.Visible = false;
+            outputwindow.Owner = this;
+
             settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
             // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
 
@@ -122,9 +126,6 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    outputwindow = new outputWindow();
-                    outputwindow.Visible = false;
-                    outputwindow.Owner = this;
 
                     if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
                     {
