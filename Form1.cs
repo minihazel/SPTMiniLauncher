@@ -2251,7 +2251,6 @@ namespace SPTMiniLauncher
                 else
                 {
                     akiServerTerminated = true;
-                    Debug.WriteLine("Server already terminated");
                 }
 
                 Process[] procs2 = Process.GetProcessesByName(akiLauncherProcess);
@@ -2261,7 +2260,6 @@ namespace SPTMiniLauncher
                 else
                 {
                     akiLauncherTerminated = true;
-                    Debug.WriteLine("Launcher already terminated");
                 }
 
                 Process[] procs3 = Process.GetProcessesByName(eftProcess);
@@ -2271,7 +2269,6 @@ namespace SPTMiniLauncher
                 else
                 {
                     eftTerminated = true;
-                    Debug.WriteLine("EFT already terminated");
                 }
 
                 if (akiServerTerminated && akiLauncherTerminated && eftTerminated)
@@ -2279,10 +2276,6 @@ namespace SPTMiniLauncher
                     statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI successfully exited, resetting"; }));
                     await Task.Delay(1000);
                     statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Run SPT"; }));
-
-                    MessageBox.Show("Server terminated\n" +
-                                    "Launcher terminated\n" +
-                                    "EFT terminated");
                 }
                 else
                 {

@@ -163,10 +163,12 @@ namespace SPTMiniLauncher
             if (bDetach.Text.ToLower() == "click to toggle: stickied")
             {
                 bDetach.Text = "Click to toggle: detached";
+                this.Owner = null;
             }
             else
             {
                 bDetach.Text = "Click to toggle: stickied";
+                this.Owner = mainForm;
                 this.Location = new Point(mainForm.Location.X + mainForm.Width, mainForm.Location.Y);
                 this.Size = new Size(this.Size.Width, mainForm.Size.Height);
             }
