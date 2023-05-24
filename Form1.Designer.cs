@@ -305,6 +305,7 @@
             this.bToggleOutputWindow.TabIndex = 8;
             this.bToggleOutputWindow.Text = "Toggle output window";
             this.bToggleOutputWindow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.bToggleOutputWindow.Visible = false;
             this.bToggleOutputWindow.Click += new System.EventHandler(this.bToggleOutputWindow_Click);
             this.bToggleOutputWindow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bToggleOutputWindow_MouseDown);
             this.bToggleOutputWindow.MouseEnter += new System.EventHandler(this.bToggleOutputWindow_MouseEnter);

@@ -30,6 +30,7 @@
         {
             this.sptOutputWindow = new System.Windows.Forms.RichTextBox();
             this.bDetach = new System.Windows.Forms.Label();
+            this.bToggleWordWrap = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // sptOutputWindow
@@ -61,14 +62,30 @@
             this.bDetach.Location = new System.Drawing.Point(0, 622);
             this.bDetach.Name = "bDetach";
             this.bDetach.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
-            this.bDetach.Size = new System.Drawing.Size(454, 29);
+            this.bDetach.Size = new System.Drawing.Size(228, 29);
             this.bDetach.TabIndex = 5;
             this.bDetach.Text = "Click to toggle: stickied";
             this.bDetach.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bDetach.Visible = false;
             this.bDetach.Click += new System.EventHandler(this.bDetach_Click);
             this.bDetach.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bDetach_MouseDown);
             this.bDetach.MouseEnter += new System.EventHandler(this.bDetach_MouseEnter);
             this.bDetach.MouseLeave += new System.EventHandler(this.bDetach_MouseLeave);
+            // 
+            // bToggleWordWrap
+            // 
+            this.bToggleWordWrap.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bToggleWordWrap.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bToggleWordWrap.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.bToggleWordWrap.Location = new System.Drawing.Point(226, 622);
+            this.bToggleWordWrap.Name = "bToggleWordWrap";
+            this.bToggleWordWrap.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
+            this.bToggleWordWrap.Size = new System.Drawing.Size(228, 29);
+            this.bToggleWordWrap.TabIndex = 6;
+            this.bToggleWordWrap.Text = "Toggle word wrap";
+            this.bToggleWordWrap.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.bToggleWordWrap.Visible = false;
+            this.bToggleWordWrap.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bToggleWordWrap_MouseDown);
             // 
             // outputWindow
             // 
@@ -76,15 +93,13 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(454, 651);
+            this.Controls.Add(this.bToggleWordWrap);
             this.Controls.Add(this.bDetach);
             this.Controls.Add(this.sptOutputWindow);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.MaximizeBox = false;
-            this.MinimizeBox = false;
             this.Name = "outputWindow";
             this.ShowIcon = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
@@ -100,5 +115,6 @@
 
         public System.Windows.Forms.RichTextBox sptOutputWindow;
         private System.Windows.Forms.Label bDetach;
+        private System.Windows.Forms.Label bToggleWordWrap;
     }
 }

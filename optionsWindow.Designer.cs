@@ -59,6 +59,8 @@
             this.tabSPTAKI = new System.Windows.Forms.Button();
             this.tabTarkov = new System.Windows.Forms.Button();
             this.panelLauncherSettings = new System.Windows.Forms.Panel();
+            this.panelCloseControl = new System.Windows.Forms.GroupBox();
+            this.bEnableControlPanel = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -78,8 +80,6 @@
             this.bPreset2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.panelCloseControl = new System.Windows.Forms.GroupBox();
-            this.bEnableControlPanel = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -91,13 +91,13 @@
             this.panelServerError.SuspendLayout();
             this.panelCloseOnExit.SuspendLayout();
             this.panelLauncherSettings.SuspendLayout();
+            this.panelCloseControl.SuspendLayout();
             this.panelSPTAKISettings.SuspendLayout();
             this.panelTarkovSettings.SuspendLayout();
             this.panelTarkovDetector.SuspendLayout();
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panelCloseControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -138,7 +138,7 @@
             this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(220, 65);
             this.panelEnableTimedAkiLauncher.TabIndex = 1;
             this.panelEnableTimedAkiLauncher.TabStop = false;
-            this.panelEnableTimedAkiLauncher.Text = "Enable timed Aki Launcher";
+            this.panelEnableTimedAkiLauncher.Text = "Internal Aki Server";
             this.optionsToolTip.SetToolTip(this.panelEnableTimedAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
         "p SPT to be used in order to exit properly.");
             // 
@@ -529,6 +529,35 @@
             this.panelLauncherSettings.Size = new System.Drawing.Size(798, 348);
             this.panelLauncherSettings.TabIndex = 14;
             // 
+            // panelCloseControl
+            // 
+            this.panelCloseControl.Controls.Add(this.bEnableControlPanel);
+            this.panelCloseControl.ForeColor = System.Drawing.Color.LightGray;
+            this.panelCloseControl.Location = new System.Drawing.Point(497, 182);
+            this.panelCloseControl.Name = "panelCloseControl";
+            this.panelCloseControl.Size = new System.Drawing.Size(220, 65);
+            this.panelCloseControl.TabIndex = 20;
+            this.panelCloseControl.TabStop = false;
+            this.panelCloseControl.Text = "Close control panel on action";
+            this.optionsToolTip.SetToolTip(this.panelCloseControl, "If enabled, SPT Launcher\'s control panel will automatically exit after opening a " +
+        "location.");
+            // 
+            // bEnableControlPanel
+            // 
+            this.bEnableControlPanel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableControlPanel.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableControlPanel.FlatAppearance.BorderSize = 0;
+            this.bEnableControlPanel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableControlPanel.ForeColor = System.Drawing.Color.IndianRed;
+            this.bEnableControlPanel.Location = new System.Drawing.Point(15, 23);
+            this.bEnableControlPanel.Name = "bEnableControlPanel";
+            this.bEnableControlPanel.Size = new System.Drawing.Size(180, 30);
+            this.bEnableControlPanel.TabIndex = 4;
+            this.bEnableControlPanel.Text = "Disabled";
+            this.bEnableControlPanel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableControlPanel.UseVisualStyleBackColor = true;
+            this.bEnableControlPanel.Click += new System.EventHandler(this.bEnableControlPanel_Click);
+            // 
             // panel3
             // 
             this.panel3.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -729,35 +758,6 @@
             this.optionsToolTip.ReshowDelay = 100;
             this.optionsToolTip.ToolTipTitle = "Setting";
             // 
-            // panelCloseControl
-            // 
-            this.panelCloseControl.Controls.Add(this.bEnableControlPanel);
-            this.panelCloseControl.ForeColor = System.Drawing.Color.LightGray;
-            this.panelCloseControl.Location = new System.Drawing.Point(497, 182);
-            this.panelCloseControl.Name = "panelCloseControl";
-            this.panelCloseControl.Size = new System.Drawing.Size(220, 65);
-            this.panelCloseControl.TabIndex = 20;
-            this.panelCloseControl.TabStop = false;
-            this.panelCloseControl.Text = "Close control panel on action";
-            this.optionsToolTip.SetToolTip(this.panelCloseControl, "If enabled, SPT Launcher\'s control panel will automatically exit after opening a " +
-        "location.");
-            // 
-            // bEnableControlPanel
-            // 
-            this.bEnableControlPanel.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bEnableControlPanel.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bEnableControlPanel.FlatAppearance.BorderSize = 0;
-            this.bEnableControlPanel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bEnableControlPanel.ForeColor = System.Drawing.Color.IndianRed;
-            this.bEnableControlPanel.Location = new System.Drawing.Point(15, 23);
-            this.bEnableControlPanel.Name = "bEnableControlPanel";
-            this.bEnableControlPanel.Size = new System.Drawing.Size(180, 30);
-            this.bEnableControlPanel.TabIndex = 4;
-            this.bEnableControlPanel.Text = "Disabled";
-            this.bEnableControlPanel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bEnableControlPanel.UseVisualStyleBackColor = true;
-            this.bEnableControlPanel.Click += new System.EventHandler(this.bEnableControlPanel_Click);
-            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -771,10 +771,10 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
-            this.Controls.Add(this.panelLauncherSettings);
-            this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
             this.Controls.Add(this.panelPresets);
+            this.Controls.Add(this.panelLauncherSettings);
+            this.Controls.Add(this.panelTarkovSettings);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -798,13 +798,13 @@
             this.panelServerError.ResumeLayout(false);
             this.panelCloseOnExit.ResumeLayout(false);
             this.panelLauncherSettings.ResumeLayout(false);
+            this.panelCloseControl.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
             this.panelTarkovSettings.ResumeLayout(false);
             this.panelTarkovDetector.ResumeLayout(false);
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.panelCloseControl.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
