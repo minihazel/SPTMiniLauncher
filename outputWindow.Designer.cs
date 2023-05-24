@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.sptOutputWindow = new System.Windows.Forms.RichTextBox();
+            this.bDetach = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // sptOutputWindow
@@ -44,7 +45,7 @@
             this.sptOutputWindow.Location = new System.Drawing.Point(0, 1);
             this.sptOutputWindow.Name = "sptOutputWindow";
             this.sptOutputWindow.ReadOnly = true;
-            this.sptOutputWindow.Size = new System.Drawing.Size(454, 650);
+            this.sptOutputWindow.Size = new System.Drawing.Size(454, 621);
             this.sptOutputWindow.TabIndex = 0;
             this.sptOutputWindow.Text = "";
             this.sptOutputWindow.WordWrap = false;
@@ -52,16 +53,35 @@
             this.sptOutputWindow.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
             this.sptOutputWindow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.richTextBox1_MouseDown);
             // 
+            // bDetach
+            // 
+            this.bDetach.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.bDetach.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bDetach.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.bDetach.Location = new System.Drawing.Point(0, 622);
+            this.bDetach.Name = "bDetach";
+            this.bDetach.Padding = new System.Windows.Forms.Padding(6, 0, 0, 0);
+            this.bDetach.Size = new System.Drawing.Size(454, 29);
+            this.bDetach.TabIndex = 5;
+            this.bDetach.Text = "Click to toggle: stickied";
+            this.bDetach.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bDetach.Click += new System.EventHandler(this.bDetach_Click);
+            this.bDetach.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bDetach_MouseDown);
+            this.bDetach.MouseEnter += new System.EventHandler(this.bDetach_MouseEnter);
+            this.bDetach.MouseLeave += new System.EventHandler(this.bDetach_MouseLeave);
+            // 
             // outputWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(454, 651);
+            this.Controls.Add(this.bDetach);
             this.Controls.Add(this.sptOutputWindow);
             this.DoubleBuffered = true;
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -79,5 +99,6 @@
         #endregion
 
         public System.Windows.Forms.RichTextBox sptOutputWindow;
+        private System.Windows.Forms.Label bDetach;
     }
 }

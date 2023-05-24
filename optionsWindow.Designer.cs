@@ -78,6 +78,8 @@
             this.bPreset2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.panelCloseControl = new System.Windows.Forms.GroupBox();
+            this.bEnableControlPanel = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -95,6 +97,7 @@
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panelCloseControl.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -509,6 +512,7 @@
             // 
             // panelLauncherSettings
             // 
+            this.panelLauncherSettings.Controls.Add(this.panelCloseControl);
             this.panelLauncherSettings.Controls.Add(this.panel3);
             this.panelLauncherSettings.Controls.Add(this.panel2);
             this.panelLauncherSettings.Controls.Add(this.panel1);
@@ -725,6 +729,35 @@
             this.optionsToolTip.ReshowDelay = 100;
             this.optionsToolTip.ToolTipTitle = "Setting";
             // 
+            // panelCloseControl
+            // 
+            this.panelCloseControl.Controls.Add(this.bEnableControlPanel);
+            this.panelCloseControl.ForeColor = System.Drawing.Color.LightGray;
+            this.panelCloseControl.Location = new System.Drawing.Point(497, 182);
+            this.panelCloseControl.Name = "panelCloseControl";
+            this.panelCloseControl.Size = new System.Drawing.Size(220, 65);
+            this.panelCloseControl.TabIndex = 20;
+            this.panelCloseControl.TabStop = false;
+            this.panelCloseControl.Text = "Close control panel on action";
+            this.optionsToolTip.SetToolTip(this.panelCloseControl, "If enabled, SPT Launcher\'s control panel will automatically exit after opening a " +
+        "location.");
+            // 
+            // bEnableControlPanel
+            // 
+            this.bEnableControlPanel.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableControlPanel.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableControlPanel.FlatAppearance.BorderSize = 0;
+            this.bEnableControlPanel.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableControlPanel.ForeColor = System.Drawing.Color.IndianRed;
+            this.bEnableControlPanel.Location = new System.Drawing.Point(15, 23);
+            this.bEnableControlPanel.Name = "bEnableControlPanel";
+            this.bEnableControlPanel.Size = new System.Drawing.Size(180, 30);
+            this.bEnableControlPanel.TabIndex = 4;
+            this.bEnableControlPanel.Text = "Disabled";
+            this.bEnableControlPanel.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableControlPanel.UseVisualStyleBackColor = true;
+            this.bEnableControlPanel.Click += new System.EventHandler(this.bEnableControlPanel_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -771,6 +804,7 @@
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.panelCloseControl.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -825,5 +859,7 @@
         private System.Windows.Forms.Button bEnableTarkovDetection;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolTip optionsToolTip;
+        private System.Windows.Forms.GroupBox panelCloseControl;
+        private System.Windows.Forms.Button bEnableControlPanel;
     }
 }

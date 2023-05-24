@@ -59,10 +59,13 @@ namespace SPTMiniLauncher
 
         private void outputWindow_LocationChanged(object sender, EventArgs e)
         {
-            if (Owner != null && !Owner.IsDisposed)
+            if (bDetach.Text.Contains("stickied"))
             {
-                this.Left = Owner.Left + Owner.Width;
-                this.Top = Owner.Top;
+                if (Owner != null && !Owner.IsDisposed)
+                {
+                    this.Left = Owner.Left + Owner.Width;
+                    this.Top = Owner.Top;
+                }
             }
         }
 
@@ -119,31 +122,6 @@ namespace SPTMiniLauncher
                                         break;
                                     }
                                 }
-
-                                /*
-                                MatchCollection matches = Regex.Matches(fullString, pattern);
-                                foreach (Match match in matches)
-                                {
-                                    string matchedString = match.Groups[1].Value;
-                                    if (matchedString.Contains(keyword))
-                                    {
-                                        string fullPath = matchedString.Substring(0, matchedString.IndexOf(keyword) + keyword.Length);
-
-                                    }
-
-                                    if (fullString.Contains(keyword))
-                                    {
-                                        if (!modProblem)
-                                        {
-                                            if (MessageBox.Show($"It appears that the mod \"{Path.GetFileName(mods[i])}\" has an issue.\n\nWould you like to open the mod in Explorer?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                            {
-                                                Process.Start(mods[i]);
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-                                */
                             }
                         }
                     }
@@ -164,6 +142,34 @@ namespace SPTMiniLauncher
         public void matchModFolder(string path)
         {
 
+        }
+
+        private void bDetach_MouseDown(object sender, MouseEventArgs e)
+        {
+        }
+
+        private void bDetach_MouseEnter(object sender, EventArgs e)
+        {
+            bDetach.ForeColor = Color.DodgerBlue;
+        }
+
+        private void bDetach_MouseLeave(object sender, EventArgs e)
+        {
+            bDetach.ForeColor = Color.LightGray;
+        }
+
+        private void bDetach_Click(object sender, EventArgs e)
+        {
+            if (bDetach.Text.ToLower() == "click to toggle: stickied")
+            {
+                bDetach.Text = "Click to toggle: detached";
+            }
+            else
+            {
+                bDetach.Text = "Click to toggle: stickied";
+                this.Location = new Point(mainForm.Location.X + mainForm.Width, mainForm.Location.Y);
+                this.Size = new Size(this.Size.Width, mainForm.Size.Height);
+            }
         }
     }
 }

@@ -156,6 +156,19 @@ namespace SPTMiniLauncher
                     bCloseOnSPTExit.ForeColor = Color.IndianRed;
                     break;
             }
+
+            switch (Properties.Settings.Default.closeControlPanel)
+            {
+                case true:
+                    bEnableControlPanel.Text = "Enabled";
+                    bEnableControlPanel.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bEnableControlPanel.Text = "Disabled";
+                    bEnableControlPanel.ForeColor = Color.IndianRed;
+                    break;
+            }
         }
 
         private void bMinimize_Click(object sender, EventArgs e)
@@ -558,6 +571,24 @@ namespace SPTMiniLauncher
                 bEnableTarkovDetection.ForeColor = Color.DodgerBlue;
                 bEndDetector.Enabled = true;
                 Properties.Settings.Default.tarkovDetector = true;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bEnableControlPanel_Click(object sender, EventArgs e)
+        {
+            if (bEnableControlPanel.Text.ToLower() == "enabled")
+            {
+                bEnableControlPanel.Text = "Disabled";
+                bEnableControlPanel.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.closeControlPanel = false;
+            }
+            else
+            {
+                bEnableControlPanel.Text = "Enabled";
+                bEnableControlPanel.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.closeControlPanel = true;
             }
 
             Properties.Settings.Default.Save();

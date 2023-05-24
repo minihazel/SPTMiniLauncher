@@ -86,5 +86,8 @@ This tool has quite a few features. Via the interface you can do the following:
     <Setting Name="tarkovDetector" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">True</Value>
     </Setting>
+    <Setting Name="closeControlPanel" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

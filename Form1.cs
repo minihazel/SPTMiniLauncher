@@ -19,6 +19,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media.Animation;
 using System.Xml.Linq;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace SPTMiniLauncher
 {
@@ -2008,8 +2009,15 @@ namespace SPTMiniLauncher
         {
         }
 
-        public void killProcesses()
+        public async void killProcesses()
         {
+            string akiServerProcess = "Aki.Server";
+            string akiLauncherProcess = "Aki.Launcher";
+            string eftProcess = "EscapeFromTarkov";
+            bool akiServerTerminated = false;
+            bool akiLauncherTerminated = false;
+            bool eftTerminated = false;
+
             if (isLoneServer)
             {
                 int confirm = 0;
@@ -2034,6 +2042,7 @@ namespace SPTMiniLauncher
                             }
                         }
 
+                        /*
                         Process[] proc = Process.GetProcesses();
                         foreach (Process p in proc)
                         {
@@ -2092,6 +2101,7 @@ namespace SPTMiniLauncher
                                 }
                             }
                         }
+                        */
 
                         if (confirm == 3)
                         {
@@ -2130,70 +2140,6 @@ namespace SPTMiniLauncher
                                 }
                             }
                         }
-
-                        Process[] proc = Process.GetProcesses();
-                        foreach (Process p in proc)
-                        {
-                            if (p.ProcessName.ToLower() == "aki.server")
-                            {
-                                string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                {
-                                    try
-                                    {
-                                        p.Kill();
-                                        p.WaitForExit();
-                                        confirm++;
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
-                                }
-                            }
-                            else if (p.ProcessName.ToLower() == "aki.launcher")
-                            {
-                                string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                {
-                                    try
-                                    {
-                                        p.Kill();
-                                        p.WaitForExit();
-                                        confirm++;
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
-                                }
-                            }
-                            else if (p.ProcessName.ToLower() == "escapefromtarkov")
-                            {
-                                string dir = Directory.GetParent(p.MainModule.FileName).FullName;
-                                if (Path.GetFileName(dir) == boxSelectedServerTitle.Text)
-                                {
-                                    try
-                                    {
-                                        p.Kill();
-                                        p.WaitForExit();
-                                        confirm++;
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
-                                }
-                            }
-                        }
-
-                        if (confirm == 3)
-                        {
-                            showError("SPT-AKI stopped!");
-                        }
                     }
                     catch (Exception err)
                     {
@@ -2201,6 +2147,153 @@ namespace SPTMiniLauncher
                         // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                     }
                 }
+            }
+
+            Control statusButton = findRun("spt is running");
+            if (statusButton != null)
+            {
+                statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT-AKI"; }));
+            }
+
+            try
+            {
+                Process[] procs = Process.GetProcessesByName(akiServerProcess);
+                if (procs != null && procs.Length > 0)
+                {
+                    foreach (Process aki in procs)
+                    {
+                        if (!aki.HasExited)
+                        {
+                            if (!aki.CloseMainWindow())
+                            {
+                                aki.Kill();
+                                aki.WaitForExit();
+                            }
+                            else
+                            {
+                                aki.WaitForExit();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"TERMINATION FAILURE OF AKI SERVER (IGNORE): {err.ToString()}");
+            }
+
+            await Task.Delay(200);
+
+            try
+            {
+                Process[] procs = Process.GetProcessesByName(akiLauncherProcess);
+                if (procs != null && procs.Length > 0)
+                {
+                    foreach (Process aki in procs)
+                    {
+                        if (!aki.HasExited)
+                        {
+                            if (!aki.CloseMainWindow())
+                            {
+                                aki.Kill();
+                                aki.WaitForExit();
+                            }
+                            else
+                            {
+                                aki.WaitForExit();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"TERMINATION FAILURE OF AKI LAUNCHER (IGNORE): {err.ToString()}");
+            }
+
+            await Task.Delay(200);
+
+            try
+            {
+                Process[] procs = Process.GetProcessesByName(eftProcess);
+                if (procs != null && procs.Length > 0)
+                {
+                    foreach (Process aki in procs)
+                    {
+                        if (!aki.HasExited)
+                        {
+                            if (!aki.CloseMainWindow())
+                            {
+                                aki.Kill();
+                                aki.WaitForExit();
+                            }
+                            else
+                            {
+                                aki.WaitForExit();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"TERMINATION FAILURE OF AKI LAUNCHER (IGNORE): {err.ToString()}");
+            }
+
+            await Task.Delay(500);
+
+            try
+            {
+                Process[] procs1 = Process.GetProcessesByName(akiServerProcess);
+                if (procs1 != null && procs1.Length > 0)
+                {
+                }
+                else
+                {
+                    akiServerTerminated = true;
+                    Debug.WriteLine("Server already terminated");
+                }
+
+                Process[] procs2 = Process.GetProcessesByName(akiLauncherProcess);
+                if (procs2 != null && procs2.Length > 0)
+                {
+                }
+                else
+                {
+                    akiLauncherTerminated = true;
+                    Debug.WriteLine("Launcher already terminated");
+                }
+
+                Process[] procs3 = Process.GetProcessesByName(eftProcess);
+                if (procs3 != null && procs3.Length > 0)
+                {
+                }
+                else
+                {
+                    eftTerminated = true;
+                    Debug.WriteLine("EFT already terminated");
+                }
+
+                if (akiServerTerminated && akiLauncherTerminated && eftTerminated)
+                {
+                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI successfully exited, resetting"; }));
+                    await Task.Delay(1000);
+                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Run SPT"; }));
+
+                    MessageBox.Show("Server terminated\n" +
+                                    "Launcher terminated\n" +
+                                    "EFT terminated");
+                }
+                else
+                {
+                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Termination failed; one or more instances did not exit"; }));
+                    await Task.Delay(1000);
+                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Run SPT"; }));
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"TERMINATION FAILURE (IGNORE): {err.ToString()}");
             }
 
             try
@@ -2482,6 +2575,18 @@ namespace SPTMiniLauncher
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.modProblem = false; }));
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.Hide(); }));
             }
+        }
+
+        public Control findRun(string searchText)
+        {
+            foreach (Control component in boxSelectedServer.Controls)
+            {
+                if (component is Label lbl && lbl.Text.ToLower().StartsWith(searchText))
+                {
+                    return lbl;
+                }
+            }
+            return null;
         }
 
         private void lbl2_MouseUp(object sender, EventArgs e)
@@ -2874,7 +2979,15 @@ namespace SPTMiniLauncher
         {
             if (outputwindow != null && outputwindow.IsHandleCreated)
             {
-                outputwindow.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                Label detach = (Label)outputwindow.Controls["bDetach"];
+                if (detach != null)
+                {
+                    if (detach.Text.ToLower().Contains("stickied"))
+                    {
+                        outputwindow.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                        this.Size = new Size(outputwindow.Size.Width, this.Size.Height);
+                    }
+                }
             }
         }
 
@@ -2882,7 +2995,17 @@ namespace SPTMiniLauncher
         {
             if (outputwindow != null && !outputwindow.IsDisposed)
             {
-                outputwindow.SetBounds(this.Right, this.Top, outputwindow.Width, this.Height);
+                Label detach = (Label)outputwindow.Controls["bDetach"];
+                if (detach != null)
+                {
+                    if (detach.Text.ToLower().Contains("stickied"))
+                    {
+                        outputwindow.Location = new Point(this.Location.X + this.Width, this.Location.Y);
+                        outputwindow.Size = new Size(outputwindow.Size.Width, this.Size.Height);
+                    }
+                }
+
+                /* outputwindow.SetBounds(this.Right, this.Top, outputwindow.Width, this.Height); */
             }
         }
 
