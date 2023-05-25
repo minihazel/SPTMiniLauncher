@@ -654,6 +654,12 @@ namespace SPTMiniLauncher
                 TarkovProcessDetector.Dispose();
         }
 
+        public void globalProcessDetector_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (globalProcessDetector != null)
+                globalProcessDetector.Dispose();
+        }
+
         public void globalProcessDetector_DoWork(object sender, DoWorkEventArgs e)
         {
             if (globalProcessDetector.CancellationPending)
@@ -672,22 +678,59 @@ namespace SPTMiniLauncher
                 bool isLauncherRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(aki_launcher, StringComparison.OrdinalIgnoreCase));
                 bool isEFTRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(eft, StringComparison.OrdinalIgnoreCase));
 
-                if (!isServerRunning && !isLauncherRunning && !isEFTRunning)
+                if (Properties.Settings.Default.timedLauncherToggle)
                 {
-                    OnAllProcessesTerminated();
-                    globalProcessDetector.CancelAsync();
+                    if (Properties.Settings.Default.tarkovDetector)
+                    {
+                        if (!isLauncherRunning)
+                        {
+                            Control statusButton = findRun(true, "spt-aki is running");
+                            if (statusButton != null)
+                            {
+                                statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "AKI Server is running, waiting for launcher"; }));
+                            }
+
+                            Control cacheBtn = findCache();
+                            if (cacheBtn != null)
+                            {
+                                cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Click here to run the Aki Launcher"; }));
+                            }
+                            Thread.Sleep(1000);
+                        }
+                        else
+                        {
+                            if (TarkovEndDetector == null && !isEFTRunning)
+                            {
+                                Control statusButton = findRun(true, "spt-aki is running");
+                                if (statusButton != null)
+                                {
+                                    Task.Delay(2000);
+                                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI is running, waiting for Escape From Tarkov"; }));
+                                }
+
+                                Control cacheBtn = findCache();
+                                if (cacheBtn != null)
+                                {
+                                    cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
+                                }
+                                Thread.Sleep(1000);
+                            }
+                        }
+                    }
                 }
                 else
                 {
-                    Thread.Sleep(1000);
+                    if (!isServerRunning && !isLauncherRunning)
+                    {
+                        OnAllProcessesTerminated();
+                        globalProcessDetector.CancelAsync();
+                    }
+                    else
+                    {
+                        Thread.Sleep(1000);
+                    }
                 }
             }
-        }
-
-        public void globalProcessDetector_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            if (globalProcessDetector != null)
-                globalProcessDetector.Dispose();
         }
 
         private void OnAllProcessesTerminated()
@@ -735,6 +778,12 @@ namespace SPTMiniLauncher
                             TarkovEndDetector.Dispose();
 
                         break;
+                    }
+
+                    Control statusButton = findRun(true, "spt-aki is running");
+                    if (statusButton != null)
+                    {
+                        statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI is running!"; }));
                     }
 
                     int interval = Convert.ToInt32(Properties.Settings.Default.endDetector);
@@ -824,9 +873,18 @@ namespace SPTMiniLauncher
 
                         if (serverOptionsStreets[i].ToLower() == "run spt")
                         {
+                            lbl.Name = "launcherRunButton";
                             lbl.Text = "Run SPT";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.DodgerBlue;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
+                        else if (serverOptionsStreets[i].ToLower() == "clear cache")
+                        {
+                            lbl.Name = "launcherClearCacheButton";
+                            lbl.Text = "Clear cache";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.LightGray;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
                         else if (serverOptionsStreets[i].ToLower() == "delete server")
@@ -941,9 +999,18 @@ namespace SPTMiniLauncher
 
                         if (serverOptions[i].ToLower() == "run spt")
                         {
+                            lbl.Name = "launcherRunButton";
                             lbl.Text = "Run SPT";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.DodgerBlue;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
+                        else if (serverOptions[i].ToLower() == "clear cache")
+                        {
+                            lbl.Name = "launcherClearCacheButton";
+                            lbl.Text = "Clear cache";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.LightGray;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
                         else if (serverOptions[i].ToLower() == "delete server")
@@ -1128,6 +1195,11 @@ namespace SPTMiniLauncher
                                     clearServerCache(Path.Combine(selectedServer, "user\\cache"));
                                 }
                             }
+                            break;
+
+                        case "click here to run the aki launcher":
+
+                            runLauncher();
                             break;
 
                         case "run spt":
@@ -1697,7 +1769,7 @@ namespace SPTMiniLauncher
                             bool akiRunning = isAKIRunning();
                             if (!akiRunning)
                             {
-                                Control stopButton = findRun("stop spt (if running)");
+                                Control stopButton = findRun(false, "stop spt (if running)");
                                 if (stopButton != null)
                                 {
                                     stopButton.Invoke((MethodInvoker)(() => {
@@ -1934,12 +2006,6 @@ namespace SPTMiniLauncher
                     Directory.SetCurrentDirectory(currentDir);
                 }
             }
-
-            globalProcessDetector = new BackgroundWorker();
-            globalProcessDetector.WorkerSupportsCancellation = true;
-            globalProcessDetector.DoWork += globalProcessDetector_DoWork;
-            globalProcessDetector.RunWorkerCompleted += globalProcessDetector_RunWorkerCompleted;
-            globalProcessDetector.RunWorkerAsync();
         }
 
         public void runLauncher()
@@ -2001,6 +2067,43 @@ namespace SPTMiniLauncher
                     MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
                 Directory.SetCurrentDirectory(currentDir);
+            }
+
+            Task.Delay(500);
+
+            // Check if there are 2 or more instances of the Aki Launcher, and if so terminate the "leftovers"
+            string akiLauncherProcess = "Aki.Launcher";
+            try
+            {
+                Process[] launcherprocs = Process.GetProcessesByName(akiLauncherProcess);
+                if (launcherprocs != null && launcherprocs.Length > 1)
+                {
+                    foreach (Process akilauncher in launcherprocs)
+                    {
+                        if (!akilauncher.HasExited)
+                        {
+                            if (!akilauncher.CloseMainWindow())
+                            {
+                                akilauncher.Kill();
+                                akilauncher.WaitForExit();
+                            }
+                            else
+                            {
+                                akilauncher.WaitForExit();
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"TERMINATION FAILURE LEFTOVERS AKI LAUNCHER (IGNORE): {err.ToString()}");
+            }
+
+            Control cacheBtn = findCache();
+            if (cacheBtn != null)
+            {
+                cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
             }
         }
 
@@ -2073,7 +2176,7 @@ namespace SPTMiniLauncher
                     eftTerminated = true;
                 }
 
-                Control attemptedButton = findRun("attempting to exit");
+                Control attemptedButton = findRun(false, "attempting to exit");
 
                 if (akiServerTerminated && akiLauncherTerminated && eftTerminated)
                 {
@@ -2089,7 +2192,7 @@ namespace SPTMiniLauncher
 
         public async void killAKIProcesses()
         {
-            Control stopButton = findRun("stop spt if (running)");
+            Control stopButton = findRun(false, "stop spt if (running)");
             if (stopButton != null)
             {
                 stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
@@ -2193,7 +2296,7 @@ namespace SPTMiniLauncher
 
         public async void killProcesses()
         {
-            Control stopButton = findRun("stop spt (if running)");
+            Control stopButton = findRun(false, "stop spt (if running)");
             bool akiRunning = isAKIRunning();
 
             if (!akiRunning)
@@ -2204,6 +2307,12 @@ namespace SPTMiniLauncher
             }
             else
             {
+                if (globalProcessDetector != null)
+                {
+                    globalProcessDetector.CancelAsync();
+                    globalProcessDetector.Dispose();
+                }
+
                 string akiServerProcess = "Aki.Server";
                 string akiLauncherProcess = "Aki.Launcher";
                 string eftProcess = "EscapeFromTarkov";
@@ -2257,7 +2366,7 @@ namespace SPTMiniLauncher
                     }
                 }
 
-                Control statusButton = findRun("spt is running");
+                Control statusButton = findRun(true, "spt-aki is running!");
                 if (statusButton != null)
                 {
                     statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT-AKI"; }));
@@ -2265,7 +2374,7 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    statusButton = findRun("loading spt");
+                    statusButton = findRun(true, "loading spt");
                     if (statusButton != null)
                     {
                         statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT-AKI"; }));
@@ -2389,7 +2498,7 @@ namespace SPTMiniLauncher
                         eftTerminated = true;
                     }
 
-                    Control attemptedButton = findRun("attempting to exit");
+                    Control attemptedButton = findRun(false, "attempting to exit");
 
                     if (akiServerTerminated && akiLauncherTerminated && eftTerminated)
                     {
@@ -2417,6 +2526,13 @@ namespace SPTMiniLauncher
                     Debug.WriteLine($"TERMINATION FAILURE (IGNORE): {err.ToString()}");
                 }
 
+                stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = true; }));
+                Control cacheBtn = findCache();
+                if (cacheBtn != null)
+                {
+                    cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
+                }
+
                 try
                 {
                     if (globalProcessDetector != null)
@@ -2438,7 +2554,7 @@ namespace SPTMiniLauncher
                     if (Properties.Settings.Default.closeOnQuit)
                         Application.Exit();
 
-                    stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = true; }));
+                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Enabled = true; }));
                 }
                 catch (Exception err)
                 {
@@ -2613,9 +2729,8 @@ namespace SPTMiniLauncher
                         CheckServerWorker.Dispose();
                     client.Connect("localhost", port);
 
-                    runLauncher();
-
                     confirmLaunched();
+                    runLauncher();
                     return true;
                 }
             }
@@ -2659,31 +2774,21 @@ namespace SPTMiniLauncher
 
         public void confirmLaunched()
         {
-            foreach (Control component in boxSelectedServer.Controls)
-            {
-                if (component is Label)
-                {
-                    if (component.Text.ToLower().StartsWith("loading spt"))
-                        component.Invoke((MethodInvoker)(() => { component.Text = "SPT is running! Quit by clicking Stop SPT"; }));
-                }
-            }
-
             if (Properties.Settings.Default.hideOptions == 2)
             {
                 hideLauncherWindow();
             }
+
+            globalProcessDetector = new BackgroundWorker();
+            globalProcessDetector.WorkerSupportsCancellation = true;
+            globalProcessDetector.DoWork += globalProcessDetector_DoWork;
+            globalProcessDetector.RunWorkerCompleted += globalProcessDetector_RunWorkerCompleted;
+            globalProcessDetector.RunWorkerAsync();
         }
 
         public void resetRunButton()
         {
-            foreach (Control component in boxSelectedServer.Controls)
-            {
-                if (component is Label)
-                {
-                    if (component.Text.ToLower().StartsWith("loading spt") || component.Text.ToLower().StartsWith("spt is running"))
-                        component.Invoke((MethodInvoker)(() => { component.Text = "Run SPT"; }));
-                }
-            }
+            setRunText("Run SPT");
         }
 
         public void clearOutput()
@@ -2697,16 +2802,71 @@ namespace SPTMiniLauncher
             }
         }
 
-        public Control findRun(string searchText)
+        public Control findCache()
         {
-            foreach (Control component in boxSelectedServer.Controls)
+            // search by name
+            Control[] cacheButton = this.Controls.Find("launcherClearCacheButton", true);
+            if (cacheButton != null)
             {
-                if (component is Label lbl && lbl.Text.ToLower().StartsWith(searchText))
-                {
-                    return lbl;
-                }
+                Label cacheBtn = (Label)cacheButton[0];
+                return cacheBtn;
             }
             return null;
+        }
+
+        public Control findRun(bool isName, string searchText)
+        {
+            if (!isName)
+            {
+                // search by text property
+                foreach (Control component in boxSelectedServer.Controls)
+                {
+                    if (component is Label lbl && lbl.Text.ToLower().StartsWith(searchText))
+                    {
+                        return lbl;
+                    }
+                }
+            }
+            else
+            {
+                // search by name
+                Control[] runButton = this.Controls.Find("launcherRunButton", true);
+                if (runButton != null)
+                {
+                    Label runBtn = (Label)runButton[0];
+                    return runBtn;
+                }
+                else { return null; }
+            }
+
+            return null;
+        }
+
+        public void setRunText(string displayText)
+        {
+            if (InvokeRequired)
+            {
+                Invoke(new Action<string>(setRunText), displayText);
+                return;
+            }
+
+            Control[] runButton = this.Controls.Find("launcherRunButton", true);
+            if (runButton != null && runButton.Length > 0)
+            {
+                Label runBtn = (Label)runButton[0];
+                runBtn.Text = displayText;
+            }
+            else
+            {
+                try
+                {
+                    this.Controls["launcherRunButton"].Text = displayText;
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"FIND FAILURE: {err.ToString()}");
+                }
+            }
         }
 
         private void lbl2_MouseUp(object sender, EventArgs e)
