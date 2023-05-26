@@ -200,7 +200,7 @@ namespace SPTMiniLauncher
 
                 string sptLauncherProcess = "SPT Launcher";
                 Process[] procs = Process.GetProcessesByName(sptLauncherProcess);
-                if (procs != null && procs.Length > 0)
+                if (procs != null && procs.Length > 1)
                 {
                     foreach (Process launcher in procs)
                     {
@@ -227,7 +227,7 @@ namespace SPTMiniLauncher
         {
             string sptLauncherProcess = "SPT Launcher";
             Process[] sptLauncher = Process.GetProcessesByName(sptLauncherProcess);
-            if (sptLauncher != null && sptLauncher.Length > 0)
+            if (sptLauncher != null && sptLauncher.Length > 1)
             {
                 return true;
             }
