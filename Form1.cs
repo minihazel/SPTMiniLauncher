@@ -62,11 +62,11 @@ namespace SPTMiniLauncher
             "Stop SPT (if running)",
             "Delete server",
             "- MODS -",
+            "Open client mods",
             "Open server mods",
             "Open profile -",
             "Open control panel",
             "Open modloader JSON",
-            "Open client mods",
             "- THIRDPARTY -",
             "Open Load Order Editor (LOE)",
             "Open Profile Editor",
@@ -80,10 +80,10 @@ namespace SPTMiniLauncher
             "Stop SPT (if running)",
             "Delete server",
             "- MODS -",
+            "Open client mods",
             "Open server mods",
             "Open profile -",
             "Open control panel",
-            "Open client mods",
             "- THIRDPARTY -",
             "Open Profile Editor",
             "Open Server Value Modifier (SVM)",
@@ -97,100 +97,141 @@ namespace SPTMiniLauncher
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            boxPath.Text = "";
-            outputwindow = new outputWindow();
-            outputwindow.Visible = false;
-            outputwindow.Owner = this;
-
-            settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
-            // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
-
-            messageBoard form = new messageBoard();
-            RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
-            Label messageTitle = (Label)form.Controls["messageTitle"];
-            messageTitle.ForeColor = Color.LightGray;
-
-            if (File.Exists(settingsFile))
+            if (!isLauncherRunning())
             {
-                globalProcesses = new List<string> { "Aki.Server", "Aki.Launcher", "EscapeFromTarkov" };
-                string readSettings = File.ReadAllText(settingsFile);
-                JObject settingsObject = JObject.Parse(readSettings);
+                boxPath.Text = "";
+                outputwindow = new outputWindow();
+                outputwindow.Visible = false;
+                outputwindow.Owner = this;
 
-                if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
+                settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
+                // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
+
+                messageBoard form = new messageBoard();
+                RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
+                Label messageTitle = (Label)form.Controls["messageTitle"];
+                messageTitle.ForeColor = Color.LightGray;
+
+                if (File.Exists(settingsFile))
                 {
-                    settingsObject.Property("showFirstTimeMessage").Value = "false";
+                    globalProcesses = new List<string> { "Aki.Server", "Aki.Launcher", "EscapeFromTarkov" };
+                    string readSettings = File.ReadAllText(settingsFile);
+                    JObject settingsObject = JObject.Parse(readSettings);
 
-                    messageTitle.Text = "First time setup";
-                    messageBox.Text = Properties.Settings.Default.firstTimeMessage; /* File.ReadAllText(firstTime); */
-
-                    form.Size = new Size(623, 730);
-                    form.ShowDialog();
-                    File.WriteAllText(settingsFile, settingsObject.ToString());
-                }
-                else
-                {
-
-                    if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
+                    if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
                     {
-                        boxPath.Text = Properties.Settings.Default.server_path;
-                        if (Directory.Exists(boxPath.Text))
+                        settingsObject.Property("showFirstTimeMessage").Value = "false";
+
+                        messageTitle.Text = "First time setup";
+                        messageBox.Text = Properties.Settings.Default.firstTimeMessage; /* File.ReadAllText(firstTime); */
+
+                        form.Size = new Size(623, 730);
+                        form.ShowDialog();
+                        File.WriteAllText(settingsFile, settingsObject.ToString());
+                    }
+                    else
+                    {
+
+                        if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
                         {
-                            if (File.Exists(Path.Combine(boxPath.Text, "Aki.Server.exe")) &&
-                                File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
-                                Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
+                            boxPath.Text = Properties.Settings.Default.server_path;
+                            if (Directory.Exists(boxPath.Text))
                             {
+                                if (File.Exists(Path.Combine(boxPath.Text, "Aki.Server.exe")) &&
+                                    File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
+                                    Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
+                                {
+                                    isLoneServer = true;
+                                    outputwindow.isTrue = true;
+                                    listAllServers(boxPath.Text);
+                                }
+                                else
+                                {
+                                    isLoneServer = false;
+                                    outputwindow.isTrue = false;
+                                    listAllServers(boxPath.Text);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Server.exe")) &&
+                                    File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Launcher.exe")) &&
+                                    Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Aki_Data")))
+                            {
+                                // actual app is in an SPT installation folder
                                 isLoneServer = true;
                                 outputwindow.isTrue = true;
+                                // boxPath.Text = Environment.CurrentDirectory;
+                                Properties.Settings.Default.server_path = boxPath.Text;
+                                Properties.Settings.Default.Save();
                                 listAllServers(boxPath.Text);
                             }
                             else
                             {
+                                showError("It looks like this you have reset the app, or it\'s your first time. Please drag and drop or browse for an SPT folder to begin!");
+                                /*
                                 isLoneServer = false;
-                                outputwindow.isTrue = false;
+                                Properties.Settings.Default.server_path = boxPath.Text;
+                                Properties.Settings.Default.Save();
                                 listAllServers(boxPath.Text);
+                                */
                             }
                         }
-                    }
-                    else
-                    {
-                        if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Server.exe")) &&
-                                File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Launcher.exe")) &&
-                                Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Aki_Data")))
-                        {
-                            // actual app is in an SPT installation folder
-                            isLoneServer = true;
-                            outputwindow.isTrue = true;
-                            // boxPath.Text = Environment.CurrentDirectory;
-                            Properties.Settings.Default.server_path = boxPath.Text;
-                            Properties.Settings.Default.Save();
-                            listAllServers(boxPath.Text);
-                        }
-                        else
-                        {
-                            showError("It looks like this you have reset the app, or it\'s your first time. Please drag and drop or browse for an SPT folder to begin!");
-                            /*
-                            isLoneServer = false;
-                            Properties.Settings.Default.server_path = boxPath.Text;
-                            Properties.Settings.Default.Save();
-                            listAllServers(boxPath.Text);
-                            */
-                        }
-                    }
 
-                    boxPathBox.Select();
+                        boxPathBox.Select();
+                    }
                 }
+                else
+                {
+                    messageTitle.Text = "Settings file was not detected!";
+                    messageBox.Text = $"We could not detect the settings file. Please restart so that the launcher can generate it!";
+                    form.Size = new Size(623, 200);
+                    form.ShowDialog();
+                }
+
+                string logFolder = Path.Combine(Environment.CurrentDirectory, "logs");
+                if (!Directory.Exists(logFolder))
+                    Directory.CreateDirectory(logFolder);
             }
             else
             {
-                messageTitle.Text = "Settings file was not detected!";
-                messageBox.Text = $"We could not detect the settings file. Please restart so that the launcher can generate it!";
-                form.Size = new Size(623, 200);
-                form.ShowDialog();
-            }
+                MessageBox.Show("It appears that SPT Launcher is already running!\n\n\nWe\'ll close all of them and restart for you.", this.Text, MessageBoxButtons.OK);
 
-            string logFolder = Path.Combine(Environment.CurrentDirectory, "logs");
-            if (!Directory.Exists(logFolder))
-                Directory.CreateDirectory(logFolder);
+                string sptLauncherProcess = "SPT Launcher";
+                Process[] procs = Process.GetProcessesByName(sptLauncherProcess);
+                if (procs != null && procs.Length > 0)
+                {
+                    foreach (Process launcher in procs)
+                    {
+                        if (!launcher.HasExited)
+                        {
+                            if (!launcher.CloseMainWindow())
+                            {
+                                launcher.Kill();
+                                launcher.WaitForExit();
+                            }
+                            else
+                            {
+                                launcher.WaitForExit();
+                            }
+                        }
+                    }
+
+                    Application.Restart();
+                }
+            }
+        }
+
+        public bool isLauncherRunning()
+        {
+            string sptLauncherProcess = "SPT Launcher";
+            Process[] sptLauncher = Process.GetProcessesByName(sptLauncherProcess);
+            if (sptLauncher != null && sptLauncher.Length > 0)
+            {
+                return true;
+            }
+            return false;
         }
 
         public void updateOrderJSON(string path)
@@ -889,6 +930,7 @@ namespace SPTMiniLauncher
                         }
                         else if (serverOptionsStreets[i].ToLower() == "delete server")
                         {
+                            lbl.Name = "launcherDeleteServerButton";
                             lbl.Text = "Delete server";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.IndianRed;
@@ -1015,6 +1057,7 @@ namespace SPTMiniLauncher
                         }
                         else if (serverOptions[i].ToLower() == "delete server")
                         {
+                            lbl.Name = "launcherDeleteServerButton";
                             lbl.Text = "Delete server";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.IndianRed;
@@ -2533,6 +2576,13 @@ namespace SPTMiniLauncher
                     cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
                 }
 
+                Control deleteBtn = findDelete();
+                if (deleteBtn != null)
+                {
+                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.Text = "Delete server"; }));
+                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.ForeColor = Color.IndianRed; }));
+                }
+
                 try
                 {
                     if (globalProcessDetector != null)
@@ -2584,34 +2634,6 @@ namespace SPTMiniLauncher
             {
                 Debug.WriteLine($"Error: {ex.Message}");
             }
-
-            /*
-            if (Properties.Settings.Default.timedLauncherToggle)
-            {
-                CheckServerWorker = new BackgroundWorker();
-                if (CheckServerWorker != null)
-                    CheckServerWorker.Dispose();
-
-                CheckServerWorker.WorkerSupportsCancellation = true;
-                CheckServerWorker.WorkerReportsProgress = false;
-
-                CheckServerWorker.DoWork += CheckServerWorker_DoWork;
-                CheckServerWorker.RunWorkerCompleted += CheckServerWorker_RunWorkerCompleted;
-
-                try
-                {
-                    CheckServerWorker.RunWorkerAsync();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine($"Error: {ex.Message}");
-                }
-            }
-            else
-            {
-                runLauncher();
-            }
-            */
         }
 
         private void CheckServerWorker_DoWork(object sender, DoWorkEventArgs e)
@@ -2800,6 +2822,18 @@ namespace SPTMiniLauncher
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.modProblem = false; }));
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.Hide(); }));
             }
+        }
+
+        public Control findDelete()
+        {
+            // search by name
+            Control[] deleteButton = this.Controls.Find("launcherDeleteServerButton", true);
+            if (deleteButton != null)
+            {
+                Label deleteBtn = (Label)deleteButton[0];
+                return deleteBtn;
+            }
+            return null;
         }
 
         public Control findCache()
