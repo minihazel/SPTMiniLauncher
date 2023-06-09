@@ -34,8 +34,8 @@ namespace SPTMiniLauncher
         public string selectedServer;
         public string settingsFile;
         public string firstTime;
-
         public string core;
+        public string selectedAID;
 
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
@@ -712,17 +712,33 @@ namespace SPTMiniLauncher
             while (!globalProcessDetector.CancellationPending)
             {
                 string aki_server = globalProcesses[0];
-                string aki_launcher = globalProcesses[1];
+                // string aki_launcher = globalProcesses[1];
                 string eft = globalProcesses[2];
 
                 bool isServerRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(aki_server, StringComparison.OrdinalIgnoreCase));
-                bool isLauncherRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(aki_launcher, StringComparison.OrdinalIgnoreCase));
+                // bool isLauncherRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(aki_launcher, StringComparison.OrdinalIgnoreCase));
                 bool isEFTRunning = Process.GetProcesses().Any(p => p.ProcessName.Equals(eft, StringComparison.OrdinalIgnoreCase));
 
                 if (Properties.Settings.Default.timedLauncherToggle)
                 {
                     if (Properties.Settings.Default.tarkovDetector)
                     {
+                        if (TarkovEndDetector == null && !isEFTRunning)
+                        {
+                            Control statusButton = findRun(true, "spt-aki is running");
+                            if (statusButton != null)
+                            {
+                                statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI is running, waiting for Escape From Tarkov"; }));
+                            }
+
+                            Control cacheBtn = findCache();
+                            if (cacheBtn != null)
+                            {
+                                cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
+                            }
+
+                        }
+                        /*
                         if (!isLauncherRunning)
                         {
                             Control statusButton = findRun(true, "spt-aki is running");
@@ -757,11 +773,12 @@ namespace SPTMiniLauncher
                                 Thread.Sleep(1000);
                             }
                         }
+                        */
                     }
                 }
                 else
                 {
-                    if (!isServerRunning && !isLauncherRunning)
+                    if (!isServerRunning /* && !isLauncherRunning */)
                     {
                         OnAllProcessesTerminated();
                         globalProcessDetector.CancelAsync();
@@ -1268,8 +1285,10 @@ namespace SPTMiniLauncher
                             }
 
                             runServer();
+
                             label.Text = "Loading SPT, this may take a few";
                             label.Enabled = false;
+
                             break;
 
                         case "open control panel":
@@ -2057,59 +2076,27 @@ namespace SPTMiniLauncher
             Process[] launchers = Process.GetProcessesByName(launcherProcess);
 
             string currentDir = Directory.GetCurrentDirectory();
+
             if (isLoneServer)
             {
-                Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                Process akiLauncher = new Process();
+                ProcessStartInfo _tarkov = new ProcessStartInfo();
+                _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
 
-                akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
-                akiLauncher.StartInfo.CreateNoWindow = false;
-                akiLauncher.StartInfo.UseShellExecute = false;
-                akiLauncher.StartInfo.RedirectStandardOutput = false;
-
-                try
-                {
-                    akiLauncher.Start();
-                    TarkovProcessDetector = new BackgroundWorker();
-                    TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
-                    TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
-
-                    TarkovProcessDetector.RunWorkerAsync();
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                }
-                Directory.SetCurrentDirectory(currentDir);
+                Process tarkovGame = new Process();
+                tarkovGame.StartInfo = _tarkov;
+                tarkovGame.Start();
             }
             else
             {
                 selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                Directory.SetCurrentDirectory(selectedServer);
-                Process akiLauncher = new Process();
+                ProcessStartInfo _tarkov = new ProcessStartInfo();
+                _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
+                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
 
-                akiLauncher.StartInfo.WorkingDirectory = selectedServer;
-                akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
-                akiLauncher.StartInfo.CreateNoWindow = false;
-                akiLauncher.StartInfo.UseShellExecute = false;
-                akiLauncher.StartInfo.RedirectStandardOutput = false;
-                try
-                {
-                    akiLauncher.Start();
-                    TarkovProcessDetector = new BackgroundWorker();
-                    TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
-                    TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
-
-                    TarkovProcessDetector.RunWorkerAsync();
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                }
-                Directory.SetCurrentDirectory(currentDir);
+                Process tarkovGame = new Process();
+                tarkovGame.StartInfo = _tarkov;
+                tarkovGame.Start();
             }
 
             Task.Delay(500);
@@ -2148,6 +2135,21 @@ namespace SPTMiniLauncher
             {
                 cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
             }
+
+            Task.Delay(5000);
+
+            TarkovEndDetector = new BackgroundWorker();
+            TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
+            TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
+            TarkovEndDetector.RunWorkerAsync();
+
+            /*
+            TarkovProcessDetector = new BackgroundWorker();
+            TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
+            TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
+
+            TarkovProcessDetector.RunWorkerAsync();
+            */
         }
 
         public void akiServer_OutputDataReceived(object sender, DataReceivedEventArgs e)
@@ -2233,9 +2235,10 @@ namespace SPTMiniLauncher
             return true;
         }
 
-        public async void killAKIProcesses()
+        public void killAKIProcesses()
         {
-            Control stopButton = findRun(false, "stop spt if (running)");
+            Control stopButton = findRun(false, "stop spt (if running)");
+
             if (stopButton != null)
             {
                 stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
@@ -2271,7 +2274,7 @@ namespace SPTMiniLauncher
                 Debug.WriteLine($"TERMINATION FAILURE OF AKI SERVER (IGNORE): {err.ToString()}");
             }
 
-            await Task.Delay(200);
+            Task.Delay(200);
 
             try
             {
@@ -2300,7 +2303,7 @@ namespace SPTMiniLauncher
                 Debug.WriteLine($"TERMINATION FAILURE OF AKI LAUNCHER (IGNORE): {err.ToString()}");
             }
 
-            await Task.Delay(200);
+            Task.Delay(200);
 
             try
             {
@@ -2329,11 +2332,38 @@ namespace SPTMiniLauncher
                 Debug.WriteLine($"TERMINATION FAILURE OF AKI LAUNCHER (IGNORE): {err.ToString()}");
             }
 
-            await Task.Delay(200);
+            Task.Delay(200);
 
             if (stopButton != null)
             {
-                stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = true; }));
+                stopButton.Invoke((MethodInvoker)(() => {
+                    stopButton.Enabled = true;
+                }));
+            }
+        }
+
+        public async void redirectKill()
+        {
+            bool akiRunning = isAKIRunning();
+            if (!akiRunning)
+            {
+                Control stopButton = findRun(false, "stop spt (if running)");
+                if (stopButton != null)
+                {
+                    stopButton.Invoke((MethodInvoker)(() => {
+                        stopButton.Text = "SPT-AKI is not running!";
+                        stopButton.ForeColor = Color.IndianRed;
+                    }));
+                    await Task.Delay(750);
+                    stopButton.Invoke((MethodInvoker)(() => {
+                        stopButton.Text = "Stop SPT (if running)";
+                        stopButton.ForeColor = Color.LightGray;
+                    }));
+                }
+            }
+            else
+            {
+                killProcesses();
             }
         }
 
@@ -2751,8 +2781,8 @@ namespace SPTMiniLauncher
                         CheckServerWorker.Dispose();
                     client.Connect("localhost", port);
 
-                    confirmLaunched();
                     runLauncher();
+                    confirmLaunched();
                     return true;
                 }
             }
@@ -2865,12 +2895,22 @@ namespace SPTMiniLauncher
             {
                 // search by name
                 Control[] runButton = this.Controls.Find("launcherRunButton", true);
-                if (runButton != null)
+                if (runButton != null && runButton.Length > 0)
                 {
-                    Label runBtn = (Label)runButton[0];
-                    return runBtn;
+                    try
+                    {
+                        Label runBtn = (Label)runButton[0];
+                        return runBtn;
+                    }
+                    catch (Exception err)
+                    {
+                        Console.WriteLine(err);
+                    }
                 }
-                else { return null; }
+                else
+                {
+                    return this.Controls["launcherRunButton"];
+                }
             }
 
             return null;

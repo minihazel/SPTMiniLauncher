@@ -237,7 +237,7 @@
             this.bResetApp.AutoSize = true;
             this.bResetApp.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetApp.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetApp.Location = new System.Drawing.Point(75, 629);
+            this.bResetApp.Location = new System.Drawing.Point(75, 639);
             this.bResetApp.Name = "bResetApp";
             this.bResetApp.Size = new System.Drawing.Size(36, 13);
             this.bResetApp.TabIndex = 3;
@@ -253,7 +253,7 @@
             this.bResetThirdParty.AutoSize = true;
             this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bResetThirdParty.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetThirdParty.Location = new System.Drawing.Point(126, 629);
+            this.bResetThirdParty.Location = new System.Drawing.Point(126, 639);
             this.bResetThirdParty.Name = "bResetThirdParty";
             this.bResetThirdParty.Size = new System.Drawing.Size(119, 13);
             this.bResetThirdParty.TabIndex = 4;
@@ -269,7 +269,7 @@
             this.bRefresh.AutoSize = true;
             this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bRefresh.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bRefresh.Location = new System.Drawing.Point(14, 629);
+            this.bRefresh.Location = new System.Drawing.Point(14, 639);
             this.bRefresh.Name = "bRefresh";
             this.bRefresh.Size = new System.Drawing.Size(46, 13);
             this.bRefresh.TabIndex = 5;

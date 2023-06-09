@@ -114,6 +114,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Select profile";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.profileSelector_FormClosing);
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.profileSelector_FormClosed);
             this.Load += new System.EventHandler(this.profileSelector_Load);
             this.panelProfiles.ResumeLayout(false);
             this.ResumeLayout(false);

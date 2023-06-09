@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -16,7 +17,11 @@ namespace SPTMiniLauncher
 {
     public partial class profileSelector : Form
     {
+
         public bool isTrue = false;
+        public bool isSPTActive = false;
+
+        public string currentDir;
         public string selectedServer;
         public string boxSelectedServerTitle;
         public string fullProfilesPath;
@@ -25,6 +30,8 @@ namespace SPTMiniLauncher
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
         public Color listHovercolor = Color.FromArgb(255, 45, 45, 45);
+
+        Form1 mForm;
 
         public profileSelector()
         {
@@ -67,8 +74,7 @@ namespace SPTMiniLauncher
 
         private void profileSelector_Load(object sender, EventArgs e)
         {
-            Form1 mainForm = new Form1();
-
+            mForm = new Form1();
             if (isTrue)
             {
                 string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
@@ -157,24 +163,52 @@ namespace SPTMiniLauncher
 
             if (lbl.Text != "")
             {
-                if (bSelection.Text.ToLower().Contains("profile_open"))
+                if (isTrue)
                 {
                     int index = lbl.Text.IndexOf(".json");
                     string output = lbl.Text.Substring(0, index + 5);
+                    string cleanOutput = output.Substring(0, output.Length - 5);
 
                     bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
                     if (profileExists)
                     {
-                        Process.Start(Path.Combine(fullProfilesPath, output));
-                        this.Close();
+                        if (this.Text.ToLower() == "launch tarkov")
+                        {
+                            mForm.selectedAID = cleanOutput;
+                            mForm.isLoneServer = true;
+                            mForm.runServer();
+                        }
+                        else if (this.Text.ToLower() == "select profile")
+                        {
+                            Process.Start(Path.Combine(fullProfilesPath, output));
+                        }
                     }
                 }
-                else if (bSelection.Text.ToLower().Contains("run_spt"))
+                else
                 {
-                    
-                }
+                    int index = lbl.Text.IndexOf(".json");
+                    string output = lbl.Text.Substring(0, index + 5);
+                    string cleanOutput = output.Substring(0, output.Length - 5);
 
+                    bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
+                    if (profileExists)
+                    {
+                        if (this.Text.ToLower() == "launch tarkov - select profile")
+                        {
+                            mForm.selectedAID = cleanOutput;
+                            mForm.isLoneServer = true;
+                            mForm.runServer();
+                        }
+                        else if (this.Text.ToLower() == "select profile")
+                        {
+                            Process.Start(Path.Combine(fullProfilesPath, output));
+                        }
+                    }
+                }
             }
+
+            isSPTActive = true;
+            this.Close();
         }
 
         private void lbl_MouseUp(object sender, EventArgs e)
@@ -198,7 +232,6 @@ namespace SPTMiniLauncher
 
         private void bCancel_Click(object sender, EventArgs e)
         {
-            clearUI();
             this.Close();
         }
 
@@ -226,7 +259,14 @@ namespace SPTMiniLauncher
 
         private void profileSelector_FormClosing(object sender, FormClosingEventArgs e)
         {
-            clearUI();
+        }
+
+        private void profileSelector_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (!isSPTActive)
+            {
+                this.Close();
+            }
         }
     }
 }

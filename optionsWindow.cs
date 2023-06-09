@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,8 +15,10 @@ namespace SPTMiniLauncher
 {
     public partial class optionsWindow : Form
     {
+        public List<string> currentProfiles = new List<string>();
         public Color selectedColor = Color.FromArgb(255, 38, 38, 38);
         public Color idleColor = Color.FromArgb(255, 28, 28, 28);
+        private int curIndex;
 
         public optionsWindow()
         {
@@ -24,6 +27,91 @@ namespace SPTMiniLauncher
 
         private void optionsWindow_Load(object sender, EventArgs e)
         {
+            Form1 mainForm = new Form1();
+
+            string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+            bool TarkovExists = File.Exists(TarkovPath);
+
+            if (!TarkovExists) // Improvised LoneServer functionality
+            {
+                string selectedServer = Path.Combine(Properties.Settings.Default.server_path, mainForm.boxSelectedServerTitle.Text);
+                string userFolder = Path.Combine(selectedServer, "user");
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+
+                string[] profiles = Directory.GetFiles(profilesFolder);
+
+                for (int i = 0; i < profiles.Length; i++)
+                {
+                    string profilePath = Path.Combine(profilesFolder, profiles[i]);
+                    bool profileExists = File.Exists(profilePath);
+                    if (profileExists)
+                    {
+                        string readProfile = File.ReadAllText(profiles[i]);
+                        JObject jReadProfile = JObject.Parse(readProfile);
+                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+
+                        string nameOutput = Path.GetFileName(profiles[i]);
+                        nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+
+                        currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                    }
+                }
+
+                bSPTAKIProfile.Text = currentProfiles[0];
+            }
+            else
+            {
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+
+                string[] profiles = Directory.GetFiles(profilesFolder);
+                for (int i = 0; i < profiles.Length; i++)
+                {
+                    string profilePath = Path.Combine(profilesFolder, profiles[i]);
+                    bool profileExists = File.Exists(profilePath);
+                    if (profileExists)
+                    {
+                        string readProfile = File.ReadAllText(profiles[i]);
+                        JObject jReadProfile = JObject.Parse(readProfile);
+                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+
+                        string nameOutput = Path.GetFileName(profiles[i]);
+                        nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+
+                        currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                    }
+                }
+
+                bSPTAKIProfile.Text = currentProfiles[0];
+            }
+
+            if (Properties.Settings.Default.currentProfileAID != null &&
+                Properties.Settings.Default.currentProfileAID != "")
+            {
+                bool isInPool = false;
+                foreach (string profileAID in currentProfiles)
+                {
+                    if (profileAID == Properties.Settings.Default.currentProfileAID)
+                    {
+                        isInPool = true;
+                    }
+                }
+                if (!isInPool)
+                {
+                    bSPTAKIProfile.Text = currentProfiles[0];
+                    Properties.Settings.Default.currentProfileAID = currentProfiles[0];
+                    Properties.Settings.Default.Save();
+                }
+                else
+                {
+                    bSPTAKIProfile.Text = Properties.Settings.Default.currentProfileAID;
+                }
+            }
+            else
+            {
+                bSPTAKIProfile.Text = currentProfiles[0];
+            }
+
             panelLauncherSettings.BringToFront();
             tabLauncherDesc.Select();
 
@@ -169,6 +257,11 @@ namespace SPTMiniLauncher
                     bEnableControlPanel.ForeColor = Color.IndianRed;
                     break;
             }
+        }
+
+        public void displayProfileName()
+        {
+
         }
 
         private void bMinimize_Click(object sender, EventArgs e)
@@ -592,6 +685,50 @@ namespace SPTMiniLauncher
             }
 
             Properties.Settings.Default.Save();
+        }
+
+        public void cycleProfiles()
+        {
+            string searchString = bSPTAKIProfile.Text;
+            int index = currentProfiles.FindIndex(file => file.Contains(searchString));
+            Debug.WriteLine(currentProfiles.Count);
+            curIndex = index;
+
+            if (curIndex == currentProfiles.Count - 1)
+            {
+                curIndex = 0;
+            }
+            else
+            {
+                curIndex++;
+            }
+
+            DisplayProfile(currentProfiles[curIndex]);
+
+        }
+
+        public void DisplayProfile(string fileName)
+        {
+            bSPTAKIProfile.Text = fileName;
+
+            /*
+            int index = fileName.IndexOf("-");
+            string output = fileName.Substring(0, index + 5);
+            string cleanOutput = output.Substring(0, output.Length - 5);
+            cleanOutput += ".json";
+            */
+
+            Properties.Settings.Default.currentProfileAID = bSPTAKIProfile.Text;
+            Properties.Settings.Default.Save();
+        }
+
+        private void bSPTAKIProfile_MouseDown(object sender, MouseEventArgs e)
+        {
+            cycleProfiles();
+        }
+
+        private void bSPTAKIProfile_Click(object sender, EventArgs e)
+        {
         }
     }
 }

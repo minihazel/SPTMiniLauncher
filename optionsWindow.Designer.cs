@@ -68,6 +68,8 @@
             this.tabSPTDesc = new System.Windows.Forms.Label();
             this.tabTarkovDesc = new System.Windows.Forms.Label();
             this.panelSPTAKISettings = new System.Windows.Forms.Panel();
+            this.panelSPTProfile = new System.Windows.Forms.GroupBox();
+            this.bSPTAKIProfile = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.panelTarkovSettings = new System.Windows.Forms.Panel();
             this.panelTarkovDetector = new System.Windows.Forms.GroupBox();
@@ -93,6 +95,7 @@
             this.panelLauncherSettings.SuspendLayout();
             this.panelCloseControl.SuspendLayout();
             this.panelSPTAKISettings.SuspendLayout();
+            this.panelSPTProfile.SuspendLayout();
             this.panelTarkovSettings.SuspendLayout();
             this.panelTarkovDetector.SuspendLayout();
             this.panelPresets.SuspendLayout();
@@ -611,12 +614,43 @@
             // 
             // panelSPTAKISettings
             // 
+            this.panelSPTAKISettings.Controls.Add(this.panelSPTProfile);
             this.panelSPTAKISettings.Controls.Add(this.label2);
             this.panelSPTAKISettings.Controls.Add(this.panelEnableTimedAkiLauncher);
             this.panelSPTAKISettings.Location = new System.Drawing.Point(12, 145);
             this.panelSPTAKISettings.Name = "panelSPTAKISettings";
             this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 348);
             this.panelSPTAKISettings.TabIndex = 15;
+            // 
+            // panelSPTProfile
+            // 
+            this.panelSPTProfile.Controls.Add(this.bSPTAKIProfile);
+            this.panelSPTProfile.ForeColor = System.Drawing.Color.LightGray;
+            this.panelSPTProfile.Location = new System.Drawing.Point(250, 3);
+            this.panelSPTProfile.Name = "panelSPTProfile";
+            this.panelSPTProfile.Size = new System.Drawing.Size(440, 65);
+            this.panelSPTProfile.TabIndex = 18;
+            this.panelSPTProfile.TabStop = false;
+            this.panelSPTProfile.Text = "Profile to start SPT-AKI with (click to cycle)";
+            this.optionsToolTip.SetToolTip(this.panelSPTProfile, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
+        "p SPT to be used in order to exit properly.");
+            // 
+            // bSPTAKIProfile
+            // 
+            this.bSPTAKIProfile.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bSPTAKIProfile.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bSPTAKIProfile.FlatAppearance.BorderSize = 0;
+            this.bSPTAKIProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bSPTAKIProfile.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bSPTAKIProfile.Location = new System.Drawing.Point(15, 23);
+            this.bSPTAKIProfile.Name = "bSPTAKIProfile";
+            this.bSPTAKIProfile.Size = new System.Drawing.Size(407, 30);
+            this.bSPTAKIProfile.TabIndex = 3;
+            this.bSPTAKIProfile.Text = "Placeholder";
+            this.bSPTAKIProfile.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bSPTAKIProfile.UseVisualStyleBackColor = true;
+            this.bSPTAKIProfile.Click += new System.EventHandler(this.bSPTAKIProfile_Click);
+            this.bSPTAKIProfile.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bSPTAKIProfile_MouseDown);
             // 
             // label2
             // 
@@ -771,10 +805,10 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
-            this.Controls.Add(this.panelLauncherSettings);
-            this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
             this.Controls.Add(this.panelPresets);
+            this.Controls.Add(this.panelLauncherSettings);
+            this.Controls.Add(this.panelTarkovSettings);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -800,6 +834,7 @@
             this.panelLauncherSettings.ResumeLayout(false);
             this.panelCloseControl.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
+            this.panelSPTProfile.ResumeLayout(false);
             this.panelTarkovSettings.ResumeLayout(false);
             this.panelTarkovDetector.ResumeLayout(false);
             this.panelPresets.ResumeLayout(false);
@@ -861,5 +896,7 @@
         private System.Windows.Forms.ToolTip optionsToolTip;
         private System.Windows.Forms.GroupBox panelCloseControl;
         private System.Windows.Forms.Button bEnableControlPanel;
+        private System.Windows.Forms.GroupBox panelSPTProfile;
+        private System.Windows.Forms.Button bSPTAKIProfile;
     }
 }
