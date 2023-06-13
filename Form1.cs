@@ -2728,10 +2728,10 @@ namespace SPTMiniLauncher
                     akiPort = 6969;
                 }
 
-                int port = akiPort; // the port to check
-                int timeout = 120000; // the maximum time to wait for the port to open in milliseconds
-                int delay = 1000; // the delay between port checks in milliseconds
-                int elapsed = 0; // the time elapsed since starting to check the port
+                int port = akiPort;
+                int timeout = 120000;
+                int delay = 1000;
+                int elapsed = 0;
 
                 while (!CheckPort(port))
                 {
