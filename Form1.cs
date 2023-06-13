@@ -3304,8 +3304,15 @@ namespace SPTMiniLauncher
             if (Properties.Settings.Default.server_path != null ||
                 Properties.Settings.Default.server_path != "" && boxPath.Text != null || boxPath.Text != "")
             {
-                optionsWindow frm = new optionsWindow();
-                frm.ShowDialog();
+                if (boxSelectedServerTitle.Text != "SPT Placeholder")
+                {
+                    optionsWindow frm = new optionsWindow();
+                    frm.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+                }
             }
             else
             {
