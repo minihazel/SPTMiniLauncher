@@ -19,6 +19,7 @@ namespace SPTMiniLauncher
         public Color selectedColor = Color.FromArgb(255, 38, 38, 38);
         public Color idleColor = Color.FromArgb(255, 28, 28, 28);
         private int curIndex;
+        public string selectedServer;
 
         public optionsWindow()
         {
@@ -34,8 +35,8 @@ namespace SPTMiniLauncher
 
             if (!TarkovExists) // Improvised LoneServer functionality
             {
-                string selectedServer = Path.Combine(Properties.Settings.Default.server_path, mainForm.boxSelectedServerTitle.Text);
-                string userFolder = Path.Combine(selectedServer, "user");
+                string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
+                string userFolder = Path.Combine(selected, "user");
                 string profilesFolder = Path.Combine(userFolder, "profiles");
 
                 string[] profiles = Directory.GetFiles(profilesFolder);

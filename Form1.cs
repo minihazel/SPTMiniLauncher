@@ -3307,6 +3307,7 @@ namespace SPTMiniLauncher
                 if (boxSelectedServerTitle.Text != "SPT Placeholder")
                 {
                     optionsWindow frm = new optionsWindow();
+                    frm.selectedServer = boxSelectedServerTitle.Text;
                     frm.ShowDialog();
                 }
                 else
