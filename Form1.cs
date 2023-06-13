@@ -3301,8 +3301,16 @@ namespace SPTMiniLauncher
 
         private void bOpenOptions_Click(object sender, EventArgs e)
         {
-            optionsWindow frm = new optionsWindow();
-            frm.ShowDialog();
+            if (Properties.Settings.Default.server_path != null ||
+                Properties.Settings.Default.server_path != "" && boxPath.Text != null || boxPath.Text != "")
+            {
+                optionsWindow frm = new optionsWindow();
+                frm.ShowDialog();
+            }
+            else
+            {
+                MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+            }
         }
 
         private void chkMinimizeOnRun_CheckedChanged(object sender, EventArgs e)
