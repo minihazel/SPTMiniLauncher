@@ -119,6 +119,16 @@ namespace SPTMiniLauncher
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
 
+            switch (Properties.Settings.Default.portChecking)
+            {
+                case 0:
+                    bPortChecking.Text = "127.0.0.1";
+                    break;
+                case 1:
+                    bPortChecking.Text = "localhost";
+                    break;
+            }
+
             switch (Properties.Settings.Default.bypassLauncher)
             {
                 case false:
@@ -757,6 +767,22 @@ namespace SPTMiniLauncher
                 bEnableBypassAkiLauncher.Text = "Enabled";
                 bEnableBypassAkiLauncher.ForeColor = Color.DodgerBlue;
                 Properties.Settings.Default.bypassLauncher = true;
+            }
+
+            Properties.Settings.Default.Save();
+        }
+
+        private void bPortChecking_Click(object sender, EventArgs e)
+        {
+            if (bPortChecking.Text.ToLower() == "localhost")
+            {
+                bPortChecking.Text = "127.0.0.1";
+                Properties.Settings.Default.portChecking = 0;
+            }
+            else
+            {
+                bPortChecking.Text = "localhost";
+                Properties.Settings.Default.portChecking = 1;
             }
 
             Properties.Settings.Default.Save();

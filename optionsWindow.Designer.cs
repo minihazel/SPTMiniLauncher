@@ -84,6 +84,8 @@
             this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
             this.panelBypassAkiLauncher = new System.Windows.Forms.GroupBox();
             this.bEnableBypassAkiLauncher = new System.Windows.Forms.Button();
+            this.panelPortCheckingMethod = new System.Windows.Forms.GroupBox();
+            this.bPortChecking = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -104,6 +106,7 @@
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.panelBypassAkiLauncher.SuspendLayout();
+            this.panelPortCheckingMethod.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -617,6 +620,7 @@
             // 
             // panelSPTAKISettings
             // 
+            this.panelSPTAKISettings.Controls.Add(this.panelPortCheckingMethod);
             this.panelSPTAKISettings.Controls.Add(this.panelBypassAkiLauncher);
             this.panelSPTAKISettings.Controls.Add(this.panelSPTProfile);
             this.panelSPTAKISettings.Controls.Add(this.label2);
@@ -825,6 +829,35 @@
             this.bEnableBypassAkiLauncher.UseVisualStyleBackColor = true;
             this.bEnableBypassAkiLauncher.Click += new System.EventHandler(this.bEnableBypassAkiLauncher_Click);
             // 
+            // panelPortCheckingMethod
+            // 
+            this.panelPortCheckingMethod.Controls.Add(this.bPortChecking);
+            this.panelPortCheckingMethod.ForeColor = System.Drawing.Color.LightGray;
+            this.panelPortCheckingMethod.Location = new System.Drawing.Point(525, 92);
+            this.panelPortCheckingMethod.Name = "panelPortCheckingMethod";
+            this.panelPortCheckingMethod.Size = new System.Drawing.Size(220, 65);
+            this.panelPortCheckingMethod.TabIndex = 20;
+            this.panelPortCheckingMethod.TabStop = false;
+            this.panelPortCheckingMethod.Text = "Port checking method";
+            this.optionsToolTip.SetToolTip(this.panelPortCheckingMethod, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
+        "p SPT to be used in order to exit properly.");
+            // 
+            // bPortChecking
+            // 
+            this.bPortChecking.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bPortChecking.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bPortChecking.FlatAppearance.BorderSize = 0;
+            this.bPortChecking.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bPortChecking.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bPortChecking.Location = new System.Drawing.Point(15, 23);
+            this.bPortChecking.Name = "bPortChecking";
+            this.bPortChecking.Size = new System.Drawing.Size(180, 30);
+            this.bPortChecking.TabIndex = 3;
+            this.bPortChecking.Text = "localhost";
+            this.bPortChecking.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bPortChecking.UseVisualStyleBackColor = true;
+            this.bPortChecking.Click += new System.EventHandler(this.bPortChecking_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -874,6 +907,7 @@
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.panelBypassAkiLauncher.ResumeLayout(false);
+            this.panelPortCheckingMethod.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -934,5 +968,7 @@
         private System.Windows.Forms.Button bSPTAKIProfile;
         private System.Windows.Forms.GroupBox panelBypassAkiLauncher;
         private System.Windows.Forms.Button bEnableBypassAkiLauncher;
+        private System.Windows.Forms.GroupBox panelPortCheckingMethod;
+        private System.Windows.Forms.Button bPortChecking;
     }
 }

@@ -304,5 +304,17 @@ This tool has quite a few features. Via the interface you can do the following:
                 this["bypassLauncher"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int portChecking {
+            get {
+                return ((int)(this["portChecking"]));
+            }
+            set {
+                this["portChecking"] = value;
+            }
+        }
     }
 }
