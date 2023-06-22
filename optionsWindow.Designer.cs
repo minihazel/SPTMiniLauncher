@@ -82,6 +82,8 @@
             this.bPreset2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
+            this.panelBypassAkiLauncher = new System.Windows.Forms.GroupBox();
+            this.bEnableBypassAkiLauncher = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -101,6 +103,7 @@
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panelBypassAkiLauncher.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -614,6 +617,7 @@
             // 
             // panelSPTAKISettings
             // 
+            this.panelSPTAKISettings.Controls.Add(this.panelBypassAkiLauncher);
             this.panelSPTAKISettings.Controls.Add(this.panelSPTProfile);
             this.panelSPTAKISettings.Controls.Add(this.label2);
             this.panelSPTAKISettings.Controls.Add(this.panelEnableTimedAkiLauncher);
@@ -792,6 +796,35 @@
             this.optionsToolTip.ReshowDelay = 100;
             this.optionsToolTip.ToolTipTitle = "Setting";
             // 
+            // panelBypassAkiLauncher
+            // 
+            this.panelBypassAkiLauncher.Controls.Add(this.bEnableBypassAkiLauncher);
+            this.panelBypassAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
+            this.panelBypassAkiLauncher.Location = new System.Drawing.Point(250, 92);
+            this.panelBypassAkiLauncher.Name = "panelBypassAkiLauncher";
+            this.panelBypassAkiLauncher.Size = new System.Drawing.Size(220, 65);
+            this.panelBypassAkiLauncher.TabIndex = 19;
+            this.panelBypassAkiLauncher.TabStop = false;
+            this.panelBypassAkiLauncher.Text = "Bypass Aki Launcher";
+            this.optionsToolTip.SetToolTip(this.panelBypassAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
+        "p SPT to be used in order to exit properly.");
+            // 
+            // bEnableBypassAkiLauncher
+            // 
+            this.bEnableBypassAkiLauncher.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableBypassAkiLauncher.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableBypassAkiLauncher.FlatAppearance.BorderSize = 0;
+            this.bEnableBypassAkiLauncher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableBypassAkiLauncher.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableBypassAkiLauncher.Location = new System.Drawing.Point(15, 23);
+            this.bEnableBypassAkiLauncher.Name = "bEnableBypassAkiLauncher";
+            this.bEnableBypassAkiLauncher.Size = new System.Drawing.Size(180, 30);
+            this.bEnableBypassAkiLauncher.TabIndex = 3;
+            this.bEnableBypassAkiLauncher.Text = "Enabled";
+            this.bEnableBypassAkiLauncher.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableBypassAkiLauncher.UseVisualStyleBackColor = true;
+            this.bEnableBypassAkiLauncher.Click += new System.EventHandler(this.bEnableBypassAkiLauncher_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -840,6 +873,7 @@
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.panelBypassAkiLauncher.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -898,5 +932,7 @@
         private System.Windows.Forms.Button bEnableControlPanel;
         private System.Windows.Forms.GroupBox panelSPTProfile;
         private System.Windows.Forms.Button bSPTAKIProfile;
+        private System.Windows.Forms.GroupBox panelBypassAkiLauncher;
+        private System.Windows.Forms.Button bEnableBypassAkiLauncher;
     }
 }

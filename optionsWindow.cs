@@ -119,6 +119,18 @@ namespace SPTMiniLauncher
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
 
+            switch (Properties.Settings.Default.bypassLauncher)
+            {
+                case false:
+                    bEnableBypassAkiLauncher.Text = "Disabled";
+                    bEnableBypassAkiLauncher.ForeColor = Color.IndianRed;
+                    break;
+                case true:
+                    bEnableBypassAkiLauncher.Text = "Enabled";
+                    bEnableBypassAkiLauncher.ForeColor = Color.DodgerBlue;
+                    break;
+            }
+
             switch (Properties.Settings.Default.hideOptions)
             {
                 case 0:
@@ -730,6 +742,24 @@ namespace SPTMiniLauncher
 
         private void bSPTAKIProfile_Click(object sender, EventArgs e)
         {
+        }
+
+        private void bEnableBypassAkiLauncher_Click(object sender, EventArgs e)
+        {
+            if (bEnableBypassAkiLauncher.Text.ToLower() == "enabled")
+            {
+                bEnableBypassAkiLauncher.Text = "Disabled";
+                bEnableBypassAkiLauncher.ForeColor = Color.IndianRed;
+                Properties.Settings.Default.bypassLauncher = false;
+            }
+            else
+            {
+                bEnableBypassAkiLauncher.Text = "Enabled";
+                bEnableBypassAkiLauncher.ForeColor = Color.DodgerBlue;
+                Properties.Settings.Default.bypassLauncher = true;
+            }
+
+            Properties.Settings.Default.Save();
         }
     }
 }

@@ -292,5 +292,17 @@ This tool has quite a few features. Via the interface you can do the following:
                 this["currentProfileAID"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool bypassLauncher {
+            get {
+                return ((bool)(this["bypassLauncher"]));
+            }
+            set {
+                this["bypassLauncher"] = value;
+            }
+        }
     }
 }
