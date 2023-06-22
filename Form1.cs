@@ -2820,7 +2820,7 @@ namespace SPTMiniLauncher
                 }
 
                 int port = akiPort; // the port to check
-                int timeout = 120000; // the maximum time to wait for the port to open in milliseconds
+                int timeout = 300000; // the maximum time to wait for the port to open in milliseconds
                 int delay = 1000; // the delay between port checks in milliseconds
                 int elapsed = 0; // the time elapsed since starting to check the port
 
@@ -2915,15 +2915,7 @@ namespace SPTMiniLauncher
                     if (CheckServerWorker != null)
                         CheckServerWorker.Dispose();
 
-                    switch (Properties.Settings.Default.portChecking)
-                    {
-                        case 0:
-                            client.Connect("127.0.0.1", port);
-                            break;
-                        case 1:
-                            client.Connect("localhost", port);
-                            break;
-                    }
+                    client.Connect(GetLocalIPAddress(), Properties.Settings.Default.usePort);
 
                     runLauncher();
                     confirmLaunched();

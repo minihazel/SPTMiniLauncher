@@ -308,12 +308,12 @@ This tool has quite a few features. Via the interface you can do the following:
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("0")]
-        public int portChecking {
+        public int usePort {
             get {
-                return ((int)(this["portChecking"]));
+                return ((int)(this["usePort"]));
             }
             set {
-                this["portChecking"] = value;
+                this["usePort"] = value;
             }
         }
     }

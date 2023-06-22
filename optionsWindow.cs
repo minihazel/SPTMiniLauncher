@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,6 +8,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -119,15 +121,61 @@ namespace SPTMiniLauncher
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
 
-            switch (Properties.Settings.Default.portChecking)
+            if (TarkovExists)
             {
-                case 0:
-                    bPortChecking.Text = "127.0.0.1";
-                    break;
-                case 1:
-                    bPortChecking.Text = "localhost";
-                    break;
+                string akiPath = Properties.Settings.Default.server_path;
+                string akiData = Path.Combine(akiPath, "Aki_Data");
+                if (Directory.Exists(akiData))
+                {
+                    string akiDataServer = Path.Combine(akiData, "Server");
+                    if (Directory.Exists(akiDataServer))
+                    {
+                        string akiDatabase = Path.Combine(akiDataServer, "database");
+                        if (Directory.Exists(akiDatabase))
+                        {
+                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                            if (File.Exists(akiServerJson))
+                            {
+                                string readJson = File.ReadAllText(akiServerJson);
+                                JObject jsonObject = JObject.Parse(readJson);
+                                string _port = jsonObject["port"].ToString();
+                                bPortChecking.Text = _port;
+                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
+                            }
+                        }
+                    }
+                }
+
             }
+            else
+            {
+                string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
+                string akiPath = selected;
+                string akiData = Path.Combine(akiPath, "Aki_Data");
+                if (Directory.Exists(akiData))
+                {
+                    string akiDataServer = Path.Combine(akiData, "Server");
+                    if (Directory.Exists(akiDataServer))
+                    {
+                        string akiDatabase = Path.Combine(akiDataServer, "database");
+                        if (Directory.Exists(akiDatabase))
+                        {
+                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                            if (File.Exists(akiServerJson))
+                            {
+                                string readJson = File.ReadAllText(akiServerJson);
+                                JObject jsonObject = JObject.Parse(readJson);
+                                string _port = jsonObject["port"].ToString();
+                                bPortChecking.Text = _port;
+                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            txtPortCheckBar.Visible = false;
 
             switch (Properties.Settings.Default.bypassLauncher)
             {
@@ -774,18 +822,98 @@ namespace SPTMiniLauncher
 
         private void bPortChecking_Click(object sender, EventArgs e)
         {
-            if (bPortChecking.Text.ToLower() == "localhost")
-            {
-                bPortChecking.Text = "127.0.0.1";
-                Properties.Settings.Default.portChecking = 0;
-            }
-            else
-            {
-                bPortChecking.Text = "localhost";
-                Properties.Settings.Default.portChecking = 1;
-            }
+            txtPortCheckBar.Visible = true;
+            txtPortCheckBar.Text = "";
+            txtPortCheckBar.Select();
+        }
 
-            Properties.Settings.Default.Save();
+        private void txtPortCheckBar_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
+                Properties.Settings.Default.Save();
+
+                string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                bool TarkovExists = File.Exists(TarkovPath);
+
+                if (TarkovExists)
+                {
+                    string akiPath = Properties.Settings.Default.server_path;
+                    string akiData = Path.Combine(akiPath, "Aki_Data");
+                    if (Directory.Exists(akiData))
+                    {
+                        string akiDataServer = Path.Combine(akiData, "Server");
+                        if (Directory.Exists(akiDataServer))
+                        {
+                            string akiDatabase = Path.Combine(akiDataServer, "database");
+                            if (Directory.Exists(akiDatabase))
+                            {
+                                string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                                if (File.Exists(akiServerJson))
+                                {
+                                    string readJson = File.ReadAllText(akiServerJson);
+                                    dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
+                                    jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
+                                    string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+                                    try
+                                    {
+                                        File.WriteAllText(akiServerJson, output);
+                                        Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+                else
+                {
+                    string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
+                    string akiPath = selected;
+                    string akiData = Path.Combine(akiPath, "Aki_Data");
+                    if (Directory.Exists(akiData))
+                    {
+                        string akiDataServer = Path.Combine(akiData, "Server");
+                        if (Directory.Exists(akiDataServer))
+                        {
+                            string akiDatabase = Path.Combine(akiDataServer, "database");
+                            if (Directory.Exists(akiDatabase))
+                            {
+                                string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                                if (File.Exists(akiServerJson))
+                                {
+                                    string readJson = File.ReadAllText(akiServerJson);
+                                    dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
+                                    jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
+                                    string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+                                    try
+                                    {
+                                        File.WriteAllText(akiServerJson, output);
+                                        Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                }
+
+                bPortChecking.Text = txtPortCheckBar.Text;
+                txtPortCheckBar.Text = "";
+                txtPortCheckBar.Visible = false;
+                Properties.Settings.Default.Save();
+            }
         }
     }
 }

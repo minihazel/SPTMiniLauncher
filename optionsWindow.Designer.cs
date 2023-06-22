@@ -86,6 +86,7 @@
             this.bEnableBypassAkiLauncher = new System.Windows.Forms.Button();
             this.panelPortCheckingMethod = new System.Windows.Forms.GroupBox();
             this.bPortChecking = new System.Windows.Forms.Button();
+            this.txtPortCheckBar = new System.Windows.Forms.TextBox();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -620,6 +621,7 @@
             // 
             // panelSPTAKISettings
             // 
+            this.panelSPTAKISettings.Controls.Add(this.txtPortCheckBar);
             this.panelSPTAKISettings.Controls.Add(this.panelPortCheckingMethod);
             this.panelSPTAKISettings.Controls.Add(this.panelBypassAkiLauncher);
             this.panelSPTAKISettings.Controls.Add(this.panelSPTProfile);
@@ -838,7 +840,7 @@
             this.panelPortCheckingMethod.Size = new System.Drawing.Size(220, 65);
             this.panelPortCheckingMethod.TabIndex = 20;
             this.panelPortCheckingMethod.TabStop = false;
-            this.panelPortCheckingMethod.Text = "Port checking method";
+            this.panelPortCheckingMethod.Text = "Port to use";
             this.optionsToolTip.SetToolTip(this.panelPortCheckingMethod, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
         "p SPT to be used in order to exit properly.");
             // 
@@ -853,10 +855,23 @@
             this.bPortChecking.Name = "bPortChecking";
             this.bPortChecking.Size = new System.Drawing.Size(180, 30);
             this.bPortChecking.TabIndex = 3;
-            this.bPortChecking.Text = "localhost";
+            this.bPortChecking.Text = "6969";
             this.bPortChecking.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bPortChecking.UseVisualStyleBackColor = true;
             this.bPortChecking.Click += new System.EventHandler(this.bPortChecking_Click);
+            // 
+            // txtPortCheckBar
+            // 
+            this.txtPortCheckBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.txtPortCheckBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPortCheckBar.Font = new System.Drawing.Font("Bahnschrift Light", 12F);
+            this.txtPortCheckBar.ForeColor = System.Drawing.Color.LightGray;
+            this.txtPortCheckBar.Location = new System.Drawing.Point(525, 171);
+            this.txtPortCheckBar.Name = "txtPortCheckBar";
+            this.txtPortCheckBar.Size = new System.Drawing.Size(220, 27);
+            this.txtPortCheckBar.TabIndex = 21;
+            this.txtPortCheckBar.Visible = false;
+            this.txtPortCheckBar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPortCheckBar_KeyDown);
             // 
             // optionsWindow
             // 
@@ -900,6 +915,7 @@
             this.panelLauncherSettings.ResumeLayout(false);
             this.panelCloseControl.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
+            this.panelSPTAKISettings.PerformLayout();
             this.panelSPTProfile.ResumeLayout(false);
             this.panelTarkovSettings.ResumeLayout(false);
             this.panelTarkovDetector.ResumeLayout(false);
@@ -970,5 +986,6 @@
         private System.Windows.Forms.Button bEnableBypassAkiLauncher;
         private System.Windows.Forms.GroupBox panelPortCheckingMethod;
         private System.Windows.Forms.Button bPortChecking;
+        private System.Windows.Forms.TextBox txtPortCheckBar;
     }
 }
