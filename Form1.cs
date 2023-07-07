@@ -2200,11 +2200,11 @@ namespace SPTMiniLauncher
                         if (akiPort != 0)
                         {
 
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
+                            _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
                         } else
                         {
 
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:6969\",\"Version\":\"live\"}}";
+                            _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
                         }
 
                         Process tarkovGame = new Process();
@@ -2218,7 +2218,7 @@ namespace SPTMiniLauncher
                         _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
                         if (akiPort != 0)
                         {
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
+                            _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
                         }
                         else
                         {
