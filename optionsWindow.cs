@@ -88,8 +88,7 @@ namespace SPTMiniLauncher
                 bSPTAKIProfile.Text = currentProfiles[0];
             }
 
-            if (Properties.Settings.Default.currentProfileAID != null &&
-                Properties.Settings.Default.currentProfileAID != "")
+            if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
             {
                 bool isInPool = false;
                 foreach (string profileAID in currentProfiles)
@@ -762,7 +761,6 @@ namespace SPTMiniLauncher
         {
             string searchString = bSPTAKIProfile.Text;
             int index = currentProfiles.FindIndex(file => file.Contains(searchString));
-            Debug.WriteLine(currentProfiles.Count);
             curIndex = index;
 
             if (curIndex == currentProfiles.Count - 1)
@@ -782,15 +780,15 @@ namespace SPTMiniLauncher
         {
             bSPTAKIProfile.Text = fileName;
 
-            /*
             int index = fileName.IndexOf("-");
             string output = fileName.Substring(0, index + 5);
             string cleanOutput = output.Substring(0, output.Length - 5);
-            cleanOutput += ".json";
-            */
+            cleanOutput = cleanOutput.Trim();
 
-            Properties.Settings.Default.currentProfileAID = bSPTAKIProfile.Text;
+            Properties.Settings.Default.currentProfileAID = cleanOutput;
             Properties.Settings.Default.Save();
+
+            Debug.WriteLine(cleanOutput);
         }
 
         private void bSPTAKIProfile_MouseDown(object sender, MouseEventArgs e)

@@ -2192,16 +2192,18 @@ namespace SPTMiniLauncher
 
             switch (Properties.Settings.Default.bypassLauncher)
             {
-                case false:
+                case true:
                     if (isLoneServer)
                     {
                         ProcessStartInfo _tarkov = new ProcessStartInfo();
                         _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                         if (akiPort != 0)
                         {
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+
+                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
                         } else
                         {
+
                             _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:6969\",\"Version\":\"live\"}}";
                         }
 
@@ -2216,7 +2218,7 @@ namespace SPTMiniLauncher
                         _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
                         if (akiPort != 0)
                         {
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
                         }
                         else
                         {
@@ -2234,7 +2236,7 @@ namespace SPTMiniLauncher
                     TarkovEndDetector.RunWorkerAsync();
                     break;
 
-                case true:
+                case false:
                     if (isLoneServer)
                     {
                         Process akiLauncher = new Process();
@@ -2833,7 +2835,7 @@ namespace SPTMiniLauncher
                         if (CheckServerWorker != null)
                             CheckServerWorker.Dispose();
 
-                        showError("We could not detect the Aki Launcher after 2 minutes.\n" +
+                        showError("We could not detect the Aki Launcher after 5 minutes.\n" +
                                   "\n" +
                                   "Max duration reached, launching SPT-AKI.");
 
@@ -2864,7 +2866,7 @@ namespace SPTMiniLauncher
                 }
 
                 int port = akiPort;
-                int timeout = 120000;
+                int timeout = 300000;
                 int delay = 1000;
                 int elapsed = 0;
 
@@ -2877,7 +2879,7 @@ namespace SPTMiniLauncher
                         if (CheckServerWorker != null)
                             CheckServerWorker.Dispose();
 
-                        showError("We could not detect the Aki Launcher after 2 minutes.\n" +
+                        showError("We could not detect the Aki Launcher after 5 minutes.\n" +
                                   "\n" +
                                   "Max duration reached, launching SPT-AKI.");
 
@@ -2915,7 +2917,7 @@ namespace SPTMiniLauncher
                     if (CheckServerWorker != null)
                         CheckServerWorker.Dispose();
 
-                    client.Connect(GetLocalIPAddress(), Properties.Settings.Default.usePort);
+                    client.Connect("127.0.0.1" /* GetLocalIPAddress() */, Properties.Settings.Default.usePort);
 
                     runLauncher();
                     confirmLaunched();
