@@ -64,10 +64,12 @@
             this.panel3 = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.tabLauncherDesc = new System.Windows.Forms.Label();
-            this.tabSPTDesc = new System.Windows.Forms.Label();
-            this.tabTarkovDesc = new System.Windows.Forms.Label();
             this.panelSPTAKISettings = new System.Windows.Forms.Panel();
+            this.txtPortCheckBar = new System.Windows.Forms.TextBox();
+            this.panelPortCheckingMethod = new System.Windows.Forms.GroupBox();
+            this.bPortChecking = new System.Windows.Forms.Button();
+            this.panelBypassAkiLauncher = new System.Windows.Forms.GroupBox();
+            this.bEnableBypassAkiLauncher = new System.Windows.Forms.Button();
             this.panelSPTProfile = new System.Windows.Forms.GroupBox();
             this.bSPTAKIProfile = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
@@ -82,11 +84,13 @@
             this.bPreset2 = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.optionsToolTip = new System.Windows.Forms.ToolTip(this.components);
-            this.panelBypassAkiLauncher = new System.Windows.Forms.GroupBox();
-            this.bEnableBypassAkiLauncher = new System.Windows.Forms.Button();
-            this.panelPortCheckingMethod = new System.Windows.Forms.GroupBox();
-            this.bPortChecking = new System.Windows.Forms.Button();
-            this.txtPortCheckBar = new System.Windows.Forms.TextBox();
+            this.tooltipLauncher = new System.Windows.Forms.ToolTip(this.components);
+            this.tooltipSPTAKI = new System.Windows.Forms.ToolTip(this.components);
+            this.tooltipTarkov = new System.Windows.Forms.ToolTip(this.components);
+            this.tooltipPresets = new System.Windows.Forms.ToolTip(this.components);
+            this.pagesTitle = new System.Windows.Forms.Label();
+            this.pagesSeparator = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -100,14 +104,14 @@
             this.panelLauncherSettings.SuspendLayout();
             this.panelCloseControl.SuspendLayout();
             this.panelSPTAKISettings.SuspendLayout();
+            this.panelPortCheckingMethod.SuspendLayout();
+            this.panelBypassAkiLauncher.SuspendLayout();
             this.panelSPTProfile.SuspendLayout();
             this.panelTarkovSettings.SuspendLayout();
             this.panelTarkovDetector.SuspendLayout();
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panelBypassAkiLauncher.SuspendLayout();
-            this.panelPortCheckingMethod.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -174,7 +178,7 @@
             this.panelMisc.Controls.Add(this.bReset);
             this.panelMisc.Controls.Add(this.bRefresh);
             this.panelMisc.ForeColor = System.Drawing.Color.LightGray;
-            this.panelMisc.Location = new System.Drawing.Point(94, 271);
+            this.panelMisc.Location = new System.Drawing.Point(3, 271);
             this.panelMisc.Name = "panelMisc";
             this.panelMisc.Size = new System.Drawing.Size(539, 65);
             this.panelMisc.TabIndex = 2;
@@ -477,47 +481,52 @@
             this.tabLauncher.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabLauncher.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
             this.tabLauncher.FlatAppearance.BorderSize = 0;
+            this.tabLauncher.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.tabLauncher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabLauncher.ForeColor = System.Drawing.Color.LightGray;
-            this.tabLauncher.Location = new System.Drawing.Point(180, 21);
+            this.tabLauncher.Location = new System.Drawing.Point(2, 71);
             this.tabLauncher.Name = "tabLauncher";
-            this.tabLauncher.Size = new System.Drawing.Size(150, 35);
+            this.tabLauncher.Size = new System.Drawing.Size(232, 45);
             this.tabLauncher.TabIndex = 11;
             this.tabLauncher.Text = "Launcher settings";
-            this.tabLauncher.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.tooltipLauncher.SetToolTip(this.tabLauncher, "Settings and options for the SPT Launcher");
             this.tabLauncher.UseVisualStyleBackColor = false;
             this.tabLauncher.Click += new System.EventHandler(this.tabLauncher_Click);
             // 
             // tabSPTAKI
             // 
+            this.tabSPTAKI.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.tabSPTAKI.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabSPTAKI.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
             this.tabSPTAKI.FlatAppearance.BorderSize = 0;
+            this.tabSPTAKI.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.tabSPTAKI.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabSPTAKI.ForeColor = System.Drawing.Color.LightGray;
-            this.tabSPTAKI.Location = new System.Drawing.Point(336, 21);
+            this.tabSPTAKI.Location = new System.Drawing.Point(2, 116);
             this.tabSPTAKI.Name = "tabSPTAKI";
-            this.tabSPTAKI.Size = new System.Drawing.Size(150, 35);
+            this.tabSPTAKI.Size = new System.Drawing.Size(232, 45);
             this.tabSPTAKI.TabIndex = 12;
             this.tabSPTAKI.Text = "SPT-AKI settings";
-            this.tabSPTAKI.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tabSPTAKI.UseVisualStyleBackColor = true;
+            this.tooltipSPTAKI.SetToolTip(this.tabSPTAKI, "Settings and configurations related to SPT-AKI and its Server and Launcher");
+            this.tabSPTAKI.UseVisualStyleBackColor = false;
             this.tabSPTAKI.Click += new System.EventHandler(this.tabSPTAKI_Click);
             // 
             // tabTarkov
             // 
+            this.tabTarkov.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.tabTarkov.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabTarkov.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
             this.tabTarkov.FlatAppearance.BorderSize = 0;
+            this.tabTarkov.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.tabTarkov.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabTarkov.ForeColor = System.Drawing.Color.LightGray;
-            this.tabTarkov.Location = new System.Drawing.Point(492, 21);
+            this.tabTarkov.Location = new System.Drawing.Point(2, 161);
             this.tabTarkov.Name = "tabTarkov";
-            this.tabTarkov.Size = new System.Drawing.Size(150, 35);
+            this.tabTarkov.Size = new System.Drawing.Size(232, 45);
             this.tabTarkov.TabIndex = 13;
             this.tabTarkov.Text = "Tarkov settings";
-            this.tabTarkov.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tabTarkov.UseVisualStyleBackColor = true;
+            this.tooltipTarkov.SetToolTip(this.tabTarkov, "Settings and configurations for Escape From Tarkov");
+            this.tabTarkov.UseVisualStyleBackColor = false;
             this.tabTarkov.Click += new System.EventHandler(this.tabTarkov_Click);
             // 
             // panelLauncherSettings
@@ -534,9 +543,9 @@
             this.panelLauncherSettings.Controls.Add(this.panelClearCache);
             this.panelLauncherSettings.Controls.Add(this.panelMinimizeOnSPTLaunch);
             this.panelLauncherSettings.Controls.Add(this.panelMisc);
-            this.panelLauncherSettings.Location = new System.Drawing.Point(12, 145);
+            this.panelLauncherSettings.Location = new System.Drawing.Point(243, 4);
             this.panelLauncherSettings.Name = "panelLauncherSettings";
-            this.panelLauncherSettings.Size = new System.Drawing.Size(798, 348);
+            this.panelLauncherSettings.Size = new System.Drawing.Size(798, 530);
             this.panelLauncherSettings.TabIndex = 14;
             // 
             // panelCloseControl
@@ -592,51 +601,96 @@
             this.panel1.Size = new System.Drawing.Size(714, 1);
             this.panel1.TabIndex = 10;
             // 
-            // tabLauncherDesc
-            // 
-            this.tabLauncherDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.tabLauncherDesc.Location = new System.Drawing.Point(180, 64);
-            this.tabLauncherDesc.Name = "tabLauncherDesc";
-            this.tabLauncherDesc.Size = new System.Drawing.Size(150, 48);
-            this.tabLauncherDesc.TabIndex = 15;
-            this.tabLauncherDesc.Text = "Settings and options for the SPT Launcher";
-            // 
-            // tabSPTDesc
-            // 
-            this.tabSPTDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.tabSPTDesc.Location = new System.Drawing.Point(333, 64);
-            this.tabSPTDesc.Name = "tabSPTDesc";
-            this.tabSPTDesc.Size = new System.Drawing.Size(153, 48);
-            this.tabSPTDesc.TabIndex = 16;
-            this.tabSPTDesc.Text = "Settings and configurations related to SPT-AKI and its Server and Launcher";
-            // 
-            // tabTarkovDesc
-            // 
-            this.tabTarkovDesc.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.tabTarkovDesc.Location = new System.Drawing.Point(489, 64);
-            this.tabTarkovDesc.Name = "tabTarkovDesc";
-            this.tabTarkovDesc.Size = new System.Drawing.Size(153, 48);
-            this.tabTarkovDesc.TabIndex = 17;
-            this.tabTarkovDesc.Text = "Settings and configurations for Escape From Tarkov";
-            // 
             // panelSPTAKISettings
             // 
+            this.panelSPTAKISettings.Controls.Add(this.panel4);
             this.panelSPTAKISettings.Controls.Add(this.txtPortCheckBar);
             this.panelSPTAKISettings.Controls.Add(this.panelPortCheckingMethod);
             this.panelSPTAKISettings.Controls.Add(this.panelBypassAkiLauncher);
             this.panelSPTAKISettings.Controls.Add(this.panelSPTProfile);
             this.panelSPTAKISettings.Controls.Add(this.label2);
             this.panelSPTAKISettings.Controls.Add(this.panelEnableTimedAkiLauncher);
-            this.panelSPTAKISettings.Location = new System.Drawing.Point(12, 145);
+            this.panelSPTAKISettings.Location = new System.Drawing.Point(243, 4);
             this.panelSPTAKISettings.Name = "panelSPTAKISettings";
-            this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 348);
+            this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 530);
             this.panelSPTAKISettings.TabIndex = 15;
+            // 
+            // txtPortCheckBar
+            // 
+            this.txtPortCheckBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.txtPortCheckBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPortCheckBar.Font = new System.Drawing.Font("Bahnschrift Light", 12F);
+            this.txtPortCheckBar.ForeColor = System.Drawing.Color.LightGray;
+            this.txtPortCheckBar.Location = new System.Drawing.Point(250, 82);
+            this.txtPortCheckBar.Name = "txtPortCheckBar";
+            this.txtPortCheckBar.Size = new System.Drawing.Size(220, 27);
+            this.txtPortCheckBar.TabIndex = 21;
+            this.txtPortCheckBar.Visible = false;
+            this.txtPortCheckBar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPortCheckBar_KeyDown);
+            // 
+            // panelPortCheckingMethod
+            // 
+            this.panelPortCheckingMethod.Controls.Add(this.bPortChecking);
+            this.panelPortCheckingMethod.ForeColor = System.Drawing.Color.LightGray;
+            this.panelPortCheckingMethod.Location = new System.Drawing.Point(250, 3);
+            this.panelPortCheckingMethod.Name = "panelPortCheckingMethod";
+            this.panelPortCheckingMethod.Size = new System.Drawing.Size(220, 65);
+            this.panelPortCheckingMethod.TabIndex = 20;
+            this.panelPortCheckingMethod.TabStop = false;
+            this.panelPortCheckingMethod.Text = "Port to use";
+            this.optionsToolTip.SetToolTip(this.panelPortCheckingMethod, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
+        "p SPT to be used in order to exit properly.");
+            // 
+            // bPortChecking
+            // 
+            this.bPortChecking.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bPortChecking.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bPortChecking.FlatAppearance.BorderSize = 0;
+            this.bPortChecking.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bPortChecking.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bPortChecking.Location = new System.Drawing.Point(15, 23);
+            this.bPortChecking.Name = "bPortChecking";
+            this.bPortChecking.Size = new System.Drawing.Size(180, 30);
+            this.bPortChecking.TabIndex = 3;
+            this.bPortChecking.Text = "6969";
+            this.bPortChecking.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bPortChecking.UseVisualStyleBackColor = true;
+            this.bPortChecking.Click += new System.EventHandler(this.bPortChecking_Click);
+            // 
+            // panelBypassAkiLauncher
+            // 
+            this.panelBypassAkiLauncher.Controls.Add(this.bEnableBypassAkiLauncher);
+            this.panelBypassAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
+            this.panelBypassAkiLauncher.Location = new System.Drawing.Point(3, 182);
+            this.panelBypassAkiLauncher.Name = "panelBypassAkiLauncher";
+            this.panelBypassAkiLauncher.Size = new System.Drawing.Size(220, 65);
+            this.panelBypassAkiLauncher.TabIndex = 19;
+            this.panelBypassAkiLauncher.TabStop = false;
+            this.panelBypassAkiLauncher.Text = "Bypass Aki Launcher";
+            this.optionsToolTip.SetToolTip(this.panelBypassAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
+        "p SPT to be used in order to exit properly.");
+            // 
+            // bEnableBypassAkiLauncher
+            // 
+            this.bEnableBypassAkiLauncher.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnableBypassAkiLauncher.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnableBypassAkiLauncher.FlatAppearance.BorderSize = 0;
+            this.bEnableBypassAkiLauncher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnableBypassAkiLauncher.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnableBypassAkiLauncher.Location = new System.Drawing.Point(15, 23);
+            this.bEnableBypassAkiLauncher.Name = "bEnableBypassAkiLauncher";
+            this.bEnableBypassAkiLauncher.Size = new System.Drawing.Size(180, 30);
+            this.bEnableBypassAkiLauncher.TabIndex = 3;
+            this.bEnableBypassAkiLauncher.Text = "Enabled";
+            this.bEnableBypassAkiLauncher.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnableBypassAkiLauncher.UseVisualStyleBackColor = true;
+            this.bEnableBypassAkiLauncher.Click += new System.EventHandler(this.bEnableBypassAkiLauncher_Click);
             // 
             // panelSPTProfile
             // 
             this.panelSPTProfile.Controls.Add(this.bSPTAKIProfile);
             this.panelSPTProfile.ForeColor = System.Drawing.Color.LightGray;
-            this.panelSPTProfile.Location = new System.Drawing.Point(250, 3);
+            this.panelSPTProfile.Location = new System.Drawing.Point(3, 271);
             this.panelSPTProfile.Name = "panelSPTProfile";
             this.panelSPTProfile.Size = new System.Drawing.Size(440, 65);
             this.panelSPTProfile.TabIndex = 18;
@@ -650,6 +704,7 @@
             this.bSPTAKIProfile.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bSPTAKIProfile.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
             this.bSPTAKIProfile.FlatAppearance.BorderSize = 0;
+            this.bSPTAKIProfile.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(33)))), ((int)(((byte)(33)))), ((int)(((byte)(33)))));
             this.bSPTAKIProfile.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bSPTAKIProfile.ForeColor = System.Drawing.Color.DodgerBlue;
             this.bSPTAKIProfile.Location = new System.Drawing.Point(15, 23);
@@ -677,16 +732,16 @@
             // 
             this.panelTarkovSettings.Controls.Add(this.panelTarkovDetector);
             this.panelTarkovSettings.Controls.Add(this.panelDetectors);
-            this.panelTarkovSettings.Location = new System.Drawing.Point(12, 145);
+            this.panelTarkovSettings.Location = new System.Drawing.Point(243, 4);
             this.panelTarkovSettings.Name = "panelTarkovSettings";
-            this.panelTarkovSettings.Size = new System.Drawing.Size(798, 348);
+            this.panelTarkovSettings.Size = new System.Drawing.Size(798, 530);
             this.panelTarkovSettings.TabIndex = 16;
             // 
             // panelTarkovDetector
             // 
             this.panelTarkovDetector.Controls.Add(this.bEnableTarkovDetection);
             this.panelTarkovDetector.ForeColor = System.Drawing.Color.LightGray;
-            this.panelTarkovDetector.Location = new System.Drawing.Point(3, 134);
+            this.panelTarkovDetector.Location = new System.Drawing.Point(497, 3);
             this.panelTarkovDetector.Name = "panelTarkovDetector";
             this.panelTarkovDetector.Size = new System.Drawing.Size(220, 65);
             this.panelTarkovDetector.TabIndex = 8;
@@ -713,18 +768,19 @@
             // 
             // tabPresets
             // 
+            this.tabPresets.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.tabPresets.Cursor = System.Windows.Forms.Cursors.Hand;
             this.tabPresets.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
             this.tabPresets.FlatAppearance.BorderSize = 0;
+            this.tabPresets.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
             this.tabPresets.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.tabPresets.ForeColor = System.Drawing.Color.LightGray;
-            this.tabPresets.Location = new System.Drawing.Point(648, 21);
+            this.tabPresets.Location = new System.Drawing.Point(2, 206);
             this.tabPresets.Name = "tabPresets";
-            this.tabPresets.Size = new System.Drawing.Size(150, 35);
+            this.tabPresets.Size = new System.Drawing.Size(232, 45);
             this.tabPresets.TabIndex = 18;
             this.tabPresets.Text = "Presets";
-            this.tabPresets.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.tabPresets.UseVisualStyleBackColor = true;
+            this.tabPresets.UseVisualStyleBackColor = false;
             this.tabPresets.Click += new System.EventHandler(this.tabPresets_Click);
             // 
             // panelPresets
@@ -733,9 +789,9 @@
             this.panelPresets.Controls.Add(this.descPreset2);
             this.panelPresets.Controls.Add(this.groupBox2);
             this.panelPresets.Controls.Add(this.groupBox1);
-            this.panelPresets.Location = new System.Drawing.Point(12, 145);
+            this.panelPresets.Location = new System.Drawing.Point(243, 4);
             this.panelPresets.Name = "panelPresets";
-            this.panelPresets.Size = new System.Drawing.Size(798, 348);
+            this.panelPresets.Size = new System.Drawing.Size(798, 530);
             this.panelPresets.TabIndex = 19;
             // 
             // descPreset1
@@ -802,87 +858,61 @@
             this.optionsToolTip.ReshowDelay = 100;
             this.optionsToolTip.ToolTipTitle = "Setting";
             // 
-            // panelBypassAkiLauncher
+            // tooltipLauncher
             // 
-            this.panelBypassAkiLauncher.Controls.Add(this.bEnableBypassAkiLauncher);
-            this.panelBypassAkiLauncher.ForeColor = System.Drawing.Color.LightGray;
-            this.panelBypassAkiLauncher.Location = new System.Drawing.Point(250, 92);
-            this.panelBypassAkiLauncher.Name = "panelBypassAkiLauncher";
-            this.panelBypassAkiLauncher.Size = new System.Drawing.Size(220, 65);
-            this.panelBypassAkiLauncher.TabIndex = 19;
-            this.panelBypassAkiLauncher.TabStop = false;
-            this.panelBypassAkiLauncher.Text = "Bypass Aki Launcher";
-            this.optionsToolTip.SetToolTip(this.panelBypassAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
-        "p SPT to be used in order to exit properly.");
+            this.tooltipLauncher.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.tooltipLauncher.ToolTipTitle = "Launcher settings";
             // 
-            // bEnableBypassAkiLauncher
+            // tooltipSPTAKI
             // 
-            this.bEnableBypassAkiLauncher.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bEnableBypassAkiLauncher.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bEnableBypassAkiLauncher.FlatAppearance.BorderSize = 0;
-            this.bEnableBypassAkiLauncher.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bEnableBypassAkiLauncher.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bEnableBypassAkiLauncher.Location = new System.Drawing.Point(15, 23);
-            this.bEnableBypassAkiLauncher.Name = "bEnableBypassAkiLauncher";
-            this.bEnableBypassAkiLauncher.Size = new System.Drawing.Size(180, 30);
-            this.bEnableBypassAkiLauncher.TabIndex = 3;
-            this.bEnableBypassAkiLauncher.Text = "Enabled";
-            this.bEnableBypassAkiLauncher.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bEnableBypassAkiLauncher.UseVisualStyleBackColor = true;
-            this.bEnableBypassAkiLauncher.Click += new System.EventHandler(this.bEnableBypassAkiLauncher_Click);
+            this.tooltipSPTAKI.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.tooltipSPTAKI.ToolTipTitle = "SPT-AKI settings";
             // 
-            // panelPortCheckingMethod
+            // tooltipTarkov
             // 
-            this.panelPortCheckingMethod.Controls.Add(this.bPortChecking);
-            this.panelPortCheckingMethod.ForeColor = System.Drawing.Color.LightGray;
-            this.panelPortCheckingMethod.Location = new System.Drawing.Point(525, 92);
-            this.panelPortCheckingMethod.Name = "panelPortCheckingMethod";
-            this.panelPortCheckingMethod.Size = new System.Drawing.Size(220, 65);
-            this.panelPortCheckingMethod.TabIndex = 20;
-            this.panelPortCheckingMethod.TabStop = false;
-            this.panelPortCheckingMethod.Text = "Port to use";
-            this.optionsToolTip.SetToolTip(this.panelPortCheckingMethod, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
-        "p SPT to be used in order to exit properly.");
+            this.tooltipTarkov.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.tooltipTarkov.ToolTipTitle = "Tarkov settings";
             // 
-            // bPortChecking
+            // tooltipPresets
             // 
-            this.bPortChecking.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bPortChecking.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bPortChecking.FlatAppearance.BorderSize = 0;
-            this.bPortChecking.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bPortChecking.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bPortChecking.Location = new System.Drawing.Point(15, 23);
-            this.bPortChecking.Name = "bPortChecking";
-            this.bPortChecking.Size = new System.Drawing.Size(180, 30);
-            this.bPortChecking.TabIndex = 3;
-            this.bPortChecking.Text = "6969";
-            this.bPortChecking.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bPortChecking.UseVisualStyleBackColor = true;
-            this.bPortChecking.Click += new System.EventHandler(this.bPortChecking_Click);
+            this.tooltipPresets.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
+            this.tooltipPresets.ToolTipTitle = "Presets";
             // 
-            // txtPortCheckBar
+            // pagesTitle
             // 
-            this.txtPortCheckBar.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.txtPortCheckBar.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtPortCheckBar.Font = new System.Drawing.Font("Bahnschrift Light", 12F);
-            this.txtPortCheckBar.ForeColor = System.Drawing.Color.LightGray;
-            this.txtPortCheckBar.Location = new System.Drawing.Point(525, 171);
-            this.txtPortCheckBar.Name = "txtPortCheckBar";
-            this.txtPortCheckBar.Size = new System.Drawing.Size(220, 27);
-            this.txtPortCheckBar.TabIndex = 21;
-            this.txtPortCheckBar.Visible = false;
-            this.txtPortCheckBar.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtPortCheckBar_KeyDown);
+            this.pagesTitle.Font = new System.Drawing.Font("Bahnschrift Light", 14F);
+            this.pagesTitle.Location = new System.Drawing.Point(2, 12);
+            this.pagesTitle.Name = "pagesTitle";
+            this.pagesTitle.Size = new System.Drawing.Size(232, 41);
+            this.pagesTitle.TabIndex = 20;
+            this.pagesTitle.Text = "Pages";
+            this.pagesTitle.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // pagesSeparator
+            // 
+            this.pagesSeparator.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.pagesSeparator.Location = new System.Drawing.Point(235, 16);
+            this.pagesSeparator.Name = "pagesSeparator";
+            this.pagesSeparator.Size = new System.Drawing.Size(1, 518);
+            this.pagesSeparator.TabIndex = 21;
+            // 
+            // panel4
+            // 
+            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel4.Location = new System.Drawing.Point(3, 164);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(714, 1);
+            this.panel4.TabIndex = 22;
             // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(822, 517);
+            this.ClientSize = new System.Drawing.Size(1053, 546);
+            this.Controls.Add(this.pagesSeparator);
+            this.Controls.Add(this.pagesTitle);
             this.Controls.Add(this.tabPresets);
-            this.Controls.Add(this.tabTarkovDesc);
-            this.Controls.Add(this.tabSPTDesc);
-            this.Controls.Add(this.tabLauncherDesc);
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
@@ -916,14 +946,14 @@
             this.panelCloseControl.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
             this.panelSPTAKISettings.PerformLayout();
+            this.panelPortCheckingMethod.ResumeLayout(false);
+            this.panelBypassAkiLauncher.ResumeLayout(false);
             this.panelSPTProfile.ResumeLayout(false);
             this.panelTarkovSettings.ResumeLayout(false);
             this.panelTarkovDetector.ResumeLayout(false);
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.panelBypassAkiLauncher.ResumeLayout(false);
-            this.panelPortCheckingMethod.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -958,9 +988,6 @@
         private System.Windows.Forms.Button tabSPTAKI;
         private System.Windows.Forms.Button tabTarkov;
         private System.Windows.Forms.Panel panelLauncherSettings;
-        private System.Windows.Forms.Label tabLauncherDesc;
-        private System.Windows.Forms.Label tabSPTDesc;
-        private System.Windows.Forms.Label tabTarkovDesc;
         private System.Windows.Forms.Panel panelSPTAKISettings;
         private System.Windows.Forms.Panel panelTarkovSettings;
         private System.Windows.Forms.Panel panel1;
@@ -987,5 +1014,12 @@
         private System.Windows.Forms.GroupBox panelPortCheckingMethod;
         private System.Windows.Forms.Button bPortChecking;
         private System.Windows.Forms.TextBox txtPortCheckBar;
+        private System.Windows.Forms.ToolTip tooltipLauncher;
+        private System.Windows.Forms.ToolTip tooltipSPTAKI;
+        private System.Windows.Forms.ToolTip tooltipTarkov;
+        private System.Windows.Forms.ToolTip tooltipPresets;
+        private System.Windows.Forms.Label pagesTitle;
+        private System.Windows.Forms.Panel pagesSeparator;
+        private System.Windows.Forms.Panel panel4;
     }
 }

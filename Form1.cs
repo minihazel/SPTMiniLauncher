@@ -2196,15 +2196,35 @@ namespace SPTMiniLauncher
                     if (isLoneServer)
                     {
                         ProcessStartInfo _tarkov = new ProcessStartInfo();
-                        _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
-                        if (akiPort != 0)
-                        {
 
-                            _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
-                        } else
+                        string aid = Properties.Settings.Default.currentProfileAID;
+                        int index = aid.IndexOf("-");
+                        if (index != -1)
                         {
+                            aid = aid.Substring(index, aid.Length).Trim();
+                            _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                            if (akiPort != 0)
+                            {
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={aid} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+                            }
+                            else
+                            {
 
-                            _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                            }
+                        }
+                        else
+                        {
+                            _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                            if (akiPort != 0)
+                            {
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+                            }
+                            else
+                            {
+
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                            }
                         }
 
                         Process tarkovGame = new Process();
@@ -2214,15 +2234,37 @@ namespace SPTMiniLauncher
                     else
                     {
                         selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+
                         ProcessStartInfo _tarkov = new ProcessStartInfo();
-                        _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
-                        if (akiPort != 0)
+
+                        string aid = Properties.Settings.Default.currentProfileAID;
+                        int index = aid.IndexOf("-");
+                        if (index != -1)
                         {
-                            _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+                            aid = aid.Substring(index, aid.Length).Trim();
+                            _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
+                            if (akiPort != 0)
+                            {
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={aid} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+                            }
+                            else
+                            {
+
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                            }
                         }
                         else
                         {
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"127.0.0.1:6969\",\"Version\":\"live\"}}";
+                            _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
+                            if (akiPort != 0)
+                            {
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{GetLocalIPAddress()}:{akiPort}\",\"Version\":\"live\"}}";
+                            }
+                            else
+                            {
+
+                                _tarkov.Arguments = $"-force-gfx-jobs native -token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                            }
                         }
 
                         Process tarkovGame = new Process();

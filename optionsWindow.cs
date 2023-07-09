@@ -11,6 +11,7 @@ using System.Linq;
 using System.Security.AccessControl;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
 
 namespace SPTMiniLauncher
@@ -59,8 +60,6 @@ namespace SPTMiniLauncher
                         currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
                     }
                 }
-
-                bSPTAKIProfile.Text = currentProfiles[0];
             }
             else
             {
@@ -84,29 +83,38 @@ namespace SPTMiniLauncher
                         currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
                     }
                 }
-
-                bSPTAKIProfile.Text = currentProfiles[0];
             }
 
             if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
             {
-                bool isInPool = false;
+                bool isProfileInPool = false;
+
                 foreach (string profileAID in currentProfiles)
                 {
-                    if (profileAID == Properties.Settings.Default.currentProfileAID)
+                    int profileIndex = profileAID.IndexOf("-");
+                    string output = profileAID.Substring(0, profileIndex + 5);
+                    string cleanOutput = output.Substring(0, output.Length - 5);
+                    cleanOutput = cleanOutput.Trim();
+
+                    if (cleanOutput == Properties.Settings.Default.currentProfileAID)
                     {
-                        isInPool = true;
+                        isProfileInPool = true;
+                        bSPTAKIProfile.Text = displayProfileName(cleanOutput);
+                        break;
                     }
                 }
-                if (!isInPool)
+
+                if (!isProfileInPool)
                 {
                     bSPTAKIProfile.Text = currentProfiles[0];
-                    Properties.Settings.Default.currentProfileAID = currentProfiles[0];
+
+                    int profileIndex = currentProfiles[0].IndexOf("-");
+                    string output = currentProfiles[0].Substring(0, profileIndex + 5);
+                    string cleanOutput = output.Substring(0, output.Length - 5);
+                    cleanOutput = cleanOutput.Trim();
+
+                    Properties.Settings.Default.currentProfileAID = cleanOutput;
                     Properties.Settings.Default.Save();
-                }
-                else
-                {
-                    bSPTAKIProfile.Text = Properties.Settings.Default.currentProfileAID;
                 }
             }
             else
@@ -115,7 +123,6 @@ namespace SPTMiniLauncher
             }
 
             panelLauncherSettings.BringToFront();
-            tabLauncherDesc.Select();
 
             bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
             bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
@@ -329,9 +336,74 @@ namespace SPTMiniLauncher
             }
         }
 
-        public void displayProfileName()
+        public string displayProfileName(string input)
         {
+            string result = "";
+            string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+            bool TarkovExists = File.Exists(TarkovPath);
 
+            if (!TarkovExists) // Improvised LoneServer functionality
+            {
+                string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
+                string userFolder = Path.Combine(selected, "user");
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                string profileFile = Path.Combine(profilesFolder, $"{input}.json");
+
+                bool profilesFileExists = File.Exists(profileFile);
+                if (profilesFileExists)
+                {
+                    string readProfile = File.ReadAllText(profileFile);
+                    JObject jReadProfile = JObject.Parse(readProfile);
+                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+
+                    string nameOutput = Path.GetFileName(profileFile);
+                    nameOutput = nameOutput.Replace(".json", "");
+
+                    result = $"{nameOutput} - [{_Nickname}]";
+                }
+            }
+            else
+            {
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                string profileFile = Path.Combine(profilesFolder, $"{input}.json");
+
+                bool profilesFileExists = File.Exists(profileFile);
+                if (profilesFileExists)
+                {
+                    string readProfile = File.ReadAllText(profileFile);
+                    JObject jReadProfile = JObject.Parse(readProfile);
+                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+
+                    string nameOutput = Path.GetFileName(profileFile);
+                    nameOutput = nameOutput.Replace(".json", "");
+
+                    result = $"{nameOutput} - [{_Nickname}]";
+                }
+            }
+
+            return result;
+        }
+
+        public string displayProfileAID(string input)
+        {
+            string result = "";
+            int profileIndex = input.IndexOf("-");
+
+            if (profileIndex != -1)
+            {
+                string output = input.Substring(0, profileIndex + 5);
+                string cleanOutput = output.Substring(0, output.Length - 5);
+                cleanOutput = cleanOutput.Trim();
+
+                result = cleanOutput;
+            }
+            else
+            {
+                result = input;
+            }
+
+            return result;
         }
 
         private void bMinimize_Click(object sender, EventArgs e)
@@ -599,7 +671,6 @@ namespace SPTMiniLauncher
             tabPresets.BackColor = idleColor;
 
             panelLauncherSettings.BringToFront();
-            tabLauncherDesc.Select();
         }
 
         private void tabSPTAKI_Click(object sender, EventArgs e)
@@ -610,7 +681,6 @@ namespace SPTMiniLauncher
             tabPresets.BackColor = idleColor;
 
             panelSPTAKISettings.BringToFront();
-            tabLauncherDesc.Select();
         }
 
         private void tabTarkov_Click(object sender, EventArgs e)
@@ -621,7 +691,6 @@ namespace SPTMiniLauncher
             tabPresets.BackColor = idleColor;
 
             panelTarkovSettings.BringToFront();
-            tabLauncherDesc.Select();
         }
 
         private void tabPresets_Click(object sender, EventArgs e)
@@ -632,7 +701,6 @@ namespace SPTMiniLauncher
             tabPresets.BackColor = selectedColor;
 
             panelPresets.BringToFront();
-            tabLauncherDesc.Select();
         }
 
         private void bPreset1_Click(object sender, EventArgs e)
@@ -772,23 +840,17 @@ namespace SPTMiniLauncher
                 curIndex++;
             }
 
-            DisplayProfile(currentProfiles[curIndex]);
+            string currentAid = displayProfileAID(currentProfiles[curIndex]);
 
+            DisplayProfile(currentAid, currentProfiles[curIndex]);
         }
 
-        public void DisplayProfile(string fileName)
+        public void DisplayProfile(string fileName, string fullName)
         {
-            bSPTAKIProfile.Text = fileName;
+            bSPTAKIProfile.Text = fullName;
 
-            int index = fileName.IndexOf("-");
-            string output = fileName.Substring(0, index + 5);
-            string cleanOutput = output.Substring(0, output.Length - 5);
-            cleanOutput = cleanOutput.Trim();
-
-            Properties.Settings.Default.currentProfileAID = cleanOutput;
+            Properties.Settings.Default.currentProfileAID = fileName;
             Properties.Settings.Default.Save();
-
-            Debug.WriteLine(cleanOutput);
         }
 
         private void bSPTAKIProfile_MouseDown(object sender, MouseEventArgs e)
