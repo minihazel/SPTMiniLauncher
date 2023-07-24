@@ -13,6 +13,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Controls.Primitives;
 using System.Windows.Forms;
+using System.Windows.Media.Animation;
 
 namespace SPTMiniLauncher
 {
@@ -42,22 +43,33 @@ namespace SPTMiniLauncher
                 string userFolder = Path.Combine(selected, "user");
                 string profilesFolder = Path.Combine(userFolder, "profiles");
 
-                string[] profiles = Directory.GetFiles(profilesFolder);
-
-                for (int i = 0; i < profiles.Length; i++)
+                bool profilesExists = Directory.Exists(profilesFolder);
+                if (profilesExists)
                 {
-                    string profilePath = Path.Combine(profilesFolder, profiles[i]);
-                    bool profileExists = File.Exists(profilePath);
-                    if (profileExists)
+                    string[] profiles = Directory.GetFiles(profilesFolder);
+
+                    for (int i = 0; i < profiles.Length; i++)
                     {
-                        string readProfile = File.ReadAllText(profiles[i]);
-                        JObject jReadProfile = JObject.Parse(readProfile);
-                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                        string profilePath = Path.Combine(profilesFolder, profiles[i]);
+                        bool profileExists = File.Exists(profilePath);
+                        if (profileExists)
+                        {
+                            string readProfile = File.ReadAllText(profiles[i]);
+                            JObject jReadProfile = JObject.Parse(readProfile);
+                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                        string nameOutput = Path.GetFileName(profiles[i]);
-                        nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+                            string nameOutput = Path.GetFileName(profiles[i]);
+                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
 
-                        currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                        }
+                    }
+                }
+                else
+                {
+                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
+                    {
+                        this.Close();
                     }
                 }
             }
@@ -65,22 +77,33 @@ namespace SPTMiniLauncher
             {
                 string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
                 string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesExists = Directory.Exists(profilesFolder);
 
-                string[] profiles = Directory.GetFiles(profilesFolder);
-                for (int i = 0; i < profiles.Length; i++)
+                if (profilesExists)
                 {
-                    string profilePath = Path.Combine(profilesFolder, profiles[i]);
-                    bool profileExists = File.Exists(profilePath);
-                    if (profileExists)
+                    string[] profiles = Directory.GetFiles(profilesFolder);
+                    for (int i = 0; i < profiles.Length; i++)
                     {
-                        string readProfile = File.ReadAllText(profiles[i]);
-                        JObject jReadProfile = JObject.Parse(readProfile);
-                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                        string profilePath = Path.Combine(profilesFolder, profiles[i]);
+                        bool profileExists = File.Exists(profilePath);
+                        if (profileExists)
+                        {
+                            string readProfile = File.ReadAllText(profiles[i]);
+                            JObject jReadProfile = JObject.Parse(readProfile);
+                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                        string nameOutput = Path.GetFileName(profiles[i]);
-                        nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+                            string nameOutput = Path.GetFileName(profiles[i]);
+                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
 
-                        currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                        }
+                    }
+                }
+                else
+                {
+                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
+                    {
+                        this.Close();
                     }
                 }
             }
@@ -973,6 +996,35 @@ namespace SPTMiniLauncher
                 txtPortCheckBar.Text = "";
                 txtPortCheckBar.Visible = false;
                 Properties.Settings.Default.Save();
+            }
+        }
+
+        private void bDeleteServer_Click(object sender, EventArgs e)
+        {
+            Form1 mainForm = new Form1();
+
+            string server = bDeleteServer.Text.Substring(16);
+            server = server.Replace("?", "");
+            if (MessageBox.Show($"Would you like to delete {server}?", $"{this.Text} - Delete an installation", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                bool TarkovExists = File.Exists(TarkovPath);
+
+                if (!TarkovExists) // Improvised LoneServer functionality
+                {
+                    string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
+                    Directory.Delete(Properties.Settings.Default.server_path, true);
+                    mainForm.showError($"Folder {server} has been deleted.");
+                    mainForm.clearUI();
+                }
+                else
+                {
+                    Directory.Delete(Properties.Settings.Default.server_path, true);
+                    mainForm.showError($"Folder {server} has been deleted.");
+                    mainForm.clearUI();
+                }
+
+                this.Close();
             }
         }
     }

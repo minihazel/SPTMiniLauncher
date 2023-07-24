@@ -61,7 +61,6 @@ namespace SPTMiniLauncher
             "Clear cache",
             "Run SPT",
             "Stop SPT (if running)",
-            "Delete server",
             "- MODS -",
             "Open client mods",
             "Open server mods",
@@ -79,7 +78,6 @@ namespace SPTMiniLauncher
             "Clear cache",
             "Run SPT",
             "Stop SPT (if running)",
-            "Delete server",
             "- MODS -",
             "Open client mods",
             "Open server mods",
@@ -312,7 +310,7 @@ namespace SPTMiniLauncher
             MessageBox.Show(content, this.Text, MessageBoxButtons.OK);
         }
 
-        private void clearUI()
+        public void clearUI()
         {
             // server box
             for (int i = boxServers.Controls.Count - 1; i >= 0; i--)
@@ -376,14 +374,14 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.loe_path = loepath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[12] = "Open Load Order Editor (LOE)";
+                serverOptionsStreets[11] = "Open Load Order Editor (LOE)";
             }
             else
             {
                 Properties.Settings.Default.loe_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[12] = "LOE not detected - click to download";
+                serverOptionsStreets[11] = "LOE not detected - click to download";
             }
 
             // perform profile editor check
@@ -395,8 +393,8 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.profile_editor_path = Path.Combine(progFiles, "SPT-AKI Profile Editor");
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[13] = "Open Profile Editor";
-                serverOptions[11] = "Open Profile Editor";
+                serverOptionsStreets[12] = "Open Profile Editor";
+                serverOptions[10] = "Open Profile Editor";
             }
             else if (Properties.Settings.Default.profile_editor_path != null || Properties.Settings.Default.profile_editor_path != "")
             {
@@ -407,8 +405,8 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.profile_editor_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[13] = "Profile Editor not detected - click to fix";
-                serverOptions[11] = "Profile Editor not detected - click to fix";
+                serverOptionsStreets[12] = "Profile Editor not detected - click to fix";
+                serverOptions[10] = "Profile Editor not detected - click to fix";
             }
 
             // server value modifier (svm)
@@ -420,16 +418,16 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.svm_path = svmpath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[14] = "Open Server Value Modifier (SVM)";
-                serverOptions[12] = "Open Server Value Modifier (SVM)";
+                serverOptionsStreets[13] = "Open Server Value Modifier (SVM)";
+                serverOptions[11] = "Open Server Value Modifier (SVM)";
             }
             else
             {
                 Properties.Settings.Default.svm_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[14] = "SVM not detected - click to download";
-                serverOptions[12] = "SVM not detected - click to download";
+                serverOptionsStreets[13] = "SVM not detected - click to download";
+                serverOptions[11] = "SVM not detected - click to download";
             }
 
             // spt realism
@@ -441,16 +439,16 @@ namespace SPTMiniLauncher
                 Properties.Settings.Default.realism_path = realismpath;
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[15] = "Open SPT Realism";
-                serverOptions[13] = "Open SPT Realism";
+                serverOptionsStreets[14] = "Open SPT Realism";
+                serverOptions[12] = "Open SPT Realism";
             }
             else
             {
                 Properties.Settings.Default.realism_path = "";
                 Properties.Settings.Default.Save();
 
-                serverOptionsStreets[15] = "SPT Realism not detected - click to download";
-                serverOptions[13] = "SPT Realism not detected - click to download";
+                serverOptionsStreets[14] = "SPT Realism not detected - click to download";
+                serverOptions[12] = "SPT Realism not detected - click to download";
             }
         }
 
@@ -946,10 +944,10 @@ namespace SPTMiniLauncher
                             lbl.ForeColor = Color.LightGray;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
-                        else if (serverOptionsStreets[i].ToLower() == "delete server")
+                        else if (serverOptionsStreets[i].ToLower() == "stop spt (if running)")
                         {
-                            lbl.Name = "launcherDeleteServerButton";
-                            lbl.Text = "Delete server";
+                            lbl.Name = "launcherStopSPTIfRunning";
+                            lbl.Text = "Stop SPT (if running)";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.IndianRed;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -1065,20 +1063,20 @@ namespace SPTMiniLauncher
                             lbl.ForeColor = Color.DodgerBlue;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
+                        else if (serverOptions[i].ToLower() == "stop spt (if running)")
+                        {
+                            lbl.Name = "launcherStopSPTIfRunning";
+                            lbl.Text = "Stop SPT (if running)";
+                            lbl.BackColor = listBackcolor;
+                            lbl.ForeColor = Color.IndianRed;
+                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        }
                         else if (serverOptions[i].ToLower() == "clear cache")
                         {
                             lbl.Name = "launcherClearCacheButton";
                             lbl.Text = "Clear cache";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.LightGray;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower() == "delete server")
-                        {
-                            lbl.Name = "launcherDeleteServerButton";
-                            lbl.Text = "Delete server";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.IndianRed;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
                         else if (serverOptions[i].ToLower() == "- mods -")
@@ -1861,53 +1859,6 @@ namespace SPTMiniLauncher
                                 }
                             }
 
-                            break;
-
-                        case "delete server":
-
-                            if (isLoneServer)
-                            {
-                                if (Directory.Exists(Properties.Settings.Default.server_path))
-                                {
-                                    if (MessageBox.Show($"Do you wish to delete {boxSelectedServerTitle.Text}?\nThis action is irreversible!", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                    {
-                                        try
-                                        {
-                                            Directory.Delete(Properties.Settings.Default.server_path, true);
-                                            showError($"Server {boxSelectedServerTitle.Text} has been deleted. Please drag and drop a server folder, or type the path to one.");
-                                            clearUI();
-                                            //listAllServers(Properties.Settings.Default.server_path);
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-
-                                }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                if (Directory.Exists(selectedServer))
-                                {
-                                    if (MessageBox.Show($"Do you wish to delete {boxSelectedServerTitle.Text}?\nThis action is irreversible!", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                                    {
-                                        try
-                                        {
-                                            Directory.Delete(selectedServer, true);
-                                            listAllServers(Properties.Settings.Default.server_path);
-                                        }
-                                        catch (Exception err)
-                                        {
-                                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                        }
-                                    }
-
-                                }
-                            }
                             break;
                     }
                 }
@@ -2785,13 +2736,6 @@ namespace SPTMiniLauncher
                     cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
                 }
 
-                Control deleteBtn = findDelete();
-                if (deleteBtn != null)
-                {
-                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.Text = "Delete server"; }));
-                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.ForeColor = Color.IndianRed; }));
-                }
-
                 try
                 {
                     if (globalProcessDetector != null)
@@ -3032,18 +2976,6 @@ namespace SPTMiniLauncher
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.modProblem = false; }));
                 outputwindow.Invoke((MethodInvoker)(() => { outputwindow.Hide(); }));
             }
-        }
-
-        public Control findDelete()
-        {
-            // search by name
-            Control[] deleteButton = this.Controls.Find("launcherDeleteServerButton", true);
-            if (deleteButton != null)
-            {
-                Label deleteBtn = (Label)deleteButton[0];
-                return deleteBtn;
-            }
-            return null;
         }
 
         public Control findCache()
@@ -3488,6 +3420,14 @@ namespace SPTMiniLauncher
                 {
                     optionsWindow frm = new optionsWindow();
                     frm.selectedServer = boxSelectedServerTitle.Text;
+
+                    Control[] found = frm.Controls.Find("bDeleteServer", true);
+                    if (found.Length > 0)
+                    {
+                        Control bDeleteServer = found[0];
+                        bDeleteServer.Text = $"Click to delete {boxSelectedServerTitle.Text}";
+                    }
+
                     frm.ShowDialog();
                 }
                 else

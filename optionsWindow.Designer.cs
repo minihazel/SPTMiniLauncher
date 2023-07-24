@@ -65,6 +65,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panelSPTAKISettings = new System.Windows.Forms.Panel();
+            this.panel4 = new System.Windows.Forms.Panel();
             this.txtPortCheckBar = new System.Windows.Forms.TextBox();
             this.panelPortCheckingMethod = new System.Windows.Forms.GroupBox();
             this.bPortChecking = new System.Windows.Forms.Button();
@@ -90,7 +91,8 @@
             this.tooltipPresets = new System.Windows.Forms.ToolTip(this.components);
             this.pagesTitle = new System.Windows.Forms.Label();
             this.pagesSeparator = new System.Windows.Forms.Panel();
-            this.panel4 = new System.Windows.Forms.Panel();
+            this.panelDeleteCurrentServer = new System.Windows.Forms.GroupBox();
+            this.bDeleteServer = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -112,6 +114,7 @@
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            this.panelDeleteCurrentServer.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -531,6 +534,7 @@
             // 
             // panelLauncherSettings
             // 
+            this.panelLauncherSettings.Controls.Add(this.panelDeleteCurrentServer);
             this.panelLauncherSettings.Controls.Add(this.panelCloseControl);
             this.panelLauncherSettings.Controls.Add(this.panel3);
             this.panelLauncherSettings.Controls.Add(this.panel2);
@@ -614,6 +618,14 @@
             this.panelSPTAKISettings.Name = "panelSPTAKISettings";
             this.panelSPTAKISettings.Size = new System.Drawing.Size(798, 530);
             this.panelSPTAKISettings.TabIndex = 15;
+            // 
+            // panel4
+            // 
+            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel4.Location = new System.Drawing.Point(3, 164);
+            this.panel4.Name = "panel4";
+            this.panel4.Size = new System.Drawing.Size(714, 1);
+            this.panel4.TabIndex = 22;
             // 
             // txtPortCheckBar
             // 
@@ -896,13 +908,34 @@
             this.pagesSeparator.Size = new System.Drawing.Size(1, 518);
             this.pagesSeparator.TabIndex = 21;
             // 
-            // panel4
+            // panelDeleteCurrentServer
             // 
-            this.panel4.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel4.Location = new System.Drawing.Point(3, 164);
-            this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(714, 1);
-            this.panel4.TabIndex = 22;
+            this.panelDeleteCurrentServer.Controls.Add(this.bDeleteServer);
+            this.panelDeleteCurrentServer.ForeColor = System.Drawing.Color.LightGray;
+            this.panelDeleteCurrentServer.Location = new System.Drawing.Point(3, 462);
+            this.panelDeleteCurrentServer.Name = "panelDeleteCurrentServer";
+            this.panelDeleteCurrentServer.Size = new System.Drawing.Size(467, 65);
+            this.panelDeleteCurrentServer.TabIndex = 21;
+            this.panelDeleteCurrentServer.TabStop = false;
+            this.panelDeleteCurrentServer.Text = " Delete current server ";
+            this.optionsToolTip.SetToolTip(this.panelDeleteCurrentServer, "If enabled, SPT Launcher\'s control panel will automatically exit after opening a " +
+        "location.");
+            // 
+            // bDeleteServer
+            // 
+            this.bDeleteServer.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bDeleteServer.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bDeleteServer.FlatAppearance.BorderSize = 0;
+            this.bDeleteServer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bDeleteServer.ForeColor = System.Drawing.Color.IndianRed;
+            this.bDeleteServer.Location = new System.Drawing.Point(15, 23);
+            this.bDeleteServer.Name = "bDeleteServer";
+            this.bDeleteServer.Size = new System.Drawing.Size(427, 30);
+            this.bDeleteServer.TabIndex = 4;
+            this.bDeleteServer.Text = "Click to delete";
+            this.bDeleteServer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bDeleteServer.UseVisualStyleBackColor = true;
+            this.bDeleteServer.Click += new System.EventHandler(this.bDeleteServer_Click);
             // 
             // optionsWindow
             // 
@@ -916,10 +949,10 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
-            this.Controls.Add(this.panelSPTAKISettings);
-            this.Controls.Add(this.panelPresets);
             this.Controls.Add(this.panelLauncherSettings);
             this.Controls.Add(this.panelTarkovSettings);
+            this.Controls.Add(this.panelSPTAKISettings);
+            this.Controls.Add(this.panelPresets);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -954,6 +987,7 @@
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
+            this.panelDeleteCurrentServer.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1021,5 +1055,7 @@
         private System.Windows.Forms.Label pagesTitle;
         private System.Windows.Forms.Panel pagesSeparator;
         private System.Windows.Forms.Panel panel4;
+        private System.Windows.Forms.GroupBox panelDeleteCurrentServer;
+        private System.Windows.Forms.Button bDeleteServer;
     }
 }
