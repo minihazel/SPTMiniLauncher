@@ -2245,9 +2245,10 @@ namespace SPTMiniLauncher
                         }
                         catch (Exception err)
                         {
-                            Debug.WriteLine($"ERROR: {err.ToString()}");
+                            Debug.WriteLine($"ERROR: {err}");
                             MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                         }
+
                     }
                     else
                     {
@@ -2259,15 +2260,17 @@ namespace SPTMiniLauncher
                         akiLauncher.StartInfo.UseShellExecute = false;
                         akiLauncher.StartInfo.RedirectStandardOutput = false;
 
+                        
                         try
                         {
                             akiLauncher.Start();
                         }
                         catch (Exception err)
                         {
-                            Debug.WriteLine($"ERROR: {err.ToString()}");
+                            Debug.WriteLine($"ERROR: {err}");
                             MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                         }
+                    
                     }
 
                     Directory.SetCurrentDirectory(currentDir);
@@ -2736,6 +2739,15 @@ namespace SPTMiniLauncher
                     cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
                 }
 
+                /*
+                Control deleteBtn = findDelete();
+                if (deleteBtn != null)
+                {
+                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.Text = "Delete server"; }));
+                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.ForeColor = Color.IndianRed; }));
+                }
+                */
+
                 try
                 {
                     if (globalProcessDetector != null)
@@ -2989,6 +3001,20 @@ namespace SPTMiniLauncher
             }
             return null;
         }
+
+        /*
+        public Control findDelete()
+        {
+            // search by name
+            Control[] deleteButton = this.Controls.Find("launcherDeleteServerButton", true);
+            if (deleteButton != null)
+            {
+                Label deleteBtn = (Label)deleteButton[0];
+                return deleteBtn;
+            }
+            return null;
+        }
+        */
 
         public Control findRun(bool isName, string searchText)
         {
