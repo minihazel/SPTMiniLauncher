@@ -1288,30 +1288,37 @@ namespace SPTMiniLauncher
 
                         case "run spt":
 
-                            switch (Properties.Settings.Default.hideOptions)
+                            if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
                             {
-                                case 1:
-                                    minimizeLauncherWindow();
-                                    break;
-                            }
+                                switch (Properties.Settings.Default.hideOptions)
+                                {
+                                    case 1:
+                                        minimizeLauncherWindow();
+                                        break;
+                                }
 
-                            if (Properties.Settings.Default.clearCache == 1)
+                                if (Properties.Settings.Default.clearCache == 1)
+                                {
+                                    if (isLoneServer)
+                                    {
+                                        clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
+                                    }
+                                    else
+                                    {
+                                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                                        clearServerCache(Path.Combine(selectedServer, "user\\cache"));
+                                    }
+                                }
+
+                                runServer();
+
+                                label.Text = "Loading SPT, this may take a few";
+                                label.Enabled = false;
+                            }
+                            else
                             {
-                                if (isLoneServer)
-                                {
-                                    clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
-                                }
-                                else
-                                {
-                                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                    clearServerCache(Path.Combine(selectedServer, "user\\cache"));
-                                }
+                                showError("You don\'t have a profile selected. Please head into Options -> SPT-AKI Settings and select a profile, then try again!");
                             }
-
-                            runServer();
-
-                            label.Text = "Loading SPT, this may take a few";
-                            label.Enabled = false;
 
                             break;
 
