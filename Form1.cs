@@ -452,12 +452,36 @@ namespace SPTMiniLauncher
             }
         }
 
+        public void checkForSingularProfile(string path)
+        {
+            string mainFolder = path;
+            string userFolder = Path.Combine(path, "user");
+            bool userExists = Directory.Exists(userFolder);
+            if (userExists)
+            {
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesExists = Directory.Exists(profilesFolder);
+                if (profilesExists)
+                {
+                    string[] profiles = Directory.GetFiles(profilesFolder);
+                    if (profiles.Length == 1)
+                    {
+                        string fileName = Path.GetFileNameWithoutExtension(profiles[0]);
+                        if (fileName != null)
+                            Properties.Settings.Default.currentProfileAID = fileName;
+                    }
+                }
+            }
+        }
+
         public void listAllServers(string path)
         {
             clearUI();
 
             if (isLoneServer)
             {
+                checkForSingularProfile(path);
+
                 Label lbl = new Label();
                 lbl.Text = Path.GetFileName(path);
                 lbl.AutoSize = false;
@@ -617,6 +641,7 @@ namespace SPTMiniLauncher
                         if (File.Exists(core))
                         {
                             checkVersion(core);
+                            checkForSingularProfile(selectedServer);
                         }
                     }
                 }
@@ -2149,6 +2174,7 @@ namespace SPTMiniLauncher
                         ProcessStartInfo _tarkov = new ProcessStartInfo();
 
                         string aid = Properties.Settings.Default.currentProfileAID;
+                        Console.WriteLine(aid);
                         int index = aid.IndexOf("-");
                         if (index != -1)
                         {
@@ -2234,10 +2260,8 @@ namespace SPTMiniLauncher
                     {
                         Process akiLauncher = new Process();
                         akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                        akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
+                        akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "Aki.Launcher.exe");
                         akiLauncher.StartInfo.CreateNoWindow = false;
-                        akiLauncher.StartInfo.UseShellExecute = false;
-                        akiLauncher.StartInfo.RedirectStandardOutput = false;
 
                         try
                         {
@@ -2246,7 +2270,7 @@ namespace SPTMiniLauncher
                         catch (Exception err)
                         {
                             Debug.WriteLine($"ERROR: {err}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err}", this.Text, MessageBoxButtons.OK);
                         }
 
                     }
@@ -2256,11 +2280,11 @@ namespace SPTMiniLauncher
                         selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                         akiLauncher.StartInfo.WorkingDirectory = selectedServer;
                         akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
+                        akiLauncher.StartInfo.FileName = Path.Combine(selectedServer, "Aki.Launcher.exe");
                         akiLauncher.StartInfo.CreateNoWindow = false;
                         akiLauncher.StartInfo.UseShellExecute = false;
                         akiLauncher.StartInfo.RedirectStandardOutput = false;
 
-                        
                         try
                         {
                             akiLauncher.Start();
