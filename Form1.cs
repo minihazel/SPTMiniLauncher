@@ -21,9 +21,22 @@ using System.Windows.Media.Animation;
 using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.Net.NetworkInformation;
+using System.Security.Policy;
 
 namespace SPTMiniLauncher
 {
+    public class ThirdPartyInfo
+    {
+        public string Name { get; set; }
+        public string Path { get; set; }
+
+        public ThirdPartyInfo(string name, string path)
+        {
+            Name = name;
+            Path = path;
+        }
+    }
+
     public partial class Form1 : Form
     {
         // Start variables
@@ -34,6 +47,7 @@ namespace SPTMiniLauncher
         public bool isLoneServer = false;
         public string selectedServer;
         public string settingsFile;
+        public string thirdPartyFile;
         public string firstTime;
         public string core;
         public string selectedAID;
@@ -47,6 +61,7 @@ namespace SPTMiniLauncher
 
         public outputWindow outputwindow;
         private List<string> globalProcesses;
+        Dictionary<string, ThirdPartyInfo> appDict = new Dictionary<string, ThirdPartyInfo>();
 
         // background working
         BackgroundWorker CheckServerWorker;
@@ -104,12 +119,87 @@ namespace SPTMiniLauncher
                 outputwindow.Owner = this;
 
                 settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
+                thirdPartyFile = System.IO.Path.Combine(Environment.CurrentDirectory, "Third Party Apps.json");
                 // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
 
                 messageBoard form = new messageBoard();
                 RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
                 Label messageTitle = (Label)form.Controls["messageTitle"];
                 messageTitle.ForeColor = Color.LightGray;
+
+                if (File.Exists(thirdPartyFile))
+                {
+                    appDict = new Dictionary<string, ThirdPartyInfo>();
+                    string thirdPartyContent = System.IO.File.ReadAllText(thirdPartyFile);
+                    JObject thirdParty = JObject.Parse(thirdPartyContent);
+                    JArray appsArray = (JArray)thirdParty["ThirdPartyApps"];
+
+                    foreach (JObject app in appsArray)
+                    {
+                        string name = (string)app["Name"];
+                        string path = (string)app["Path"];
+
+                        appDict[name] = new ThirdPartyInfo(name, path);
+                    }
+                }
+                else
+                {
+                    var thirdpartyData = new JObject
+                    {
+                        ["ThirdPartyApps"] = new JArray
+                        {
+                            new JObject
+                            {
+                                ["Name"] = "Load Order Editor",
+                                ["Path"] = "mods-file"
+                            },
+                            new JObject
+                            {
+                                ["Name"] = "Profile Editor",
+                                ["Path"] = ""
+                            },
+                            new JObject
+                            {
+                                ["Name"] = "SVM",
+                                ["Path"] = "mods-folder"
+                            },
+                            new JObject
+                            {
+                                ["Name"] = "SPT Realism",
+                                ["Path"] = "mods-folder"
+                            }
+                        }
+                    };
+                    string json = thirdpartyData.ToString();
+
+                    try
+                    {
+                        File.WriteAllText(thirdPartyFile, json);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+
+                    try
+                    {
+                        string thirdPartyContent = System.IO.File.ReadAllText(thirdPartyFile);
+                        JObject thirdParty = JObject.Parse(thirdPartyContent);
+                        JArray appsArray = (JArray)thirdParty["ThirdPartyApps"];
+
+                        foreach (JObject app in appsArray)
+                        {
+                            string name = (string)app["Name"];
+                            string path = (string)app["Path"];
+
+                            appDict[name] = new ThirdPartyInfo(name, path);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
 
                 if (File.Exists(settingsFile))
                 {
@@ -130,7 +220,6 @@ namespace SPTMiniLauncher
                     }
                     else
                     {
-
                         if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
                         {
                             boxPath.Text = Properties.Settings.Default.server_path;
@@ -366,6 +455,14 @@ namespace SPTMiniLauncher
 
         private void checkThirdPartyApps(string path)
         {
+            if (appDict.Count > 0)
+            {
+                foreach (var app in appDict)
+                {
+
+                }
+            }
+
             // load order editor (loe)
             string loepath = Path.Combine(path, "user\\mods\\Load Order Editor.exe");
 
