@@ -1908,7 +1908,6 @@ namespace SPTMiniLauncher
                 try
                 {
                     Directory.Delete(cacheFolder, true);
-                    showError("Cache cleared!");
                 }
                 catch (Exception err)
                 {
