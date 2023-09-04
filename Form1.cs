@@ -39,7 +39,7 @@ namespace SPTMiniLauncher
         public string firstTime;
         public string core;
         public string selectedAID;
-        string[] thirdPartyContent = { };
+        public string[] thirdPartyContent = { };
 
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
@@ -50,7 +50,7 @@ namespace SPTMiniLauncher
 
         public outputWindow outputwindow;
         private List<string> globalProcesses;
-        Dictionary<string, ThirdPartyInfo> appDict = new Dictionary<string, ThirdPartyInfo>();
+        public Dictionary<string, ThirdPartyInfo> appDict = new Dictionary<string, ThirdPartyInfo>();
 
         // background working
         BackgroundWorker CheckServerWorker;
@@ -477,6 +477,9 @@ namespace SPTMiniLauncher
                         }
                     }
 
+                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new app";
+
                     Label lastItem = null;
                     foreach (Control ctrl in boxSelectedServer.Controls)
                     {
@@ -502,7 +505,16 @@ namespace SPTMiniLauncher
                         lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
 
                         lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
-                        lbl.Text = $"Open {thirdPartyContent[i]}";
+
+                        if (thirdPartyContent[i].ToLower() == "add new app")
+                        {
+                            lbl.Text = thirdPartyContent[i];
+                        }
+                        else
+                        {
+                            lbl.Text = $"Open {thirdPartyContent[i]}";
+                        }
+
                         lbl.BackColor = listBackcolor;
                         lbl.ForeColor = Color.LightGray;
                         lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -1296,7 +1308,7 @@ namespace SPTMiniLauncher
             }
         }
 
-        private void listServerOptions(bool isStreets)
+        public void listServerOptions(bool isStreets)
         {
             try
             {
@@ -2011,6 +2023,13 @@ namespace SPTMiniLauncher
                                 }
                             }
                         }
+                    }
+
+                    else if (label.Text.ToLower() ==
+                        "add new app")
+                    {
+                        addThirdParty addwnd = new addThirdParty();
+                        addwnd.Show();
                     }
 
                     else
