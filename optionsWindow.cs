@@ -1015,13 +1015,13 @@ namespace SPTMiniLauncher
                     string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
                     Directory.Delete(Properties.Settings.Default.server_path, true);
                     mainForm.showError($"Folder {server} has been deleted.");
-                    mainForm.clearUI();
+                    mainForm.clearUI(true);
                 }
                 else
                 {
                     Directory.Delete(Properties.Settings.Default.server_path, true);
                     mainForm.showError($"Folder {server} has been deleted.");
-                    mainForm.clearUI();
+                    mainForm.clearUI(true);
                 }
 
                 this.Close();
