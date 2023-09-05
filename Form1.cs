@@ -124,22 +124,22 @@ namespace SPTMiniLauncher
                             new JObject
                             {
                                 ["Name"] = "Load Order Editor",
-                                ["Path"] = "mods-file"
+                                ["Path"] = "mods\\Load Order Editor.exe"
                             },
                             new JObject
                             {
-                                ["Name"] = "Profile Editor",
-                                ["Path"] = ""
+                                ["Name"] = "SPT-AKI Profile Editor",
+                                ["Path"] = "C:\\Program Files\\SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe"
                             },
                             new JObject
                             {
-                                ["Name"] = "SVM",
-                                ["Path"] = "mods-folder"
+                                ["Name"] = "Server Value Modifier",
+                                ["Path"] = "mods\\ServerValueModifier\\GFVE.exe"
                             },
                             new JObject
                             {
                                 ["Name"] = "SPT Realism",
-                                ["Path"] = "mods-folder"
+                                ["Path"] = "mods\\SPT-Realism-Mod\\RealismModConfig.exe"
                             }
                         }
                     };
@@ -763,7 +763,7 @@ namespace SPTMiniLauncher
                                     {
                                         showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
                                             $"{Environment.NewLine}{Environment.NewLine}" +
-                                            $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
+                                            $"Please download and install the tool to use it. Alternatively, remove it from Third Party Apps (right-click until you see Remove).");
                                     }
                                 }
                                 catch (Exception err)
