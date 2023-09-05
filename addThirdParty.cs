@@ -144,7 +144,7 @@ namespace SPTMiniLauncher
                     }
                     else
                     {
-                        mainForm.showError($"Third-party tool {appName} was not found, did you perhaps change the name?");
+                        mainForm.showError($"Third party tool {appName} was not found, did you perhaps change the name?");
                         isSuccessful = false;
                     }
                 }

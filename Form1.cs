@@ -471,7 +471,7 @@ namespace SPTMiniLauncher
                         {
                             string newPath = _path.ToLower().Replace("mods", modsFolder);
                             Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
+                            thirdPartyContent[thirdPartyContent.Length - 1] = $"Open {_name}";
                         }
                         else
                         {
@@ -481,7 +481,7 @@ namespace SPTMiniLauncher
                     }
 
                     Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new app";
+                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
 
                     Label lastItem = null;
                     foreach (Control ctrl in boxSelectedServer.Controls)
@@ -509,7 +509,7 @@ namespace SPTMiniLauncher
 
                         lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
 
-                        if (thirdPartyContent[i].ToLower() == "add new app")
+                        if (thirdPartyContent[i].ToLower() == "add new tool")
                         {
                             lbl.Text = thirdPartyContent[i];
                         }
@@ -545,7 +545,15 @@ namespace SPTMiniLauncher
                             Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
                             thirdPartyContent[thirdPartyContent.Length - 1] = $"Open {_name}";
                         }
+                        else
+                        {
+                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
+                        }
                     }
+
+                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
 
                     Label lastItem = null;
                     foreach (Control ctrl in boxSelectedServer.Controls)
@@ -572,7 +580,16 @@ namespace SPTMiniLauncher
                         lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
 
                         lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
-                        lbl.Text = $"Open {thirdPartyContent[i]}";
+
+                        if (thirdPartyContent[i].ToLower() == "add new tool")
+                        {
+                            lbl.Text = thirdPartyContent[i];
+                        }
+                        else
+                        {
+                            lbl.Text = $"Open {thirdPartyContent[i]}";
+                        }
+
                         lbl.BackColor = listBackcolor;
                         lbl.ForeColor = Color.LightGray;
                         lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -734,7 +751,7 @@ namespace SPTMiniLauncher
                                     }
                                     else
                                     {
-                                        showError($"It appears that third-party content {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
+                                        showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
                                             $"{Environment.NewLine}{Environment.NewLine}" +
                                             $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
                                     }
@@ -757,7 +774,7 @@ namespace SPTMiniLauncher
                                     }
                                     else
                                     {
-                                        showError($"It appears that third-party content {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{_path}" +
+                                        showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{_path}" +
                                             $"{Environment.NewLine}{Environment.NewLine}" +
                                             $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
                                     }
@@ -787,10 +804,55 @@ namespace SPTMiniLauncher
                         if (_path.ToLower().StartsWith("mods"))
                         {
                             string newPath = _path.ToLower().Replace("mods", modsFolder);
+                            bool newPathExists = File.Exists(newPath);
+
+                            try
+                            {
+                                if (newPathExists)
+                                {
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = Path.GetDirectoryName(newPath);
+                                    newApp.FileName = Path.GetFileName(newPath);
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
+
+                                    Process.Start(newApp);
+                                }
+                                else
+                                {
+                                    showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
+                                        $"{Environment.NewLine}{Environment.NewLine}" +
+                                        $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
+                                }
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
                         }
                         else
                         {
+                            bool _pathExists = File.Exists(_path);
 
+                            try
+                            {
+                                if (_pathExists)
+                                {
+                                    Process.Start(_path);
+                                }
+                                else
+                                {
+                                    showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{_path}" +
+                                        $"{Environment.NewLine}{Environment.NewLine}" +
+                                        $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
+                                }
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
                         }
                     }
                 }
@@ -1454,135 +1516,6 @@ namespace SPTMiniLauncher
                         checkThirdPartyApps(selectedServer);
                     }
                 }
-
-                /*
-                else
-                {
-
-                    for (int i = 0; i < serverOptions.Length; i++)
-                    {
-                        Label lbl = new Label();
-                        lbl.AutoSize = false;
-                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                        lbl.TextAlign = ContentAlignment.MiddleLeft;
-                        lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
-                        lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
-
-                        if (serverOptions[i].ToLower() == "run spt")
-                        {
-                            lbl.Name = "launcherRunButton";
-                            lbl.Text = "Run SPT";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.DodgerBlue;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower() == "stop spt (if running)")
-                        {
-                            lbl.Name = "launcherStopSPTIfRunning";
-                            lbl.Text = "Stop SPT (if running)";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower() == "clear cache")
-                        {
-                            lbl.Name = "launcherClearCacheButton";
-                            lbl.Text = "Clear cache";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.LightGray;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower() == "- mods -")
-                        {
-                            lbl.Text = "  Mods";
-                            lbl.BackColor = this.BackColor;
-                            lbl.ForeColor = Color.DodgerBlue;
-                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower() == "- actions -")
-                        {
-                            lbl.Text = "  Actions";
-                            lbl.BackColor = this.BackColor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower() == "- thirdparty -")
-                        {
-                            lbl.Text = "  Third Party Apps";
-                            lbl.BackColor = this.BackColor;
-                            lbl.ForeColor = Color.DarkSeaGreen;
-                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower().Contains("not detected"))
-                        {
-                            lbl.Text = serverOptions[i];
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptions[i].ToLower().Contains("open profile -"))
-                        {
-                            if (isLoneServer)
-                            {
-                                string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
-                                bool profilesFolderExists = Directory.Exists(profilesFolder);
-                                if (profilesFolderExists)
-                                {
-                                    int _countProfiles = Directory.GetFiles(profilesFolder).Length;
-                                    lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.LightGray;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                                else
-                                {
-                                    lbl.Text = $"Profiles folder unavailable";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.IndianRed;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string profilesFolder = Path.Combine(selectedServer, "user\\profiles");
-                                bool profilesFolderExists = Directory.Exists(profilesFolder);
-                                if (profilesFolderExists)
-                                {
-                                    int _countProfiles = Directory.GetFiles(profilesFolder).Length;
-                                    lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.LightGray;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                                else
-                                {
-                                    lbl.Text = $"Profiles folder unavailable";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.IndianRed;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            lbl.Text = serverOptions[i];
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.LightGray;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-
-                        lbl.Margin = new Padding(1, 1, 1, 1);
-                        lbl.Cursor = Cursors.Hand;
-                        lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
-                        lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
-                        lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
-                        lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
-                        boxSelectedServer.Controls.Add(lbl);
-                    }
-
-                }
-                */
             }
             catch (Exception err)
             {
@@ -2029,11 +1962,13 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
-                        "add new app")
+                        "add new tool")
                     {
                         addThirdParty addwnd = new addThirdParty(this, false);
                         addwnd.Show();
                     }
+
+                    // Third Party Apps section
 
                     else
                     {
