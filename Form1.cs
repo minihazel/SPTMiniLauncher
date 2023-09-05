@@ -944,7 +944,7 @@ namespace SPTMiniLauncher
                     settingsObject.Add("mainWidth", 695);
 
                 if (!settingsObject.ContainsKey("mainHeight"))
-                    settingsObject.Add("mainHeight", 680);
+                    settingsObject.Add("mainHeight", 690);
 
                 settingsObject["mainWidth"] = curWidth;
                 settingsObject["mainHeight"] = curHeight;
