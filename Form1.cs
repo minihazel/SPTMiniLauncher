@@ -471,7 +471,7 @@ namespace SPTMiniLauncher
                         {
                             string newPath = _path.ToLower().Replace("mods", modsFolder);
                             Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = $"Open {_name}";
+                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
                         }
                         else
                         {
@@ -543,7 +543,7 @@ namespace SPTMiniLauncher
                         {
                             string newPath = _path.ToLower().Replace("mods", modsFolder);
                             Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = $"Open {_name}";
+                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
                         }
                         else
                         {

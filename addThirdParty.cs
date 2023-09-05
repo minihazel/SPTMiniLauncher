@@ -115,6 +115,7 @@ namespace SPTMiniLauncher
 
                     Task.Delay(500);
                     mainForm.listServerOptions(true);
+                    isSuccessful = true;
                 }
                 else
                 {
