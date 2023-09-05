@@ -180,6 +180,16 @@ namespace SPTMiniLauncher
                     string readSettings = File.ReadAllText(settingsFile);
                     JObject settingsObject = JObject.Parse(readSettings);
 
+                    if (settingsObject.ContainsKey("mainWidth") && settingsObject.ContainsKey("mainHeight"))
+                    {
+                        this.Width = (int)settingsObject["mainWidth"];
+                        this.Height = (int)settingsObject["mainHeight"];
+                    }
+                    else
+                    {
+                        saveDimensions();
+                    }
+
                     if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
                     {
                         settingsObject.Property("showFirstTimeMessage").Value = "false";
@@ -916,6 +926,31 @@ namespace SPTMiniLauncher
                             Properties.Settings.Default.currentProfileAID = fileName;
                     }
                 }
+            }
+        }
+
+        public void saveDimensions()
+        {
+            int curWidth = this.Size.Width;
+            int curHeight = this.Size.Height;
+
+            bool settingsFileExists = File.Exists(settingsFile);
+            if (settingsFileExists)
+            {
+                string readSettings = File.ReadAllText(settingsFile);
+                JObject settingsObject = JObject.Parse(readSettings);
+
+                if (!settingsObject.ContainsKey("mainWidth"))
+                    settingsObject.Add("mainWidth", 695);
+
+                if (!settingsObject.ContainsKey("mainHeight"))
+                    settingsObject.Add("mainHeight", 680);
+
+                settingsObject["mainWidth"] = curWidth;
+                settingsObject["mainHeight"] = curHeight;
+
+                string updatedJSON = settingsObject.ToString();
+                File.WriteAllText(settingsFile, updatedJSON);
             }
         }
 
@@ -3645,6 +3680,7 @@ namespace SPTMiniLauncher
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
+            saveDimensions();
             Properties.Settings.Default.Save();
         }
 

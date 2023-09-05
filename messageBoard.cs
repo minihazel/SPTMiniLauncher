@@ -61,7 +61,9 @@ namespace SPTMiniLauncher
             {
                 var data = new
                 {
-                    showFirstTimeMessage = "true"
+                    showFirstTimeMessage = "true",
+                    mainWidth = 695,
+                    mainHeight = 680,
                 };
 
                 var json = JsonConvert.SerializeObject(data, Formatting.Indented);
