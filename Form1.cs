@@ -2262,6 +2262,7 @@ namespace SPTMiniLauncher
             Process[] launchers = Process.GetProcessesByName(launcherProcess);
             string currentDir = Directory.GetCurrentDirectory();
             int akiPort = 0;
+            int ip_address = 0;
 
             if (isLoneServer)
             {
@@ -2281,6 +2282,7 @@ namespace SPTMiniLauncher
                                 string readJson = File.ReadAllText(akiServerJson);
                                 JObject parsedJson = JObject.Parse(readJson);
                                 akiPort = Convert.ToInt32(parsedJson["port"]);
+                                ip_address = Convert.ToInt32(parsedJson["ip"]);
                             }
                         }
                     }
@@ -2305,6 +2307,7 @@ namespace SPTMiniLauncher
                                 string readJson = File.ReadAllText(akiServerJson);
                                 JObject parsedJson = JObject.Parse(readJson);
                                 akiPort = Convert.ToInt32(parsedJson["port"]);
+                                ip_address = Convert.ToInt32(parsedJson["ip"]);
                             }
                         }
                     }
@@ -2364,7 +2367,7 @@ namespace SPTMiniLauncher
                             _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                             if (akiPort != 0)
                             {
-                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
+                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                             }
                             else
                             {
@@ -2377,7 +2380,7 @@ namespace SPTMiniLauncher
                             _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                             if (akiPort != 0)
                             {
-                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
+                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                             }
                             else
                             {
@@ -2404,7 +2407,7 @@ namespace SPTMiniLauncher
                             _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
                             if (akiPort != 0)
                             {
-                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
+                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                             }
                             else
                             {
@@ -2417,7 +2420,7 @@ namespace SPTMiniLauncher
                             _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
                             if (akiPort != 0)
                             {
-                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:{akiPort}\",\"Version\":\"live\"}}";
+                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                             }
                             else
                             {
