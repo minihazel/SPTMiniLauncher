@@ -10,25 +10,32 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Windows.Media;
 
 namespace SPTMiniLauncher
 {
     public partial class addThirdParty : Form
     {
-        public Form1 mainForm;
-        public Dictionary<string, ThirdPartyInfo> dictionary { get; private set; }
+        private Form1 mainForm;
+        public string thirdPartyFile;
+        private bool isChanging;
 
-        public addThirdParty()
+        public addThirdParty(Form1 mainForm, bool isChanging)
         {
+            this.mainForm = mainForm;
             InitializeComponent();
+            this.isChanging = isChanging;
         }
 
         private void addThirdParty_Load(object sender, EventArgs e)
         {
-            dictionary = mainForm.appDict;
+            thirdPartyFile = System.IO.Path.Combine(Environment.CurrentDirectory, "Third Party Apps.json");
 
-            txtCustomName.Clear();
-            txtPathToApp.Clear();
+            if (!isChanging)
+            {
+                txtCustomName.Clear();
+                txtPathToApp.Clear();
+            }
 
             txtCustomName.Select();
         }
@@ -81,29 +88,76 @@ namespace SPTMiniLauncher
 
         private void bApplyThirdPartyApp_Click(object sender, EventArgs e)
         {
-            if (!mainForm.appDict.ContainsKey(txtCustomName.Text))
-            {
-                JObject newApp = new JObject();
-                newApp["Name"] = txtCustomName.Text;
-                newApp["Path"] = txtPathToApp.Text;
+            bool isSuccessful = false;
 
-                bool thirdPartyFileExists = File.Exists(mainForm.thirdPartyFile);
-                if (thirdPartyFileExists)
+            if (mainForm != null)
+            {
+                if (!isChanging)
                 {
-                    string thirdPartycontent = File.ReadAllText(mainForm.thirdPartyFile);
-                    JObject obj = JObject.Parse(thirdPartycontent);
-                    JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
-                    thirdPartyApps.Add(newApp);
-                    string updatedJSON = obj.ToString();
-                    File.WriteAllText(mainForm.thirdPartyFile, updatedJSON);
+                    JObject newApp = new JObject();
+                    newApp["Name"] = txtCustomName.Text;
+                    newApp["Path"] = txtPathToApp.Text;
+                    bool thirdPartyFileExists = File.Exists(thirdPartyFile);
+
+                    if (thirdPartyFileExists)
+                    {
+                        string thirdPartycontent = File.ReadAllText(thirdPartyFile);
+                        JObject obj = JObject.Parse(thirdPartycontent);
+                        JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
+                        thirdPartyApps.Add(newApp);
+                        string updatedJSON = obj.ToString();
+                        File.WriteAllText(thirdPartyFile, updatedJSON);
+                    }
+
+                    ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text);
+                    string appName = txtCustomName.Text;
+                    mainForm.appDict.Add(appName, newAppInfo);
+
+                    Task.Delay(500);
+                    mainForm.listServerOptions(true);
+                }
+                else
+                {
+                    string appName = txtCustomName.Text;
+                    string fullFilePath = txtPathToApp.Text;
+
+                    if (mainForm.appDict.ContainsKey(appName))
+                    {
+                        string[] parts = txtPathToApp.Text.Split('\\');
+                        int userIndex = Array.IndexOf(parts, "user");
+                        int modsIndex = Array.IndexOf(parts, "mods");
+
+                        if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                        {
+                            string folderName = parts[modsIndex];
+                            folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+                            mainForm.appDict[appName].Path = folderName;
+                            mainForm.editThirdPartyApp(appName, folderName);
+                        }
+                        else
+                        {
+                            mainForm.appDict[appName].Path = fullFilePath;
+                            mainForm.editThirdPartyApp(appName, fullFilePath);
+                        }
+
+                        isSuccessful = true;
+                    }
+                    else
+                    {
+                        mainForm.showError($"Third-party tool {appName} was not found, did you perhaps change the name?");
+                        isSuccessful = false;
+                    }
                 }
 
-                ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text);
-                string appName = txtCustomName.Text;
-                dictionary.Add(appName, newAppInfo);
-
-                mainForm.listServerOptions(true);
-                this.Close();
+                if (isSuccessful)
+                {
+                    mainForm.listServerOptions(true);
+                    this.Close();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Error: mainForm is null");
             }
         }
     }

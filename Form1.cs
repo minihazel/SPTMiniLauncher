@@ -50,7 +50,8 @@ namespace SPTMiniLauncher
 
         public outputWindow outputwindow;
         private List<string> globalProcesses;
-        public Dictionary<string, ThirdPartyInfo> appDict = new Dictionary<string, ThirdPartyInfo>();
+        public Dictionary<string, ThirdPartyInfo> appDict { get; set; }
+        public static Form1 Instance { get; private set; }
 
         // background working
         BackgroundWorker CheckServerWorker;
@@ -77,6 +78,8 @@ namespace SPTMiniLauncher
         public Form1()
         {
             InitializeComponent();
+            appDict = new Dictionary<string, ThirdPartyInfo>();
+            Instance = this;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -436,7 +439,7 @@ namespace SPTMiniLauncher
             }
         }
 
-        private void checkThirdPartyApps(string path)
+        public void checkThirdPartyApps(string path)
         {
 
             if (appDict.Count > 0)
@@ -662,7 +665,7 @@ namespace SPTMiniLauncher
             }*/
         }
 
-        private void editThirdPartyApp(string appName, string newPath)
+        public void editThirdPartyApp(string appName, string newPath)
         {
             try
             {
@@ -694,7 +697,7 @@ namespace SPTMiniLauncher
             }
         }
 
-        private void runThirdPartyApp(string appName)
+        public void runThirdPartyApp(string appName)
         {
             if (appDict.Count > 0)
             {
@@ -794,7 +797,7 @@ namespace SPTMiniLauncher
             }
         }
 
-        private void removeThirdPartyApp(string appName)
+        public void removeThirdPartyApp(string appName)
         {
             if (appDict.ContainsKey(appName))
             {
@@ -2028,7 +2031,7 @@ namespace SPTMiniLauncher
                     else if (label.Text.ToLower() ==
                         "add new app")
                     {
-                        addThirdParty addwnd = new addThirdParty();
+                        addThirdParty addwnd = new addThirdParty(this, false);
                         addwnd.Show();
                     }
 
@@ -2076,41 +2079,10 @@ namespace SPTMiniLauncher
                             {
                                 string trimmedName = label.Text.Replace("Change ", "");
 
-                                OpenFileDialog open = new OpenFileDialog();
-                                open.Title =
-                                    $"Select a file to associate with {trimmedName}";
-                                open.Filter =
-                                    $"All files (*.*|*.*";
-
-                                if (open.ShowDialog() == DialogResult.OK)
-                                {
-                                    string fullFilePath = open.FileName;
-
-                                    string[] parts = fullFilePath.Split('\\');
-                                    int userIndex = Array.IndexOf(parts, "user");
-                                    int modsIndex = Array.IndexOf(parts, "mods");
-
-                                    if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
-                                    {
-                                        if (appDict.ContainsKey(trimmedName))
-                                        {
-                                            string folderName = parts[modsIndex];
-                                            folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
-                                            appDict[trimmedName].Path = folderName;
-                                            editThirdPartyApp(trimmedName, folderName);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (appDict.ContainsKey(trimmedName))
-                                        {
-                                            appDict[trimmedName].Path = fullFilePath;
-                                            editThirdPartyApp(trimmedName, fullFilePath);
-                                        }
-                                    }
-
-                                    listAllServers(Properties.Settings.Default.server_path);
-                                }
+                                addThirdParty addwnd = new addThirdParty(this, true);
+                                addwnd.txtCustomName.Text = trimmedName;
+                                addwnd.txtPathToApp.Text = appDict[trimmedName].Path;
+                                addwnd.Show();
                             }
 
                             else if (label.Text.ToLower().StartsWith("remove") &&
@@ -2128,7 +2100,6 @@ namespace SPTMiniLauncher
                             }
                         }
                     }
-
                 }
             }
 

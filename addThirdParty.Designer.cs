@@ -32,10 +32,10 @@
             this.panelCustomName = new System.Windows.Forms.GroupBox();
             this.txtCustomName = new System.Windows.Forms.TextBox();
             this.panelPathToApp = new System.Windows.Forms.GroupBox();
+            this.bBrowsePath = new System.Windows.Forms.Button();
             this.txtPathToApp = new System.Windows.Forms.TextBox();
             this.panelApplyThirdPartyApp = new System.Windows.Forms.GroupBox();
             this.bApplyThirdPartyApp = new System.Windows.Forms.Button();
-            this.bBrowsePath = new System.Windows.Forms.Button();
             this.panelCustomName.SuspendLayout();
             this.panelPathToApp.SuspendLayout();
             this.panelApplyThirdPartyApp.SuspendLayout();
@@ -83,6 +83,22 @@
             this.panelPathToApp.TabStop = false;
             this.panelPathToApp.Text = "Path to app";
             // 
+            // bBrowsePath
+            // 
+            this.bBrowsePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.bBrowsePath.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bBrowsePath.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bBrowsePath.FlatAppearance.BorderSize = 0;
+            this.bBrowsePath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bBrowsePath.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bBrowsePath.Location = new System.Drawing.Point(529, 22);
+            this.bBrowsePath.Name = "bBrowsePath";
+            this.bBrowsePath.Size = new System.Drawing.Size(120, 30);
+            this.bBrowsePath.TabIndex = 2;
+            this.bBrowsePath.Text = "Browse";
+            this.bBrowsePath.UseVisualStyleBackColor = true;
+            this.bBrowsePath.Click += new System.EventHandler(this.bBrowsePath_Click);
+            // 
             // txtPathToApp
             // 
             this.txtPathToApp.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -126,22 +142,6 @@
             this.bApplyThirdPartyApp.UseVisualStyleBackColor = true;
             this.bApplyThirdPartyApp.Click += new System.EventHandler(this.bApplyThirdPartyApp_Click);
             // 
-            // bBrowsePath
-            // 
-            this.bBrowsePath.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.bBrowsePath.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bBrowsePath.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bBrowsePath.FlatAppearance.BorderSize = 0;
-            this.bBrowsePath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bBrowsePath.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bBrowsePath.Location = new System.Drawing.Point(529, 22);
-            this.bBrowsePath.Name = "bBrowsePath";
-            this.bBrowsePath.Size = new System.Drawing.Size(120, 30);
-            this.bBrowsePath.TabIndex = 2;
-            this.bBrowsePath.Text = "Browse";
-            this.bBrowsePath.UseVisualStyleBackColor = true;
-            this.bBrowsePath.Click += new System.EventHandler(this.bBrowsePath_Click);
-            // 
             // addThirdParty
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -154,7 +154,7 @@
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "addThirdParty";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Add third party content";
@@ -170,12 +170,12 @@
 
         #endregion
 
-        private System.Windows.Forms.GroupBox panelCustomName;
-        private System.Windows.Forms.TextBox txtCustomName;
-        private System.Windows.Forms.GroupBox panelPathToApp;
-        private System.Windows.Forms.TextBox txtPathToApp;
-        private System.Windows.Forms.GroupBox panelApplyThirdPartyApp;
-        private System.Windows.Forms.Button bApplyThirdPartyApp;
-        private System.Windows.Forms.Button bBrowsePath;
+        public System.Windows.Forms.GroupBox panelCustomName;
+        public System.Windows.Forms.TextBox txtCustomName;
+        public System.Windows.Forms.GroupBox panelPathToApp;
+        public System.Windows.Forms.TextBox txtPathToApp;
+        public System.Windows.Forms.GroupBox panelApplyThirdPartyApp;
+        public System.Windows.Forms.Button bApplyThirdPartyApp;
+        public System.Windows.Forms.Button bBrowsePath;
     }
 }
