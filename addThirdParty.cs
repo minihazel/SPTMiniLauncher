@@ -42,7 +42,7 @@ namespace SPTMiniLauncher
 
         private void txtCustomName_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Tab)
+            if (e.KeyCode == Keys.Tab || e.KeyCode == Keys.Enter)
             {
                 txtPathToApp.Select();
             }
@@ -52,7 +52,11 @@ namespace SPTMiniLauncher
         {
             if (e.KeyCode == Keys.Tab)
             {
-                bBrowsePath.Select();
+                bBrowsePath.PerformClick();
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                bApplyThirdPartyApp.PerformClick();
             }
         }
 
@@ -83,6 +87,8 @@ namespace SPTMiniLauncher
                 {
                     txtPathToApp.Text = fullFilePath;
                 }
+
+                bBrowsePath.Select();
             }
         }
 
