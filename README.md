@@ -1,19 +1,20 @@
-# SPTMiniLauncher
-A remade version of the original SPT Mini Launcher. This acts as both a launcher and a miniature mod management utility that mostly caters to experienced SPT-AKI users.
+# SPT Launcher
+An overhauled version of the original SPT Mini Launcher. This acts as both a launcher and a miniature mod management utility that mostly caters to experienced SPT-AKI users.
 
-![SPT Mini Launcher](https://media.discordapp.net/attachments/1064578464994304060/1089218070511362100/image.png?width=660&height=612)
+![SPT Mini Launcher](https://hub.sp-tarkov.com/attachment/6178-spt-launcher-5k4ezfzg6x-png/)
 
 ## Features
-This feature-set is incomplete as I have some more plans for this later down the road!
 
-- Launch and stop both the Aki Server and Launcher and Tarkov itself
-- Cache clearing on launch and stop
-- Shortcuts to both mods folder (BepInEx/plugins, user/mods)
+- Dedicated launching capability with optional bypass for both the Aki Server and Aki Launcher
+- Profile selection
+- Heavy customizability for a multitude of features, including cache clearing, custom server window, and more
+- Shortcuts to both mods folder as well as a plethora of database folders
+- Control panel, dedicated settings and a navigation hub
 - Small-scale mod management for adding or removing mods
-- Compatibility for popular mods / tools (such as SPT-AKI Profile Editor)
+- Compatibility and support for custom tools and third party content
 
 ## Installing
-* Download the tool from the <a href="https://hub.sp-tarkov.com/files/file/1017-spt-mini-launcher/">AKI Mods Workshop</a>.
+* Download the tool from the <a href="https://hub.sp-tarkov.com/files/file/1017-spt-mini-launcher/">AKI Workshop</a>.
 * Extract the `SPT Launcher` folder to wherever you want it using <a href="https://www.7-zip.org/download.html">7-Zip</a>.
 * Open the folder and run `SPT Launcher.exe`
 
