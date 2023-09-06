@@ -22,6 +22,7 @@ using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.Net.NetworkInformation;
 using System.Security.Policy;
+using System.Security.Permissions;
 
 namespace SPTMiniLauncher
 {
@@ -1645,37 +1646,10 @@ namespace SPTMiniLauncher
                     else if (label.Text.ToLower() ==
                         "launch spt-aki")
                     {
-                        if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
-                        {
-                            switch (Properties.Settings.Default.hideOptions)
-                            {
-                                case 1:
-                                    minimizeLauncherWindow();
-                                    break;
-                            }
+                        label.Text = "Loading SPT, this may take a few";
+                        label.Enabled = false;
 
-                            if (Properties.Settings.Default.clearCache == 1)
-                            {
-                                if (isLoneServer)
-                                {
-                                    clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
-                                }
-                                else
-                                {
-                                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                    clearServerCache(Path.Combine(selectedServer, "user\\cache"));
-                                }
-                            }
-
-                            runServer();
-
-                            label.Text = "Loading SPT, this may take a few";
-                            label.Enabled = false;
-                        }
-                        else
-                        {
-                            showError("You don\'t have a profile selected. Please head into Options -> SPT-AKI Settings and select a profile, then try again!");
-                        }
+                        startLaunch();
                     }
 
                     else if (label.Text.ToLower() ==
@@ -2076,6 +2050,38 @@ namespace SPTMiniLauncher
             boxPathBox.Select();
         }
 
+        public void startLaunch()
+        {
+            if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
+            {
+                switch (Properties.Settings.Default.hideOptions)
+                {
+                    case 1:
+                        minimizeLauncherWindow();
+                        break;
+                }
+
+                if (Properties.Settings.Default.clearCache == 1)
+                {
+                    if (isLoneServer)
+                    {
+                        clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
+                    }
+                    else
+                    {
+                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                        clearServerCache(Path.Combine(selectedServer, "user\\cache"));
+                    }
+                }
+
+                runServer();
+            }
+            else
+            {
+                showError("You don\'t have a profile selected. Please head into Options -> SPT-AKI Settings and select a profile, then try again!");
+            }
+        }
+
         public void clearServerCache(string path)
         {
             string cacheFolder = path;
@@ -2262,7 +2268,7 @@ namespace SPTMiniLauncher
             Process[] launchers = Process.GetProcessesByName(launcherProcess);
             string currentDir = Directory.GetCurrentDirectory();
             int akiPort = 0;
-            int ip_address = 0;
+            string ip_address = "";
 
             if (isLoneServer)
             {
@@ -2282,7 +2288,7 @@ namespace SPTMiniLauncher
                                 string readJson = File.ReadAllText(akiServerJson);
                                 JObject parsedJson = JObject.Parse(readJson);
                                 akiPort = Convert.ToInt32(parsedJson["port"]);
-                                ip_address = Convert.ToInt32(parsedJson["ip"]);
+                                ip_address = (string)parsedJson["ip"];
                             }
                         }
                     }
@@ -2307,7 +2313,7 @@ namespace SPTMiniLauncher
                                 string readJson = File.ReadAllText(akiServerJson);
                                 JObject parsedJson = JObject.Parse(readJson);
                                 akiPort = Convert.ToInt32(parsedJson["port"]);
-                                ip_address = Convert.ToInt32(parsedJson["ip"]);
+                                ip_address = (string)parsedJson["ip"];
                             }
                         }
                     }
@@ -2351,144 +2357,143 @@ namespace SPTMiniLauncher
                 cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
             }
 
-            switch (Properties.Settings.Default.bypassLauncher)
+            if (Properties.Settings.Default.bypassLauncher)
             {
-                case true:
-                    if (isLoneServer)
+                if (isLoneServer)
+                {
+                    Console.WriteLine("status 5");
+                    ProcessStartInfo _tarkov = new ProcessStartInfo();
+
+                    string aid = Properties.Settings.Default.currentProfileAID;
+                    Console.WriteLine(aid);
+                    int index = aid.IndexOf("-");
+                    if (index != -1)
                     {
-                        ProcessStartInfo _tarkov = new ProcessStartInfo();
-
-                        string aid = Properties.Settings.Default.currentProfileAID;
-                        Console.WriteLine(aid);
-                        int index = aid.IndexOf("-");
-                        if (index != -1)
+                        aid = aid.Substring(index, aid.Length).Trim();
+                        _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                        if (akiPort != 0)
                         {
-                            aid = aid.Substring(index, aid.Length).Trim();
-                            _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
-                            if (akiPort != 0)
-                            {
-                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                            }
-                            else
-                            {
-
-                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                            }
+                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                         }
                         else
                         {
-                            _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
-                            if (akiPort != 0)
-                            {
-                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                            }
-                            else
-                            {
 
-                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                            }
+                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
                         }
-
-                        Process tarkovGame = new Process();
-                        tarkovGame.StartInfo = _tarkov;
-                        tarkovGame.Start();
                     }
                     else
                     {
-                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-
-                        ProcessStartInfo _tarkov = new ProcessStartInfo();
-
-                        string aid = Properties.Settings.Default.currentProfileAID;
-                        int index = aid.IndexOf("-");
-                        if (index != -1)
+                        _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                        if (akiPort != 0)
                         {
-                            aid = aid.Substring(index, aid.Length).Trim();
-                            _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
-                            if (akiPort != 0)
-                            {
-                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                            }
-                            else
-                            {
-
-                                _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                            }
+                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                         }
                         else
                         {
-                            _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
-                            if (akiPort != 0)
-                            {
-                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http:\\{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                            }
-                            else
-                            {
 
-                                _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                            }
+                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
                         }
-
-                        Process tarkovGame = new Process();
-                        tarkovGame.StartInfo = _tarkov;
-                        tarkovGame.Start();
                     }
 
-                    TarkovEndDetector = new BackgroundWorker();
-                    TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
-                    TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
-                    TarkovEndDetector.RunWorkerAsync();
-                    break;
+                    Process tarkovGame = new Process();
+                    tarkovGame.StartInfo = _tarkov;
+                    tarkovGame.Start();
+                }
+                else
+                {
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
 
-                case false:
-                    if (isLoneServer)
+                    ProcessStartInfo _tarkov = new ProcessStartInfo();
+
+                    string aid = Properties.Settings.Default.currentProfileAID;
+                    int index = aid.IndexOf("-");
+                    if (index != -1)
                     {
-                        Process akiLauncher = new Process();
-                        akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                        akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "Aki.Launcher.exe");
-                        akiLauncher.StartInfo.CreateNoWindow = false;
-
-                        try
+                        aid = aid.Substring(index, aid.Length).Trim();
+                        _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
+                        if (akiPort != 0)
                         {
-                            akiLauncher.Start();
+                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                         }
-                        catch (Exception err)
+                        else
                         {
-                            Debug.WriteLine($"ERROR: {err}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err}", this.Text, MessageBoxButtons.OK);
-                        }
 
+                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                        }
                     }
                     else
                     {
-                        Process akiLauncher = new Process();
-                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                        akiLauncher.StartInfo.WorkingDirectory = selectedServer;
-                        akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
-                        akiLauncher.StartInfo.FileName = Path.Combine(selectedServer, "Aki.Launcher.exe");
-                        akiLauncher.StartInfo.CreateNoWindow = false;
-                        akiLauncher.StartInfo.UseShellExecute = false;
-                        akiLauncher.StartInfo.RedirectStandardOutput = false;
+                        _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
+                        if (akiPort != 0)
+                        {
+                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
+                        }
+                        else
+                        {
 
-                        try
-                        {
-                            akiLauncher.Start();
+                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
                         }
-                        catch (Exception err)
-                        {
-                            Debug.WriteLine($"ERROR: {err}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                        }
-                    
                     }
 
-                    Directory.SetCurrentDirectory(currentDir);
+                    Process tarkovGame = new Process();
+                    tarkovGame.StartInfo = _tarkov;
+                    tarkovGame.Start();
+                }
 
-                    TarkovProcessDetector = new BackgroundWorker();
-                    TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
-                    TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
-                    TarkovProcessDetector.RunWorkerAsync();
-                    break;
+                TarkovEndDetector = new BackgroundWorker();
+                TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
+                TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
+                TarkovEndDetector.RunWorkerAsync();
+            }
+            else
+            {
+                if (isLoneServer)
+                {
+                    Process akiLauncher = new Process();
+                    akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                    akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "Aki.Launcher.exe");
+                    akiLauncher.StartInfo.CreateNoWindow = false;
+
+                    try
+                    {
+                        akiLauncher.Start();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err}", this.Text, MessageBoxButtons.OK);
+                    }
+
+                }
+                else
+                {
+                    Process akiLauncher = new Process();
+                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                    akiLauncher.StartInfo.WorkingDirectory = selectedServer;
+                    akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
+                    akiLauncher.StartInfo.FileName = Path.Combine(selectedServer, "Aki.Launcher.exe");
+                    akiLauncher.StartInfo.CreateNoWindow = false;
+                    akiLauncher.StartInfo.UseShellExecute = false;
+                    akiLauncher.StartInfo.RedirectStandardOutput = false;
+
+                    try
+                    {
+                        akiLauncher.Start();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+
+                }
+
+                Directory.SetCurrentDirectory(currentDir);
+
+                TarkovProcessDetector = new BackgroundWorker();
+                TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
+                TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
+                TarkovProcessDetector.RunWorkerAsync();
             }
 
             Task.Delay(5000);
