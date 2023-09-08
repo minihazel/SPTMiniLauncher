@@ -59,6 +59,8 @@
             this.tabSPTAKI = new System.Windows.Forms.Button();
             this.tabTarkov = new System.Windows.Forms.Button();
             this.panelLauncherSettings = new System.Windows.Forms.Panel();
+            this.panelDeleteCurrentServer = new System.Windows.Forms.GroupBox();
+            this.bDeleteServer = new System.Windows.Forms.Button();
             this.panelCloseControl = new System.Windows.Forms.GroupBox();
             this.bEnableControlPanel = new System.Windows.Forms.Button();
             this.panel3 = new System.Windows.Forms.Panel();
@@ -91,8 +93,17 @@
             this.tooltipPresets = new System.Windows.Forms.ToolTip(this.components);
             this.pagesTitle = new System.Windows.Forms.Label();
             this.pagesSeparator = new System.Windows.Forms.Panel();
-            this.panelDeleteCurrentServer = new System.Windows.Forms.GroupBox();
-            this.bDeleteServer = new System.Windows.Forms.Button();
+            this.tabTimeDisplay = new System.Windows.Forms.Button();
+            this.panelTimeDisplay = new System.Windows.Forms.Panel();
+            this.panelServerTimeCounter = new System.Windows.Forms.GroupBox();
+            this.bServerTimeCounter = new System.Windows.Forms.Button();
+            this.panelServerHourCount = new System.Windows.Forms.GroupBox();
+            this.bServerHourCounter = new System.Windows.Forms.Button();
+            this.panel5 = new System.Windows.Forms.Panel();
+            this.panelTarkovTimeCounter = new System.Windows.Forms.GroupBox();
+            this.bTarkovTimeCounter = new System.Windows.Forms.Button();
+            this.panelTarkovHourCount = new System.Windows.Forms.GroupBox();
+            this.bTarkovHourCount = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -104,6 +115,7 @@
             this.panelServerError.SuspendLayout();
             this.panelCloseOnExit.SuspendLayout();
             this.panelLauncherSettings.SuspendLayout();
+            this.panelDeleteCurrentServer.SuspendLayout();
             this.panelCloseControl.SuspendLayout();
             this.panelSPTAKISettings.SuspendLayout();
             this.panelPortCheckingMethod.SuspendLayout();
@@ -114,7 +126,11 @@
             this.panelPresets.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.panelDeleteCurrentServer.SuspendLayout();
+            this.panelTimeDisplay.SuspendLayout();
+            this.panelServerTimeCounter.SuspendLayout();
+            this.panelServerHourCount.SuspendLayout();
+            this.panelTarkovTimeCounter.SuspendLayout();
+            this.panelTarkovHourCount.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -552,6 +568,35 @@
             this.panelLauncherSettings.Size = new System.Drawing.Size(798, 530);
             this.panelLauncherSettings.TabIndex = 14;
             // 
+            // panelDeleteCurrentServer
+            // 
+            this.panelDeleteCurrentServer.Controls.Add(this.bDeleteServer);
+            this.panelDeleteCurrentServer.ForeColor = System.Drawing.Color.LightGray;
+            this.panelDeleteCurrentServer.Location = new System.Drawing.Point(3, 462);
+            this.panelDeleteCurrentServer.Name = "panelDeleteCurrentServer";
+            this.panelDeleteCurrentServer.Size = new System.Drawing.Size(467, 65);
+            this.panelDeleteCurrentServer.TabIndex = 21;
+            this.panelDeleteCurrentServer.TabStop = false;
+            this.panelDeleteCurrentServer.Text = " Delete current server ";
+            this.optionsToolTip.SetToolTip(this.panelDeleteCurrentServer, "If enabled, SPT Launcher\'s control panel will automatically exit after opening a " +
+        "location.");
+            // 
+            // bDeleteServer
+            // 
+            this.bDeleteServer.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bDeleteServer.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bDeleteServer.FlatAppearance.BorderSize = 0;
+            this.bDeleteServer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bDeleteServer.ForeColor = System.Drawing.Color.IndianRed;
+            this.bDeleteServer.Location = new System.Drawing.Point(15, 23);
+            this.bDeleteServer.Name = "bDeleteServer";
+            this.bDeleteServer.Size = new System.Drawing.Size(427, 30);
+            this.bDeleteServer.TabIndex = 4;
+            this.bDeleteServer.Text = "Click to delete";
+            this.bDeleteServer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bDeleteServer.UseVisualStyleBackColor = true;
+            this.bDeleteServer.Click += new System.EventHandler(this.bDeleteServer_Click);
+            // 
             // panelCloseControl
             // 
             this.panelCloseControl.Controls.Add(this.bEnableControlPanel);
@@ -908,34 +953,145 @@
             this.pagesSeparator.Size = new System.Drawing.Size(1, 518);
             this.pagesSeparator.TabIndex = 21;
             // 
-            // panelDeleteCurrentServer
+            // tabTimeDisplay
             // 
-            this.panelDeleteCurrentServer.Controls.Add(this.bDeleteServer);
-            this.panelDeleteCurrentServer.ForeColor = System.Drawing.Color.LightGray;
-            this.panelDeleteCurrentServer.Location = new System.Drawing.Point(3, 462);
-            this.panelDeleteCurrentServer.Name = "panelDeleteCurrentServer";
-            this.panelDeleteCurrentServer.Size = new System.Drawing.Size(467, 65);
-            this.panelDeleteCurrentServer.TabIndex = 21;
-            this.panelDeleteCurrentServer.TabStop = false;
-            this.panelDeleteCurrentServer.Text = " Delete current server ";
-            this.optionsToolTip.SetToolTip(this.panelDeleteCurrentServer, "If enabled, SPT Launcher\'s control panel will automatically exit after opening a " +
-        "location.");
+            this.tabTimeDisplay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.tabTimeDisplay.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.tabTimeDisplay.FlatAppearance.BorderColor = System.Drawing.Color.DodgerBlue;
+            this.tabTimeDisplay.FlatAppearance.BorderSize = 0;
+            this.tabTimeDisplay.FlatAppearance.MouseDownBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(38)))), ((int)(((byte)(38)))), ((int)(((byte)(38)))));
+            this.tabTimeDisplay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.tabTimeDisplay.ForeColor = System.Drawing.Color.LightGray;
+            this.tabTimeDisplay.Location = new System.Drawing.Point(2, 251);
+            this.tabTimeDisplay.Name = "tabTimeDisplay";
+            this.tabTimeDisplay.Size = new System.Drawing.Size(232, 45);
+            this.tabTimeDisplay.TabIndex = 22;
+            this.tabTimeDisplay.Text = "Time Display";
+            this.tabTimeDisplay.UseVisualStyleBackColor = false;
             // 
-            // bDeleteServer
+            // panelTimeDisplay
             // 
-            this.bDeleteServer.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bDeleteServer.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bDeleteServer.FlatAppearance.BorderSize = 0;
-            this.bDeleteServer.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bDeleteServer.ForeColor = System.Drawing.Color.IndianRed;
-            this.bDeleteServer.Location = new System.Drawing.Point(15, 23);
-            this.bDeleteServer.Name = "bDeleteServer";
-            this.bDeleteServer.Size = new System.Drawing.Size(427, 30);
-            this.bDeleteServer.TabIndex = 4;
-            this.bDeleteServer.Text = "Click to delete";
-            this.bDeleteServer.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.bDeleteServer.UseVisualStyleBackColor = true;
-            this.bDeleteServer.Click += new System.EventHandler(this.bDeleteServer_Click);
+            this.panelTimeDisplay.Controls.Add(this.panelTarkovHourCount);
+            this.panelTimeDisplay.Controls.Add(this.panelTarkovTimeCounter);
+            this.panelTimeDisplay.Controls.Add(this.panel5);
+            this.panelTimeDisplay.Controls.Add(this.panelServerHourCount);
+            this.panelTimeDisplay.Controls.Add(this.panelServerTimeCounter);
+            this.panelTimeDisplay.Location = new System.Drawing.Point(243, 4);
+            this.panelTimeDisplay.Name = "panelTimeDisplay";
+            this.panelTimeDisplay.Size = new System.Drawing.Size(798, 530);
+            this.panelTimeDisplay.TabIndex = 23;
+            // 
+            // panelServerTimeCounter
+            // 
+            this.panelServerTimeCounter.Controls.Add(this.bServerTimeCounter);
+            this.panelServerTimeCounter.ForeColor = System.Drawing.Color.LightGray;
+            this.panelServerTimeCounter.Location = new System.Drawing.Point(3, 3);
+            this.panelServerTimeCounter.Name = "panelServerTimeCounter";
+            this.panelServerTimeCounter.Size = new System.Drawing.Size(539, 65);
+            this.panelServerTimeCounter.TabIndex = 3;
+            this.panelServerTimeCounter.TabStop = false;
+            this.panelServerTimeCounter.Text = "Server time counter";
+            // 
+            // bServerTimeCounter
+            // 
+            this.bServerTimeCounter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bServerTimeCounter.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bServerTimeCounter.FlatAppearance.BorderSize = 0;
+            this.bServerTimeCounter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bServerTimeCounter.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bServerTimeCounter.Location = new System.Drawing.Point(15, 23);
+            this.bServerTimeCounter.Name = "bServerTimeCounter";
+            this.bServerTimeCounter.Size = new System.Drawing.Size(518, 30);
+            this.bServerTimeCounter.TabIndex = 3;
+            this.bServerTimeCounter.Text = "XX days, XX hours and XX minutes played || No playtime recorded";
+            this.bServerTimeCounter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bServerTimeCounter.UseVisualStyleBackColor = true;
+            // 
+            // panelServerHourCount
+            // 
+            this.panelServerHourCount.Controls.Add(this.bServerHourCounter);
+            this.panelServerHourCount.ForeColor = System.Drawing.Color.LightGray;
+            this.panelServerHourCount.Location = new System.Drawing.Point(3, 92);
+            this.panelServerHourCount.Name = "panelServerHourCount";
+            this.panelServerHourCount.Size = new System.Drawing.Size(539, 65);
+            this.panelServerHourCount.TabIndex = 4;
+            this.panelServerHourCount.TabStop = false;
+            this.panelServerHourCount.Text = "Server hour count";
+            // 
+            // bServerHourCounter
+            // 
+            this.bServerHourCounter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bServerHourCounter.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bServerHourCounter.FlatAppearance.BorderSize = 0;
+            this.bServerHourCounter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bServerHourCounter.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bServerHourCounter.Location = new System.Drawing.Point(15, 23);
+            this.bServerHourCounter.Name = "bServerHourCounter";
+            this.bServerHourCounter.Size = new System.Drawing.Size(518, 30);
+            this.bServerHourCounter.TabIndex = 3;
+            this.bServerHourCounter.Text = "XX hours played || No playtime recorded";
+            this.bServerHourCounter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bServerHourCounter.UseVisualStyleBackColor = true;
+            // 
+            // panel5
+            // 
+            this.panel5.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel5.Location = new System.Drawing.Point(3, 171);
+            this.panel5.Name = "panel5";
+            this.panel5.Size = new System.Drawing.Size(714, 1);
+            this.panel5.TabIndex = 19;
+            // 
+            // panelTarkovTimeCounter
+            // 
+            this.panelTarkovTimeCounter.Controls.Add(this.bTarkovTimeCounter);
+            this.panelTarkovTimeCounter.ForeColor = System.Drawing.Color.LightGray;
+            this.panelTarkovTimeCounter.Location = new System.Drawing.Point(3, 182);
+            this.panelTarkovTimeCounter.Name = "panelTarkovTimeCounter";
+            this.panelTarkovTimeCounter.Size = new System.Drawing.Size(539, 65);
+            this.panelTarkovTimeCounter.TabIndex = 20;
+            this.panelTarkovTimeCounter.TabStop = false;
+            this.panelTarkovTimeCounter.Text = "Tarkov time counter";
+            // 
+            // bTarkovTimeCounter
+            // 
+            this.bTarkovTimeCounter.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bTarkovTimeCounter.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bTarkovTimeCounter.FlatAppearance.BorderSize = 0;
+            this.bTarkovTimeCounter.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bTarkovTimeCounter.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bTarkovTimeCounter.Location = new System.Drawing.Point(15, 23);
+            this.bTarkovTimeCounter.Name = "bTarkovTimeCounter";
+            this.bTarkovTimeCounter.Size = new System.Drawing.Size(518, 30);
+            this.bTarkovTimeCounter.TabIndex = 3;
+            this.bTarkovTimeCounter.Text = "XX days, XX hours and XX minutes played || No playtime recorded";
+            this.bTarkovTimeCounter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bTarkovTimeCounter.UseVisualStyleBackColor = true;
+            // 
+            // panelTarkovHourCount
+            // 
+            this.panelTarkovHourCount.Controls.Add(this.bTarkovHourCount);
+            this.panelTarkovHourCount.ForeColor = System.Drawing.Color.LightGray;
+            this.panelTarkovHourCount.Location = new System.Drawing.Point(3, 271);
+            this.panelTarkovHourCount.Name = "panelTarkovHourCount";
+            this.panelTarkovHourCount.Size = new System.Drawing.Size(539, 65);
+            this.panelTarkovHourCount.TabIndex = 21;
+            this.panelTarkovHourCount.TabStop = false;
+            this.panelTarkovHourCount.Text = "Tarkov hour count";
+            // 
+            // bTarkovHourCount
+            // 
+            this.bTarkovHourCount.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bTarkovHourCount.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bTarkovHourCount.FlatAppearance.BorderSize = 0;
+            this.bTarkovHourCount.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bTarkovHourCount.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bTarkovHourCount.Location = new System.Drawing.Point(15, 23);
+            this.bTarkovHourCount.Name = "bTarkovHourCount";
+            this.bTarkovHourCount.Size = new System.Drawing.Size(518, 30);
+            this.bTarkovHourCount.TabIndex = 3;
+            this.bTarkovHourCount.Text = "XX hours played || No playtime recorded";
+            this.bTarkovHourCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bTarkovHourCount.UseVisualStyleBackColor = true;
             // 
             // optionsWindow
             // 
@@ -943,12 +1099,14 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(1053, 546);
+            this.Controls.Add(this.tabTimeDisplay);
             this.Controls.Add(this.pagesSeparator);
             this.Controls.Add(this.pagesTitle);
             this.Controls.Add(this.tabPresets);
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
+            this.Controls.Add(this.panelTimeDisplay);
             this.Controls.Add(this.panelLauncherSettings);
             this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
@@ -976,6 +1134,7 @@
             this.panelServerError.ResumeLayout(false);
             this.panelCloseOnExit.ResumeLayout(false);
             this.panelLauncherSettings.ResumeLayout(false);
+            this.panelDeleteCurrentServer.ResumeLayout(false);
             this.panelCloseControl.ResumeLayout(false);
             this.panelSPTAKISettings.ResumeLayout(false);
             this.panelSPTAKISettings.PerformLayout();
@@ -987,7 +1146,11 @@
             this.panelPresets.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.panelDeleteCurrentServer.ResumeLayout(false);
+            this.panelTimeDisplay.ResumeLayout(false);
+            this.panelServerTimeCounter.ResumeLayout(false);
+            this.panelServerHourCount.ResumeLayout(false);
+            this.panelTarkovTimeCounter.ResumeLayout(false);
+            this.panelTarkovHourCount.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1057,5 +1220,16 @@
         private System.Windows.Forms.Panel panel4;
         private System.Windows.Forms.GroupBox panelDeleteCurrentServer;
         private System.Windows.Forms.Button bDeleteServer;
+        private System.Windows.Forms.Button tabTimeDisplay;
+        private System.Windows.Forms.Panel panelTimeDisplay;
+        private System.Windows.Forms.GroupBox panelServerTimeCounter;
+        private System.Windows.Forms.Button bServerTimeCounter;
+        private System.Windows.Forms.GroupBox panelServerHourCount;
+        private System.Windows.Forms.Button bServerHourCounter;
+        private System.Windows.Forms.Panel panel5;
+        private System.Windows.Forms.GroupBox panelTarkovTimeCounter;
+        private System.Windows.Forms.Button bTarkovTimeCounter;
+        private System.Windows.Forms.GroupBox panelTarkovHourCount;
+        private System.Windows.Forms.Button bTarkovHourCount;
     }
 }

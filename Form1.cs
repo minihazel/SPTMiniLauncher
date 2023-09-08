@@ -41,6 +41,8 @@ namespace SPTMiniLauncher
         public string core;
         public string selectedAID;
         public string[] thirdPartyContent = { };
+        public DateTime startTimeTarkov;
+        public DateTime startTimeServer;
 
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
@@ -189,6 +191,24 @@ namespace SPTMiniLauncher
                     else
                     {
                         saveDimensions();
+                    }
+
+                    if (settingsObject["timeOptions"] != null)
+                    {
+                        if (settingsObject["timeOptions"]["serverTime"] == null)
+                            settingsObject["timeOptions"]["serverTime"] = 0;
+
+                        if (settingsObject["timeOptions"]["tarkovTime"] == null)
+                            settingsObject["timeOptions"]["tarkovTime"] = 0;
+                    }
+                    else
+                    {
+                        settingsObject["timeOptions"] = new JObject();
+                        settingsObject["timeOptions"]["serverTime"] = 0;
+                        settingsObject["timeOptions"]["tarkovTime"] = 0;
+
+                        string updatedJSON = settingsObject.ToString();
+                        File.WriteAllText(settingsFile, updatedJSON);
                     }
 
                     if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
@@ -1184,6 +1204,19 @@ namespace SPTMiniLauncher
                         TarkovEndDetector.RunWorkerAsync();
                     }
 
+                    bool settingsFileExists = File.Exists(settingsFile);
+                    if (settingsFileExists)
+                    {
+                        string settingsContent = File.ReadAllText(settingsFile);
+                        JObject settingsObj = JObject.Parse(settingsContent);
+
+                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                        int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
+
+                        TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
+                        startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
+                    }
+
                     if (TarkovProcessDetector != null)
                         TarkovProcessDetector.Dispose();
 
@@ -1337,7 +1370,9 @@ namespace SPTMiniLauncher
                         {
                             flashLauncherWindow();
                         }
+
                         killProcesses();
+
                         if (TarkovEndDetector != null)
                             TarkovEndDetector.Dispose();
 
@@ -2260,6 +2295,19 @@ namespace SPTMiniLauncher
                     Directory.SetCurrentDirectory(currentDir);
                 }
             }
+
+            bool settingsFileExists = File.Exists(settingsFile);
+            if (settingsFileExists)
+            {
+                string settingsContent = File.ReadAllText(settingsFile);
+                JObject settingsObj = JObject.Parse(settingsContent);
+
+                JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                int previousServerSeconds = (int)timeOptions["serverTime"];
+
+                TimeSpan elapsedServerDuration = TimeSpan.FromSeconds(previousServerSeconds);
+                startTimeServer = DateTime.Now - elapsedServerDuration;
+            }
         }
 
         public void runLauncher()
@@ -2440,6 +2488,19 @@ namespace SPTMiniLauncher
                     tarkovGame.Start();
                 }
 
+                bool settingsFileExists = File.Exists(settingsFile);
+                if (settingsFileExists)
+                {
+                    string settingsContent = File.ReadAllText(settingsFile);
+                    JObject settingsObj = JObject.Parse(settingsContent);
+
+                    JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                    int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
+
+                    TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
+                    startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
+                }
+
                 TarkovEndDetector = new BackgroundWorker();
                 TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
                 TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
@@ -2519,7 +2580,6 @@ namespace SPTMiniLauncher
                     akiServerOutputter.AppendLine(res);
                 }
             }
-
         }
 
         private void akiServer_Exited(object sender, EventArgs e)
@@ -2975,6 +3035,30 @@ namespace SPTMiniLauncher
 
                     if (TarkovProcessDetector != null)
                         TarkovProcessDetector.Dispose();
+
+                    bool settingsFileExists = File.Exists(settingsFile);
+                    if (settingsFileExists)
+                    {
+                        string settingsContent = File.ReadAllText(settingsFile);
+                        JObject settingsObj = JObject.Parse(settingsContent);
+
+                        if (settingsObj["timeOptions"] != null)
+                        {
+                            JObject timeOptions = (JObject)settingsObj["timeOptions"];
+
+                            DateTime endTime = DateTime.Now;
+                            TimeSpan playtimeServer = endTime - startTimeServer;
+                            TimeSpan playtimeTarkov = endTime - startTimeTarkov;
+
+                            int serverPlaytimeSeconds = (int)playtimeServer.TotalSeconds;
+                            int tarkovPlaytimeSeconds = (int)playtimeTarkov.TotalSeconds;
+                            timeOptions["serverTime"] = (int)serverPlaytimeSeconds;
+                            timeOptions["tarkovTime"] = (int)serverPlaytimeSeconds;
+
+                            string updatedJSON = settingsObj.ToString();
+                            File.WriteAllText(settingsFile, updatedJSON);
+                        }
+                    }
 
                     generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
                     resetRunButton();
