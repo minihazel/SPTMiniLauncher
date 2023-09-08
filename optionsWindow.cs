@@ -24,6 +24,7 @@ namespace SPTMiniLauncher
         public Color idleColor = Color.FromArgb(255, 28, 28, 28);
         private int curIndex;
         public string selectedServer;
+        public string settingsFile = Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
 
         public optionsWindow()
         {
@@ -356,6 +357,139 @@ namespace SPTMiniLauncher
                     bEnableControlPanel.Text = "Disabled";
                     bEnableControlPanel.ForeColor = Color.IndianRed;
                     break;
+            }
+
+            bool settingsFileExists = File.Exists(settingsFile);
+            if (settingsFileExists)
+            {
+                string settingsContent = File.ReadAllText(settingsFile);
+                JObject settingsObj = JObject.Parse(settingsContent);
+
+                if (settingsObj["timeOptions"] != null)
+                {
+                    JObject timeOptions = (JObject)settingsObj["timeOptions"];
+
+                    int serverPlaytime = (int)timeOptions["serverTime"];
+                    int tarkovPlaytime = (int)timeOptions["tarkovTime"];
+                    TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
+                    TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
+
+                    // Check if the time is 0
+                    if (serverPlaytime == 0)
+                    {
+                        bServerTimeCounter.Text = "No playtime recorded";
+                        bServerHourCounter.Text = "No playtime recorded";
+                    }
+                    else
+                    {
+                        // Format time based on days, hours and minutes
+                        string formattedServerPlaytime = "";
+
+                        if (serverPlaytimeInSeconds.TotalDays >= 1)
+                        {
+                            if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
+                            {
+                                int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                int hours = serverPlaytimeInSeconds.Hours;
+                                formattedServerPlaytime = $"{days} days and {hours} hours";
+                            }
+                            else if (serverPlaytimeInSeconds.TotalHours >= 1)
+                            {
+                                int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                int hours = serverPlaytimeInSeconds.Hours;
+                                int minutes = serverPlaytimeInSeconds.Minutes;
+                                formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                            }
+                            else
+                            {
+                                int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                int minutes = serverPlaytimeInSeconds.Minutes;
+                                formattedServerPlaytime = $"{days} days and {minutes} hours";
+                            }
+                        }
+                        else if (serverPlaytimeInSeconds.TotalHours >= 1)
+                        {
+                            if (serverPlaytimeInSeconds.Minutes == 0)
+                            {
+                                int hours = serverPlaytimeInSeconds.Hours;
+                                formattedServerPlaytime = $"{hours} hours";
+                            }
+                            else
+                            {
+                                int hours = serverPlaytimeInSeconds.Hours;
+                                int minutes = serverPlaytimeInSeconds.Minutes;
+                                formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
+                            }
+                        }
+                        else
+                        {
+                            int minutes = serverPlaytimeInSeconds.Minutes;
+                            formattedServerPlaytime = $"{minutes} minutes";
+                        }
+
+                        string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
+                        bServerHourCounter.Text = $"{formattedHour} hours played";
+                        bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
+                    }
+
+                    // Check if the time is 0
+                    if (tarkovPlaytime == 0)
+                    {
+                        bTarkovTimeCounter.Text = "No playtime recorded";
+                        bTarkovHourCount.Text = "No playtime recorded";
+                    }
+                    else
+                    {
+                        // Format time based on days, hours and minutes
+                        string formattedTarkovPlaytime = "";
+
+                        if (tarkovPlaytimeInSeconds.TotalDays >= 1)
+                        {
+                            if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
+                            {
+                                int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                int hours = tarkovPlaytimeInSeconds.Hours;
+                                formattedTarkovPlaytime = $"{days} days and {hours} hours";
+                            }
+                            else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
+                            {
+                                int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                int hours = tarkovPlaytimeInSeconds.Hours;
+                                int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                            }
+                            else
+                            {
+                                int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                formattedTarkovPlaytime = $"{days} days and {minutes} hours";
+                            }
+                        }
+                        else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
+                        {
+                            if (tarkovPlaytimeInSeconds.Minutes == 0)
+                            {
+                                int hours = tarkovPlaytimeInSeconds.Hours;
+                                formattedTarkovPlaytime = $"{hours} hours";
+                            }
+                            else
+                            {
+                                int hours = tarkovPlaytimeInSeconds.Hours;
+                                int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
+                            }
+                        }
+                        else
+                        {
+                            int minutes = tarkovPlaytimeInSeconds.Minutes;
+                            formattedTarkovPlaytime = $"{minutes} minutes";
+                        }
+
+                        string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
+                        bTarkovHourCount.Text = $"{formattedHour} hours played";
+                        bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
+                    }
+                }
             }
         }
 
