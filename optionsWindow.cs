@@ -836,6 +836,7 @@ namespace SPTMiniLauncher
             tabSPTAKI.BackColor = idleColor;
             tabTarkov.BackColor = idleColor;
             tabPresets.BackColor = idleColor;
+            tabTimeDisplay.BackColor = idleColor;
 
             panelLauncherSettings.BringToFront();
         }
@@ -846,6 +847,7 @@ namespace SPTMiniLauncher
             tabSPTAKI.BackColor = selectedColor;
             tabTarkov.BackColor = idleColor;
             tabPresets.BackColor = idleColor;
+            tabTimeDisplay.BackColor = idleColor;
 
             panelSPTAKISettings.BringToFront();
         }
@@ -856,6 +858,7 @@ namespace SPTMiniLauncher
             tabSPTAKI.BackColor = idleColor;
             tabTarkov.BackColor = selectedColor;
             tabPresets.BackColor = idleColor;
+            tabTimeDisplay.BackColor = idleColor;
 
             panelTarkovSettings.BringToFront();
         }
@@ -866,8 +869,20 @@ namespace SPTMiniLauncher
             tabSPTAKI.BackColor = idleColor;
             tabTarkov.BackColor = idleColor;
             tabPresets.BackColor = selectedColor;
+            tabTimeDisplay.BackColor = idleColor;
 
             panelPresets.BringToFront();
+        }
+
+        private void tabTimeDisplay_Click(object sender, EventArgs e)
+        {
+            tabLauncher.BackColor = idleColor;
+            tabSPTAKI.BackColor = idleColor;
+            tabTarkov.BackColor = idleColor;
+            tabPresets.BackColor = idleColor;
+            tabTimeDisplay.BackColor = selectedColor;
+
+            panelTimeDisplay.BringToFront();
         }
 
         private void bPreset1_Click(object sender, EventArgs e)

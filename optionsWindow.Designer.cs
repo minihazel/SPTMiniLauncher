@@ -968,6 +968,7 @@
             this.tabTimeDisplay.TabIndex = 22;
             this.tabTimeDisplay.Text = "Time Display";
             this.tabTimeDisplay.UseVisualStyleBackColor = false;
+            this.tabTimeDisplay.Click += new System.EventHandler(this.tabTimeDisplay_Click);
             // 
             // panelTimeDisplay
             // 
