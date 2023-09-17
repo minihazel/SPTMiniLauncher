@@ -285,6 +285,22 @@ namespace SPTMiniLauncher
                 string logFolder = Path.Combine(Environment.CurrentDirectory, "logs");
                 if (!Directory.Exists(logFolder))
                     Directory.CreateDirectory(logFolder);
+
+                if (Properties.Settings.Default.currentProfileAID != null)
+                {
+                    string convertedProfile = fetchProfileFromAID(Properties.Settings.Default.currentProfileAID);
+                    if (convertedProfile != null &&
+                        convertedProfile != Properties.Settings.Default.currentProfileAID)
+                    {
+                        if (convertedProfile.Length > 1)
+                        {
+                            if (convertedProfile != null)
+                            {
+                                bProfilePlaceholder.Text = $"Profile \'{convertedProfile}' selected";
+                            }
+                        }
+                    }
+                }
             }
             else
             {
@@ -313,6 +329,78 @@ namespace SPTMiniLauncher
                     Application.Restart();
                 }
             }
+        }
+
+        public string fetchProfileFromAID(string profileAID)
+        {
+            if (isLoneServer)
+            {
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                bool userFolderExists = Directory.Exists(userFolder);
+                if (userFolderExists)
+                {
+                    string profilesFolder = Path.Combine(userFolder, "profiles");
+                    bool profilesFolderExists = Directory.Exists(profilesFolder);
+                    if (profilesFolderExists)
+                    {
+                        string fullAID = Path.Combine(profilesFolder, $"{profileAID}.json");
+                        bool fullAIDExists = File.Exists(fullAID);
+                        if (fullAIDExists)
+                        {
+                            string fileContent = File.ReadAllText(fullAID);
+                            JObject parsedFile = JObject.Parse(fileContent);
+                            JObject info = (JObject)parsedFile["info"];
+                            string infoAID = (string)info["id"];
+
+                            JObject characters = (JObject)parsedFile["characters"];
+                            JObject pmc = (JObject)characters["pmc"];
+                            JObject Info = (JObject)pmc["Info"];
+
+                            string Nickname = (string)Info["Nickname"];
+
+                            if (infoAID == profileAID)
+                            {
+                                return Nickname;
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
+                string userFolder = Path.Combine(selectedServer, "user");
+                bool userFolderExists = Directory.Exists(userFolder);
+                if (userFolderExists)
+                {
+                    string profilesFolder = Path.Combine(userFolder, "profiles");
+                    bool profilesFolderExists = Directory.Exists(profilesFolder);
+                    if (profilesFolderExists)
+                    {
+                        string fullAID = Path.Combine(profilesFolder, $"{profileAID}.json");
+                        bool fullAIDExists = File.Exists(fullAID);
+                        if (fullAIDExists)
+                        {
+                            string fileContent = File.ReadAllText(fullAID);
+                            JObject parsedFile = JObject.Parse(fileContent);
+                            JObject info = (JObject)parsedFile["info"];
+                            string infoAID = (string)info["id"];
+
+                            JObject characters = (JObject)parsedFile["characters"];
+                            JObject pmc = (JObject)characters["pmc"];
+                            JObject Info = (JObject)pmc["Info"];
+
+                            string Nickname = (string)Info["Nickname"];
+
+                            if (infoAID == profileAID)
+                            {
+                                return Nickname;
+                            }
+                        }
+                    }
+                }
+            }
+            return null;
         }
 
         public bool isLauncherRunning()
@@ -3013,15 +3101,6 @@ namespace SPTMiniLauncher
                     cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
                 }
 
-                /*
-                Control deleteBtn = findDelete();
-                if (deleteBtn != null)
-                {
-                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.Text = "Delete server"; }));
-                    deleteBtn.Invoke((MethodInvoker)(() => { deleteBtn.ForeColor = Color.IndianRed; }));
-                }
-                */
-
                 try
                 {
                     if (globalProcessDetector != null)
@@ -3220,8 +3299,9 @@ namespace SPTMiniLauncher
                     return true;
                 }
             }
-            catch (Exception)
+            catch (System.Net.Sockets.SocketException ex)
             {
+                Console.WriteLine($"IGNORE: {ex.Message.ToString()}");
                 return false;
             }
         }
@@ -3742,15 +3822,8 @@ namespace SPTMiniLauncher
             {
                 if (boxSelectedServerTitle.Text != "SPT Placeholder")
                 {
-                    optionsWindow frm = new optionsWindow();
+                    optionsWindow frm = new optionsWindow(bProfilePlaceholder, this, false);
                     frm.selectedServer = boxSelectedServerTitle.Text;
-
-                    Control[] found = frm.Controls.Find("bDeleteServer", true);
-                    if (found.Length > 0)
-                    {
-                        Control bDeleteServer = found[0];
-                        bDeleteServer.Text = $"Click to delete {boxSelectedServerTitle.Text}";
-                    }
 
                     frm.ShowDialog();
                 }
@@ -3841,6 +3914,44 @@ namespace SPTMiniLauncher
                     outputwindow.Hide();
                 }
             }
+        }
+
+        private void bProfilePlaceholder_Click(object sender, EventArgs e)
+        {
+            if (Properties.Settings.Default.server_path != null ||
+                Properties.Settings.Default.server_path != "" && boxPath.Text != null || boxPath.Text != "")
+            {
+                if (boxSelectedServerTitle.Text != "SPT Placeholder")
+                {
+                    optionsWindow frm = new optionsWindow(bProfilePlaceholder, this, true);
+                    frm.selectedServer = boxSelectedServerTitle.Text;
+
+                    frm.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+                }
+            }
+            else
+            {
+                MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+            }
+        }
+
+        private void bProfilePlaceholder_MouseDown(object sender, MouseEventArgs e)
+        {
+            
+        }
+
+        private void bProfilePlaceholder_MouseEnter(object sender, EventArgs e)
+        {
+            bProfilePlaceholder.ForeColor = Color.DodgerBlue;
+        }
+
+        private void bProfilePlaceholder_MouseLeave(object sender, EventArgs e)
+        {
+            bProfilePlaceholder.ForeColor = Color.LightGray;
         }
     }
 

@@ -26,9 +26,16 @@ namespace SPTMiniLauncher
         public string selectedServer;
         public string settingsFile = Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
 
-        public optionsWindow()
+        private bool isProfileSelect = false;
+        private Form1 mainForm;
+        private Label bProfilePlaceholder;
+
+        public optionsWindow(Label bProfilePlaceholder, Form1 mainForm, bool isProfileSelection)
         {
             InitializeComponent();
+            this.isProfileSelect = isProfileSelection;
+            this.mainForm = mainForm;
+            this.bProfilePlaceholder = bProfilePlaceholder;
         }
 
         private void optionsWindow_Load(object sender, EventArgs e)
@@ -491,6 +498,9 @@ namespace SPTMiniLauncher
                     }
                 }
             }
+
+            if (isProfileSelect)
+                tabSPTAKI.PerformClick();
         }
 
         public string displayProfileName(string input)
@@ -1008,6 +1018,20 @@ namespace SPTMiniLauncher
 
             Properties.Settings.Default.currentProfileAID = fileName;
             Properties.Settings.Default.Save();
+
+            string input = fullName;
+            int index = input.IndexOf("-");
+            if (index != -1)
+            {
+                string result = input.Substring(index + 1).Trim();
+                result = result.Replace("[", null);
+                result = result.Replace("]", null);
+
+                if (bProfilePlaceholder != null)
+                {
+                    bProfilePlaceholder.Text = $"Profile \'{result}\' selected";
+                }
+            }
         }
 
         private void bSPTAKIProfile_MouseDown(object sender, MouseEventArgs e)

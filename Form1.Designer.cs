@@ -47,6 +47,7 @@
             this.bRefresh = new System.Windows.Forms.Label();
             this.bOpenOptions = new System.Windows.Forms.Label();
             this.bToggleOutputWindow = new System.Windows.Forms.Label();
+            this.bProfilePlaceholder = new System.Windows.Forms.Label();
             this.boxPathBox.SuspendLayout();
             this.boxServers.SuspendLayout();
             this.boxSelectedServer.SuspendLayout();
@@ -312,6 +313,22 @@
             this.bToggleOutputWindow.MouseEnter += new System.EventHandler(this.bToggleOutputWindow_MouseEnter);
             this.bToggleOutputWindow.MouseLeave += new System.EventHandler(this.bToggleOutputWindow_MouseLeave);
             // 
+            // bProfilePlaceholder
+            // 
+            this.bProfilePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bProfilePlaceholder.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bProfilePlaceholder.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.bProfilePlaceholder.Location = new System.Drawing.Point(14, 622);
+            this.bProfilePlaceholder.Name = "bProfilePlaceholder";
+            this.bProfilePlaceholder.Size = new System.Drawing.Size(317, 30);
+            this.bProfilePlaceholder.TabIndex = 9;
+            this.bProfilePlaceholder.Text = "Click here to select a profile";
+            this.bProfilePlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bProfilePlaceholder.Click += new System.EventHandler(this.bProfilePlaceholder_Click);
+            this.bProfilePlaceholder.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bProfilePlaceholder_MouseDown);
+            this.bProfilePlaceholder.MouseEnter += new System.EventHandler(this.bProfilePlaceholder_MouseEnter);
+            this.bProfilePlaceholder.MouseLeave += new System.EventHandler(this.bProfilePlaceholder_MouseLeave);
+            // 
             // Form1
             // 
             this.AllowDrop = true;
@@ -319,6 +336,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 661);
+            this.Controls.Add(this.bProfilePlaceholder);
             this.Controls.Add(this.bToggleOutputWindow);
             this.Controls.Add(this.bOpenOptions);
             this.Controls.Add(this.bRefresh);
@@ -372,6 +390,7 @@
         private System.Windows.Forms.Label bRefresh;
         private System.Windows.Forms.Label bOpenOptions;
         private System.Windows.Forms.Label bToggleOutputWindow;
+        public System.Windows.Forms.Label bProfilePlaceholder;
     }
 }
 
