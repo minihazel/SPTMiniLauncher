@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -44,7 +45,19 @@ namespace SPTMiniLauncher
         {
             if (e.KeyCode == Keys.Tab || e.KeyCode == Keys.Enter)
             {
-                txtPathToApp.Select();
+                bToolType.Select();
+            }
+        }
+
+        private void bToolType_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Tab)
+            {
+                bBrowsePath.PerformClick();
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                bToolType.PerformClick();
             }
         }
 
@@ -62,33 +75,67 @@ namespace SPTMiniLauncher
 
         private void bBrowsePath_Click(object sender, EventArgs e)
         {
-            OpenFileDialog open = new OpenFileDialog();
-            open.Title =
-                $"Select a file";
-            open.Filter =
-                $"All files (*.*|*.*";
-
-            if (open.ShowDialog() == DialogResult.OK)
+            if (bToolType.Text.ToLower() == "folder")
             {
-                string fullFilePath = open.FileName;
+                CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                dialog.IsFolderPicker = true;
 
-                string[] parts = fullFilePath.Split('\\');
-                int userIndex = Array.IndexOf(parts, "user");
-                int modsIndex = Array.IndexOf(parts, "mods");
-
-                if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    string folderName = parts[modsIndex];
-                    folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+                    string fullPath = Path.GetFullPath(dialog.FileName);
+                    if (Directory.Exists(fullPath))
+                    {
+                        string[] parts = fullPath.Split('\\');
+                        int userIndex = Array.IndexOf(parts, "user");
+                        int modsIndex = Array.IndexOf(parts, "mods");
 
-                    txtPathToApp.Text = folderName;
+                        if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                        {
+                            string folderName = parts[modsIndex];
+                            folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+
+                            txtPathToApp.Text = folderName;
+                        }
+                        else if (userIndex == -1 && modsIndex == -1)
+                        {
+                            txtPathToApp.Text = fullPath;
+                        }
+
+                        bBrowsePath.Select();
+                    }
                 }
-                else if (userIndex == -1 && modsIndex == -1)
+            }
+            else
+            {
+                OpenFileDialog open = new OpenFileDialog();
+                open.Title =
+                    $"Select a file";
+                open.Filter =
+                    $"All files (*.*)|*.*";
+
+                if (open.ShowDialog() == DialogResult.OK)
                 {
-                    txtPathToApp.Text = fullFilePath;
-                }
+                    string fullFilePath = open.FileName;
 
-                bBrowsePath.Select();
+                    string[] parts = fullFilePath.Split('\\');
+                    int userIndex = Array.IndexOf(parts, "user");
+                    int modsIndex = Array.IndexOf(parts, "mods");
+
+                    if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                    {
+                        string folderName = parts[modsIndex];
+                        folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+
+                        txtPathToApp.Text = folderName;
+                    }
+                    else if (userIndex == -1 && modsIndex == -1)
+                    {
+                        txtPathToApp.Text = fullFilePath;
+                    }
+
+                    bBrowsePath.Select();
+                }
             }
         }
 
@@ -100,59 +147,137 @@ namespace SPTMiniLauncher
             {
                 if (!isChanging)
                 {
-                    JObject newApp = new JObject();
-                    newApp["Name"] = txtCustomName.Text;
-                    newApp["Path"] = txtPathToApp.Text;
-                    bool thirdPartyFileExists = File.Exists(thirdPartyFile);
-
-                    if (thirdPartyFileExists)
+                    if (bToolType.Text.ToLower() == "folder")
                     {
-                        string thirdPartycontent = File.ReadAllText(thirdPartyFile);
-                        JObject obj = JObject.Parse(thirdPartycontent);
-                        JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
-                        thirdPartyApps.Add(newApp);
-                        string updatedJSON = obj.ToString();
-                        File.WriteAllText(thirdPartyFile, updatedJSON);
-                    }
+                        string type = "Folder";
+                        JObject newApp = new JObject();
+                        newApp["Name"] = txtCustomName.Text;
+                        newApp["Path"] = txtPathToApp.Text;
+                        newApp["Type"] = type;
+                        bool thirdPartyFileExists = File.Exists(thirdPartyFile);
 
-                    ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text);
-                    string appName = txtCustomName.Text;
-                    mainForm.appDict.Add(appName, newAppInfo);
-
-                    Task.Delay(500);
-                    mainForm.listServerOptions(true);
-                    isSuccessful = true;
-                }
-                else
-                {
-                    string appName = txtCustomName.Text;
-                    string fullFilePath = txtPathToApp.Text;
-
-                    if (mainForm.appDict.ContainsKey(appName))
-                    {
-                        string[] parts = txtPathToApp.Text.Split('\\');
-                        int userIndex = Array.IndexOf(parts, "user");
-                        int modsIndex = Array.IndexOf(parts, "mods");
-
-                        if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                        if (thirdPartyFileExists)
                         {
-                            string folderName = parts[modsIndex];
-                            folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
-                            mainForm.appDict[appName].Path = folderName;
-                            mainForm.editThirdPartyApp(appName, folderName);
-                        }
-                        else
-                        {
-                            mainForm.appDict[appName].Path = fullFilePath;
-                            mainForm.editThirdPartyApp(appName, fullFilePath);
+                            string thirdPartycontent = File.ReadAllText(thirdPartyFile);
+                            JObject obj = JObject.Parse(thirdPartycontent);
+                            JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
+                            thirdPartyApps.Add(newApp);
+                            string updatedJSON = obj.ToString();
+                            File.WriteAllText(thirdPartyFile, updatedJSON);
                         }
 
+                        ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text, type);
+                        string appName = txtCustomName.Text;
+                        mainForm.appDict.Add(appName, newAppInfo);
+
+                        Task.Delay(500);
+                        mainForm.listServerOptions(true);
                         isSuccessful = true;
                     }
                     else
                     {
-                        mainForm.showError($"Third party tool {appName} was not found, did you perhaps change the name?");
-                        isSuccessful = false;
+                        string type = "App";
+                        JObject newApp = new JObject();
+                        newApp["Name"] = txtCustomName.Text;
+                        newApp["Path"] = txtPathToApp.Text;
+                        newApp["Type"] = type;
+                        bool thirdPartyFileExists = File.Exists(thirdPartyFile);
+
+                        if (thirdPartyFileExists)
+                        {
+                            string thirdPartycontent = File.ReadAllText(thirdPartyFile);
+                            JObject obj = JObject.Parse(thirdPartycontent);
+                            JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
+                            thirdPartyApps.Add(newApp);
+                            string updatedJSON = obj.ToString();
+                            File.WriteAllText(thirdPartyFile, updatedJSON);
+                        }
+
+                        ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text, type);
+                        string appName = txtCustomName.Text;
+                        mainForm.appDict.Add(appName, newAppInfo);
+
+                        Task.Delay(500);
+                        mainForm.listServerOptions(true);
+                        isSuccessful = true;
+                    }
+                }
+                else
+                {
+                    if (bToolType.Text.ToLower() == "folder")
+                    {
+                        string type = "Folder";
+                        string appName = txtCustomName.Text;
+                        string fullFilePath = txtPathToApp.Text;
+
+                        if (mainForm.appDict.ContainsKey(appName))
+                        {
+                            string[] parts = txtPathToApp.Text.Split('\\');
+                            int userIndex = Array.IndexOf(parts, "user");
+                            int modsIndex = Array.IndexOf(parts, "mods");
+
+                            if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            {
+                                string folderName = parts[modsIndex];
+                                folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+                                mainForm.appDict[appName].Path = folderName;
+                                mainForm.appDict[appName].Type = type;
+                                mainForm.editThirdPartyApp(appName, folderName, type);
+                            }
+                            else
+                            {
+                                mainForm.appDict[appName].Path = fullFilePath;
+                                mainForm.appDict[appName].Type = type;
+
+                                mainForm.editThirdPartyApp(appName, fullFilePath, type);
+                            }
+
+                            Task.Delay(500);
+                            mainForm.listServerOptions(true);
+                            isSuccessful = true;
+                        }
+                        else
+                        {
+                            mainForm.showError($"Third party tool {appName} was not found, did you perhaps change the name?");
+                            isSuccessful = false;
+                        }
+                    }
+                    else
+                    {
+                        string type = "App";
+                        string appName = txtCustomName.Text;
+                        string fullFilePath = txtPathToApp.Text;
+
+                        if (mainForm.appDict.ContainsKey(appName))
+                        {
+                            string[] parts = txtPathToApp.Text.Split('\\');
+                            int userIndex = Array.IndexOf(parts, "user");
+                            int modsIndex = Array.IndexOf(parts, "mods");
+
+                            if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            {
+                                string folderName = parts[modsIndex];
+                                folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+                                mainForm.appDict[appName].Path = folderName;
+                                mainForm.appDict[appName].Type = type;
+                                mainForm.editThirdPartyApp(appName, folderName, type);
+                            }
+                            else
+                            {
+                                mainForm.appDict[appName].Path = fullFilePath;
+                                mainForm.appDict[appName].Type = type;
+                                mainForm.editThirdPartyApp(appName, fullFilePath, type);
+                            }
+
+                            Task.Delay(500);
+                            mainForm.listServerOptions(true);
+                            isSuccessful = true;
+                        }
+                        else
+                        {
+                            mainForm.showError($"Third party tool {appName} was not found, did you perhaps change the name?");
+                            isSuccessful = false;
+                        }
                     }
                 }
 
@@ -165,6 +290,23 @@ namespace SPTMiniLauncher
             else
             {
                 MessageBox.Show("Error: mainForm is null");
+            }
+        }
+
+        private void bToolType_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void bToolType_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (bToolType.Text.ToLower() == "folder")
+            {
+                bToolType.Text = "App";
+            }
+            else
+            {
+                bToolType.Text = "Folder";
             }
         }
     }

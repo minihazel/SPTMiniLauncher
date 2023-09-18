@@ -114,8 +114,9 @@ namespace SPTMiniLauncher
                     {
                         string name = (string)app["Name"];
                         string path = (string)app["Path"];
+                        string type = (string)app["Type"];
 
-                        appDict[name] = new ThirdPartyInfo(name, path);
+                        appDict[name] = new ThirdPartyInfo(name, path, type);
                     }
                 }
                 else
@@ -127,22 +128,26 @@ namespace SPTMiniLauncher
                             new JObject
                             {
                                 ["Name"] = "Load Order Editor",
-                                ["Path"] = "mods\\Load Order Editor.exe"
+                                ["Path"] = "mods\\Load Order Editor.exe",
+                                ["Type"] = "App"
                             },
                             new JObject
                             {
                                 ["Name"] = "SPT-AKI Profile Editor",
-                                ["Path"] = "C:\\Program Files\\SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe"
+                                ["Path"] = "C:\\Program Files\\SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe",
+                                ["Type"] = "App"
                             },
                             new JObject
                             {
                                 ["Name"] = "Server Value Modifier",
-                                ["Path"] = "mods\\ServerValueModifier\\GFVE.exe"
+                                ["Path"] = "mods\\ServerValueModifier\\GFVE.exe",
+                                ["Type"] = "App"
                             },
                             new JObject
                             {
                                 ["Name"] = "SPT Realism",
-                                ["Path"] = "mods\\SPT-Realism-Mod\\RealismModConfig.exe"
+                                ["Path"] = "mods\\SPT-Realism-Mod\\RealismModConfig.exe",
+                                ["Type"] = "App"
                             }
                         }
                     };
@@ -167,8 +172,9 @@ namespace SPTMiniLauncher
                         {
                             string name = (string)app["Name"];
                             string path = (string)app["Path"];
+                            string type = (string)app["Type"];
 
-                            appDict[name] = new ThirdPartyInfo(name, path);
+                            appDict[name] = new ThirdPartyInfo(name, path, type);
                         }
                     }
                     catch (Exception ex)
@@ -801,7 +807,7 @@ namespace SPTMiniLauncher
             }*/
         }
 
-        public void editThirdPartyApp(string appName, string newPath)
+        public void editThirdPartyApp(string appName, string newPath, string type)
         {
             try
             {
@@ -816,6 +822,7 @@ namespace SPTMiniLauncher
                         if (item["Name"].ToString() == appName)
                         {
                             item["Path"] = newPath;
+                            item["Type"] = type;
                             break;
                         }
                     }
@@ -848,13 +855,23 @@ namespace SPTMiniLauncher
 
                         string _name = appInfo.Name;
                         string _path = appInfo.Path;
+                        string _type = appInfo.Type;
 
                         if (_name == appName)
                         {
                             if (_path.ToLower().StartsWith("mods"))
                             {
                                 string newPath = _path.Replace("mods", modsFolder);
-                                bool newPathExists = File.Exists(newPath);
+                                bool newPathExists;
+
+                                if (_type.ToLower() == "folder")
+                                {
+                                    newPathExists = Directory.Exists(newPath);
+                                }
+                                else
+                                {
+                                    newPathExists = File.Exists(newPath);
+                                }
 
                                 try
                                 {
@@ -883,13 +900,28 @@ namespace SPTMiniLauncher
                             }
                             else
                             {
-                                bool _pathExists = File.Exists(_path);
+                                bool _pathExists;
+
+                                if (_type.ToLower() == "folder")
+                                {
+                                    _pathExists = Directory.Exists(_path);
+                                }
+                                else
+                                {
+                                    _pathExists = File.Exists(_path);
+                                }
 
                                 try
                                 {
                                     if (_pathExists)
                                     {
-                                        Process.Start(_path);
+                                        ProcessStartInfo newApp = new ProcessStartInfo();
+                                        newApp.WorkingDirectory = Path.GetDirectoryName(_path);
+                                        newApp.FileName = Path.GetFileName(_path);
+                                        newApp.UseShellExecute = true;
+                                        newApp.Verb = "open";
+
+                                        Process.Start(newApp);
                                     }
                                     else
                                     {
@@ -2097,7 +2129,7 @@ namespace SPTMiniLauncher
                         "add new tool")
                     {
                         addThirdParty addwnd = new addThirdParty(this, false);
-                        addwnd.Show();
+                        addwnd.ShowDialog();
                     }
 
                     // Third Party Apps section
@@ -2149,7 +2181,7 @@ namespace SPTMiniLauncher
                                 addThirdParty addwnd = new addThirdParty(this, true);
                                 addwnd.txtCustomName.Text = trimmedName;
                                 addwnd.txtPathToApp.Text = appDict[trimmedName].Path;
-                                addwnd.Show();
+                                addwnd.ShowDialog();
                             }
 
                             else if (label.Text.ToLower().StartsWith("remove") &&
@@ -3959,11 +3991,13 @@ namespace SPTMiniLauncher
     {
         public string Name { get; set; }
         public string Path { get; set; }
+        public string Type { get; set; }
 
-        public ThirdPartyInfo(string name, string path)
+        public ThirdPartyInfo(string name, string path, string type)
         {
             Name = name;
             Path = path;
+            Type = type;
         }
     }
 }

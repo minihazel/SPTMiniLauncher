@@ -36,9 +36,12 @@
             this.txtPathToApp = new System.Windows.Forms.TextBox();
             this.panelApplyThirdPartyApp = new System.Windows.Forms.GroupBox();
             this.bApplyThirdPartyApp = new System.Windows.Forms.Button();
+            this.panelToolType = new System.Windows.Forms.GroupBox();
+            this.bToolType = new System.Windows.Forms.Button();
             this.panelCustomName.SuspendLayout();
             this.panelPathToApp.SuspendLayout();
             this.panelApplyThirdPartyApp.SuspendLayout();
+            this.panelToolType.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelCustomName
@@ -49,7 +52,7 @@
             this.panelCustomName.ForeColor = System.Drawing.Color.LightGray;
             this.panelCustomName.Location = new System.Drawing.Point(12, 12);
             this.panelCustomName.Name = "panelCustomName";
-            this.panelCustomName.Size = new System.Drawing.Size(655, 65);
+            this.panelCustomName.Size = new System.Drawing.Size(417, 65);
             this.panelCustomName.TabIndex = 3;
             this.panelCustomName.TabStop = false;
             this.panelCustomName.Text = "Custom name";
@@ -64,7 +67,7 @@
             this.txtCustomName.ForeColor = System.Drawing.Color.LightGray;
             this.txtCustomName.Location = new System.Drawing.Point(15, 23);
             this.txtCustomName.Name = "txtCustomName";
-            this.txtCustomName.Size = new System.Drawing.Size(634, 26);
+            this.txtCustomName.Size = new System.Drawing.Size(396, 26);
             this.txtCustomName.TabIndex = 0;
             this.txtCustomName.Text = "Placeholder";
             this.txtCustomName.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtCustomName_KeyDown);
@@ -142,12 +145,43 @@
             this.bApplyThirdPartyApp.UseVisualStyleBackColor = true;
             this.bApplyThirdPartyApp.Click += new System.EventHandler(this.bApplyThirdPartyApp_Click);
             // 
+            // panelToolType
+            // 
+            this.panelToolType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelToolType.Controls.Add(this.bToolType);
+            this.panelToolType.ForeColor = System.Drawing.Color.LightGray;
+            this.panelToolType.Location = new System.Drawing.Point(447, 12);
+            this.panelToolType.Name = "panelToolType";
+            this.panelToolType.Size = new System.Drawing.Size(220, 65);
+            this.panelToolType.TabIndex = 8;
+            this.panelToolType.TabStop = false;
+            this.panelToolType.Text = "Is this custom tool a folder?";
+            // 
+            // bToolType
+            // 
+            this.bToolType.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bToolType.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bToolType.FlatAppearance.BorderSize = 0;
+            this.bToolType.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bToolType.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bToolType.Location = new System.Drawing.Point(15, 23);
+            this.bToolType.Name = "bToolType";
+            this.bToolType.Size = new System.Drawing.Size(180, 30);
+            this.bToolType.TabIndex = 3;
+            this.bToolType.Text = "Folder";
+            this.bToolType.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bToolType.UseVisualStyleBackColor = true;
+            this.bToolType.Click += new System.EventHandler(this.bToolType_Click);
+            this.bToolType.KeyDown += new System.Windows.Forms.KeyEventHandler(this.bToolType_KeyDown);
+            this.bToolType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bToolType_MouseDown);
+            // 
             // addThirdParty
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 269);
+            this.Controls.Add(this.panelToolType);
             this.Controls.Add(this.panelApplyThirdPartyApp);
             this.Controls.Add(this.panelPathToApp);
             this.Controls.Add(this.panelCustomName);
@@ -164,6 +198,7 @@
             this.panelPathToApp.ResumeLayout(false);
             this.panelPathToApp.PerformLayout();
             this.panelApplyThirdPartyApp.ResumeLayout(false);
+            this.panelToolType.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -177,5 +212,7 @@
         public System.Windows.Forms.GroupBox panelApplyThirdPartyApp;
         public System.Windows.Forms.Button bApplyThirdPartyApp;
         public System.Windows.Forms.Button bBrowsePath;
+        public System.Windows.Forms.GroupBox panelToolType;
+        public System.Windows.Forms.Button bToolType;
     }
 }
