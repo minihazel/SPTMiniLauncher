@@ -3805,10 +3805,6 @@ namespace SPTMiniLauncher
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-        }
-
-        private void Form1_KeyUp(object sender, KeyEventArgs e)
-        {
             if (e.KeyData == (Keys.LControlKey | Keys.R))
             {
                 e.SuppressKeyPress = true;
