@@ -1735,6 +1735,10 @@ namespace SPTMiniLauncher
 
         private async void lbl2_MouseDown(object sender, MouseEventArgs e)
         {
+            // The main action happens here
+            // Detecting when options and tools are used in any way
+            // Includes right-click and left-click systems
+
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
             if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {

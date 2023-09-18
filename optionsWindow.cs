@@ -42,9 +42,11 @@ namespace SPTMiniLauncher
         {
             Form1 mainForm = new Form1();
 
+            // Setting up global boolean for mimicking "isLoneServer" functionality
             string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
             bool TarkovExists = File.Exists(TarkovPath);
 
+            // Adding all available profiles to array
             if (!TarkovExists) // Improvised LoneServer functionality
             {
                 string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
@@ -116,6 +118,7 @@ namespace SPTMiniLauncher
                 }
             }
 
+            // Sorting profiles for use in the profile cycler
             if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
             {
                 bool isProfileInPool = false;
@@ -153,11 +156,10 @@ namespace SPTMiniLauncher
                 bSPTAKIProfile.Text = currentProfiles[0];
             }
 
+            // Setting homepage and detection
             panelLauncherSettings.BringToFront();
 
-            bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
-            bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
-
+            // Setting server port
             if (TarkovExists)
             {
                 string akiPath = Properties.Settings.Default.server_path;
@@ -211,9 +213,14 @@ namespace SPTMiniLauncher
                 }
 
             }
-
             txtPortCheckBar.Visible = false;
 
+            // Labeling
+            bDeleteServer.Text = $"Click to delete {selectedServer}";
+            bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
+            bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
+
+            // Standard options
             switch (Properties.Settings.Default.bypassLauncher)
             {
                 case false:
@@ -244,15 +251,17 @@ namespace SPTMiniLauncher
                     break;
             }
 
-            if (Properties.Settings.Default.timedLauncherToggle)
+            switch (Properties.Settings.Default.timedLauncherToggle)
             {
-                bEnableTimed.Text = "Enabled";
-                bEnableTimed.ForeColor = Color.DodgerBlue;
-            }
-            else
-            {
-                bEnableTimed.Text = "Disabled";
-                bEnableTimed.ForeColor = Color.IndianRed;
+                case true:
+                    bEnableTimed.Text = "Enabled";
+                    bEnableTimed.ForeColor = Color.DodgerBlue;
+                    break;
+
+                case false:
+                    bEnableTimed.Text = "Disabled";
+                    bEnableTimed.ForeColor = Color.IndianRed;
+                    break;
             }
 
             switch (Properties.Settings.Default.tarkovDetector)
@@ -366,6 +375,7 @@ namespace SPTMiniLauncher
                     break;
             }
 
+            // Playtime counter for server and EFT
             bool settingsFileExists = File.Exists(settingsFile);
             if (settingsFileExists)
             {
@@ -499,6 +509,7 @@ namespace SPTMiniLauncher
                 }
             }
 
+            // Profile selection shortcut
             if (isProfileSelect)
                 tabSPTAKI.PerformClick();
         }
@@ -1176,8 +1187,8 @@ namespace SPTMiniLauncher
         {
             Form1 mainForm = new Form1();
 
-            string server = bDeleteServer.Text.Substring(16);
-            server = server.Replace("?", "");
+            string server = bDeleteServer.Text.Replace("Click to delete ", "");
+
             if (MessageBox.Show($"Would you like to delete {server}?", $"{this.Text} - Delete an installation", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
@@ -1186,7 +1197,7 @@ namespace SPTMiniLauncher
                 if (!TarkovExists) // Improvised LoneServer functionality
                 {
                     string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                    Directory.Delete(Properties.Settings.Default.server_path, true);
+                    Directory.Delete(selected, true);
                     mainForm.showError($"Folder {server} has been deleted.");
                     mainForm.clearUI(true);
                 }
