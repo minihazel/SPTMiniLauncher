@@ -98,5 +98,8 @@ This tool has quite a few features. Via the interface you can do the following:
     <Setting Name="usePort" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
+    <Setting Name="lastUsedInstall" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
   </Settings>
 </SettingsFile>

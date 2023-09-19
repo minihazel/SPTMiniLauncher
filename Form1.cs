@@ -23,6 +23,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 using System.Net.NetworkInformation;
 using System.Security.Policy;
 using System.Security.Permissions;
+using System.Runtime.InteropServices.ComTypes;
 
 namespace SPTMiniLauncher
 {
@@ -265,60 +266,16 @@ namespace SPTMiniLauncher
                         form.ShowDialog();
                         File.WriteAllText(settingsFile, settingsObject.ToString());
                     }
-                    else
-                    {
-                        if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
-                        {
-                            boxPath.Text = Properties.Settings.Default.server_path;
-                            if (Directory.Exists(boxPath.Text))
-                            {
-                                if (File.Exists(Path.Combine(boxPath.Text, "Aki.Server.exe")) &&
-                                    File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
-                                    Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
-                                {
-                                    isLoneServer = true;
-                                    outputwindow.isTrue = true;
-                                    readGallery();
-                                    // listAllServers(boxPath.Text);
-                                }
-                                else
-                                {
-                                    isLoneServer = false;
-                                    outputwindow.isTrue = false;
-                                    readGallery();
-                                    // listAllServers(boxPath.Text);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Server.exe")) &&
-                                    File.Exists(Path.Combine(Environment.CurrentDirectory, "Aki.Launcher.exe")) &&
-                                    Directory.Exists(Path.Combine(Environment.CurrentDirectory, "Aki_Data")))
-                            {
-                                // actual app is in an SPT installation folder
-                                isLoneServer = true;
-                                outputwindow.isTrue = true;
-                                // boxPath.Text = Environment.CurrentDirectory;
-                                Properties.Settings.Default.server_path = boxPath.Text;
-                                Properties.Settings.Default.Save();
-                                readGallery();
-                                // listAllServers(boxPath.Text);
-                            }
-                            else
-                            {
-                                showError("It looks like this you have reset the app, or it\'s your first time. Please drag and drop or browse for an SPT folder to begin!");
-                                /*
-                                isLoneServer = false;
-                                Properties.Settings.Default.server_path = boxPath.Text;
-                                Properties.Settings.Default.Save();
-                                listAllServers(boxPath.Text);
-                                */
-                            }
-                        }
 
-                        boxPathBox.Select();
+                    if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
+                    {
+                        if (Directory.Exists(Properties.Settings.Default.server_path))
+                        {
+                            readGallery();
+                        }
                     }
+
+                    boxPathBox.Select();
                 }
                 else
                 {
@@ -377,71 +334,134 @@ namespace SPTMiniLauncher
             }
         }
 
-        public string fetchProfileFromAID(string profileAID)
+        public void readGallery()
         {
-            if (isLoneServer)
+            bool galleryFileExists = File.Exists(galleryFile);
+            if (galleryFileExists)
             {
-                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                bool userFolderExists = Directory.Exists(userFolder);
-                if (userFolderExists)
+                clearUI(true);
+
+                try
                 {
-                    string profilesFolder = Path.Combine(userFolder, "profiles");
-                    bool profilesFolderExists = Directory.Exists(profilesFolder);
-                    if (profilesFolderExists)
+                    // instantiate internal array for storing installs and the "add new" button
+                    sptGallery = new string[] { };
+                    arrInsert(ref sptGallery, "Add new SPT-AKI install");
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"ERROR: {err}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                }
+
+                if (galleryDictionary != null)
+                {
+                    if (galleryDictionary.Count > 0)
                     {
-                        string fullAID = Path.Combine(profilesFolder, $"{profileAID}.json");
-                        bool fullAIDExists = File.Exists(fullAID);
-                        if (fullAIDExists)
+                        foreach (var folder in galleryDictionary)
                         {
-                            string fileContent = File.ReadAllText(fullAID);
-                            JObject parsedFile = JObject.Parse(fileContent);
-                            JObject info = (JObject)parsedFile["info"];
-                            string infoAID = (string)info["id"];
+                            clearUI(true);
+                            string name = folder.Key;
+                            Gallery folderInfo = folder.Value;
 
-                            JObject characters = (JObject)parsedFile["characters"];
-                            JObject pmc = (JObject)characters["pmc"];
-                            JObject Info = (JObject)pmc["Info"];
+                            string installName = folderInfo.Name;
+                            string installPath = folderInfo.Path;
 
-                            string Nickname = (string)Info["Nickname"];
-
-                            if (infoAID == profileAID)
-                            {
-                                return Nickname;
-                            }
+                            arrInsert(ref sptGallery, name);
                         }
                     }
                 }
-            }
-            else
-            {
-                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                string userFolder = Path.Combine(selectedServer, "user");
-                bool userFolderExists = Directory.Exists(userFolder);
-                if (userFolderExists)
+
+                Label lastItem = null;
+
+                foreach (Control ctrl in boxServers.Controls)
                 {
-                    string profilesFolder = Path.Combine(userFolder, "profiles");
-                    bool profilesFolderExists = Directory.Exists(profilesFolder);
-                    if (profilesFolderExists)
+                    if (ctrl is Label lbl)
                     {
-                        string fullAID = Path.Combine(profilesFolder, $"{profileAID}.json");
-                        bool fullAIDExists = File.Exists(fullAID);
-                        if (fullAIDExists)
+                        lastItem = lbl;
+                    }
+                }
+
+                for (int i = 0; i < sptGallery.Length; i++)
+                {
+                    Label lbl = new Label();
+                    lbl.AutoSize = false;
+                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                    lbl.TextAlign = ContentAlignment.MiddleLeft;
+                    lbl.Size = new Size(boxServers.Size.Width, boxServerPlaceholder.Size.Height);
+                    lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
+                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    lbl.BackColor = listBackcolor;
+                    lbl.ForeColor = Color.LightGray;
+                    lbl.Margin = new Padding(1, 1, 1, 1);
+                    lbl.Cursor = Cursors.Hand;
+                    lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
+                    lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
+                    lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
+                    lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
+
+                    if (sptGallery[i].ToLower() == "add new spt-aki install")
+                    {
+                        lbl.Name = $"gallery_addBtn";
+                    }
+                    else
+                    {
+                        lbl.Name = $"install_{sptGallery[i]}";
+                    }
+
+                    lbl.Text = sptGallery[i];
+                    boxServers.Controls.Add(lbl);
+
+                    selectCurrentInstall();
+                }
+            }
+        }
+
+        public void selectCurrentInstall()
+        {
+            string fullPath = Properties.Settings.Default.server_path;
+            string fullName = Properties.Settings.Default.lastUsedInstall;
+
+            if (fullPath != null && fullName != null)
+            {
+                foreach (Control ctrl in boxServers.Controls)
+                {
+                    if (ctrl is Label lbl && lbl.Text == fullName)
+                    {
+                        useInstall(fullName);
+                        boxPathBox.Select();
+                    }
+                }
+            }
+        }
+
+        public string fetchProfileFromAID(string profileAID)
+        {
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            bool userFolderExists = Directory.Exists(userFolder);
+            if (userFolderExists)
+            {
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesFolderExists = Directory.Exists(profilesFolder);
+                if (profilesFolderExists)
+                {
+                    string fullAID = Path.Combine(profilesFolder, $"{profileAID}.json");
+                    bool fullAIDExists = File.Exists(fullAID);
+                    if (fullAIDExists)
+                    {
+                        string fileContent = File.ReadAllText(fullAID);
+                        JObject parsedFile = JObject.Parse(fileContent);
+                        JObject info = (JObject)parsedFile["info"];
+                        string infoAID = (string)info["id"];
+
+                        JObject characters = (JObject)parsedFile["characters"];
+                        JObject pmc = (JObject)characters["pmc"];
+                        JObject Info = (JObject)pmc["Info"];
+
+                        string Nickname = (string)Info["Nickname"];
+
+                        if (infoAID == profileAID)
                         {
-                            string fileContent = File.ReadAllText(fullAID);
-                            JObject parsedFile = JObject.Parse(fileContent);
-                            JObject info = (JObject)parsedFile["info"];
-                            string infoAID = (string)info["id"];
-
-                            JObject characters = (JObject)parsedFile["characters"];
-                            JObject pmc = (JObject)characters["pmc"];
-                            JObject Info = (JObject)pmc["Info"];
-
-                            string Nickname = (string)Info["Nickname"];
-
-                            if (infoAID == profileAID)
-                            {
-                                return Nickname;
-                            }
+                            return Nickname;
                         }
                     }
                 }
@@ -547,15 +567,18 @@ namespace SPTMiniLauncher
                     Label selected = boxServers.Controls[i] as Label;
                     if ((selected != null) && (selected.Name.ToLower() != "boxserverstitle"))
                     {
-                        try
+                        if (boxServers.Controls.Count > 0)
                         {
-                            boxServers.Controls.RemoveAt(i);
-                            selected.Dispose();
-                        }
-                        catch (Exception err)
-                        {
-                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            try
+                            {
+                                boxServers.Controls.RemoveAt(i);
+                                selected.Dispose();
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
                         }
                     }
                 }
@@ -567,15 +590,18 @@ namespace SPTMiniLauncher
                     Label selected = boxSelectedServer.Controls[i] as Label;
                     if ((selected != null) && (selected.Name.ToLower() != "boxselectedservertitle"))
                     {
-                        try
+                        if (boxSelectedServer.Controls.Count > 0)
                         {
-                            boxSelectedServer.Controls.RemoveAt(i);
-                            selected.Dispose();
-                        }
-                        catch (Exception err)
-                        {
-                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            try
+                            {
+                                boxSelectedServer.Controls.RemoveAt(i);
+                                selected.Dispose();
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
                         }
                     }
                 }
@@ -649,148 +675,73 @@ namespace SPTMiniLauncher
                     MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
 
-                if (isLoneServer)
+                Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
+
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                string modsFolder = Path.Combine(userFolder, "mods");
+
+                foreach (var app in appDict)
                 {
-                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
+                    string appName = app.Key;
+                    ThirdPartyInfo appInfo = app.Value;
 
-                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                    string modsFolder = Path.Combine(userFolder, "mods");
+                    string _name = appInfo.Name;
+                    string _path = appInfo.Path;
 
-                    foreach (var app in appDict)
+                    if (_path.ToLower().StartsWith("mods"))
                     {
-                        string appName = app.Key;
-                        ThirdPartyInfo appInfo = app.Value;
-
-                        string _name = appInfo.Name;
-                        string _path = appInfo.Path;
-
-                        if (_path.ToLower().StartsWith("mods"))
-                        {
-                            string newPath = _path.ToLower().Replace("mods", modsFolder);
-                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
-                        }
-                        else
-                        {
-                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
-                        }
+                        string newPath = _path.ToLower().Replace("mods", modsFolder);
+                        Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                        thirdPartyContent[thirdPartyContent.Length - 1] = _name;
                     }
-
-                    Label lastItem = null;
-                    foreach (Control ctrl in boxSelectedServer.Controls)
+                    else
                     {
-                        if (ctrl is Label lbl)
-                        {
-                            lastItem = lbl;
-                        }
-                    }
-
-                    for (int i = 0; i < thirdPartyContent.Length; i++)
-                    {
-                        Label lbl = new Label();
-                        lbl.AutoSize = false;
-                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                        lbl.TextAlign = ContentAlignment.MiddleLeft;
-                        lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
-                        lbl.Location = new Point(lastItem.Location.X, lastItem.Location.Y + 30 + (i * 30));
-                        lbl.Cursor = Cursors.Hand;
-                        lbl.Margin = new Padding(1, 1, 1, 1);
-                        lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
-                        lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
-                        lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
-                        lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
-
-                        lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
-
-                        if (thirdPartyContent[i].ToLower() == "add new tool")
-                        {
-                            lbl.Text = thirdPartyContent[i];
-                        }
-                        else
-                        {
-                            lbl.Text = $"Open {thirdPartyContent[i]}";
-                        }
-
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.LightGray;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-
-                        boxSelectedServer.Controls.Add(lbl);
+                        Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                        thirdPartyContent[thirdPartyContent.Length - 1] = _name;
                     }
                 }
-                else
+
+                Label lastItem = null;
+                foreach (Control ctrl in boxSelectedServer.Controls)
                 {
-                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
-
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                    string userFolder = Path.Combine(selectedServer, "user");
-                    string modsFolder = Path.Combine(userFolder, "mods");
-
-                    foreach (var app in appDict)
+                    if (ctrl is Label lbl)
                     {
-                        string appName = app.Key;
-                        ThirdPartyInfo appInfo = app.Value;
+                        lastItem = lbl;
+                    }
+                }
 
-                        string _name = appInfo.Name;
-                        string _path = appInfo.Path;
+                for (int i = 0; i < thirdPartyContent.Length; i++)
+                {
+                    Label lbl = new Label();
+                    lbl.AutoSize = false;
+                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                    lbl.TextAlign = ContentAlignment.MiddleLeft;
+                    lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
+                    lbl.Location = new Point(lastItem.Location.X, lastItem.Location.Y + 30 + (i * 30));
+                    lbl.Cursor = Cursors.Hand;
+                    lbl.Margin = new Padding(1, 1, 1, 1);
+                    lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
+                    lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
+                    lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
+                    lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
 
-                        if (_path.ToLower().StartsWith("mods"))
-                        {
-                            string newPath = _path.ToLower().Replace("mods", modsFolder);
-                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
-                        }
-                        else
-                        {
-                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
-                        }
+                    lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
+
+                    if (thirdPartyContent[i].ToLower() == "add new tool")
+                    {
+                        lbl.Text = thirdPartyContent[i];
+                    }
+                    else
+                    {
+                        lbl.Text = $"Open {thirdPartyContent[i]}";
                     }
 
-                    Label lastItem = null;
-                    foreach (Control ctrl in boxSelectedServer.Controls)
-                    {
-                        if (ctrl is Label lbl)
-                        {
-                            lastItem = lbl;
-                        }
-                    }
+                    lbl.BackColor = listBackcolor;
+                    lbl.ForeColor = Color.LightGray;
+                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
 
-                    for (int i = 0; i < thirdPartyContent.Length; i++)
-                    {
-                        Label lbl = new Label();
-                        lbl.AutoSize = false;
-                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                        lbl.TextAlign = ContentAlignment.MiddleLeft;
-                        lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
-                        lbl.Location = new Point(lastItem.Location.X, lastItem.Location.Y + 30 + (i * 30));
-                        lbl.Cursor = Cursors.Hand;
-                        lbl.Margin = new Padding(1, 1, 1, 1);
-                        lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
-                        lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
-                        lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
-                        lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
-
-                        lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
-
-                        if (thirdPartyContent[i].ToLower() == "add new tool")
-                        {
-                            lbl.Text = thirdPartyContent[i];
-                        }
-                        else
-                        {
-                            lbl.Text = $"Open {thirdPartyContent[i]}";
-                        }
-
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.LightGray;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-
-                        boxSelectedServer.Controls.Add(lbl);
-                    }
+                    boxSelectedServer.Controls.Add(lbl);
                 }
             }
 
@@ -914,118 +865,32 @@ namespace SPTMiniLauncher
         {
             if (appDict.Count > 0)
             {
-                if (isLoneServer)
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                string modsFolder = Path.Combine(userFolder, "mods");
+
+                foreach (var app in appDict)
                 {
-                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                    string modsFolder = Path.Combine(userFolder, "mods");
+                    ThirdPartyInfo appInfo = app.Value;
 
-                    foreach (var app in appDict)
+                    string _name = appInfo.Name;
+                    string _path = appInfo.Path;
+                    string _type = appInfo.Type;
+
+                    if (_name == appName)
                     {
-                        ThirdPartyInfo appInfo = app.Value;
-
-                        string _name = appInfo.Name;
-                        string _path = appInfo.Path;
-                        string _type = appInfo.Type;
-
-                        if (_name == appName)
+                        if (_path.ToLower().StartsWith("mods"))
                         {
-                            if (_path.ToLower().StartsWith("mods"))
+                            string newPath = _path.Replace("mods", modsFolder);
+                            bool newPathExists;
+
+                            if (_type.ToLower() == "folder")
                             {
-                                string newPath = _path.Replace("mods", modsFolder);
-                                bool newPathExists;
-
-                                if (_type.ToLower() == "folder")
-                                {
-                                    newPathExists = Directory.Exists(newPath);
-                                }
-                                else
-                                {
-                                    newPathExists = File.Exists(newPath);
-                                }
-
-                                try
-                                {
-                                    if (newPathExists)
-                                    {
-                                        ProcessStartInfo newApp = new ProcessStartInfo();
-                                        newApp.WorkingDirectory = Path.GetDirectoryName(newPath);
-                                        newApp.FileName = Path.GetFileName(newPath);
-                                        newApp.UseShellExecute = true;
-                                        newApp.Verb = "open";
-
-                                        Process.Start(newApp);
-                                    }
-                                    else
-                                    {
-                                        showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
-                                            $"{Environment.NewLine}{Environment.NewLine}" +
-                                            $"Please download and install the tool to use it. Alternatively, remove it from Third Party Apps (right-click until you see Remove).");
-                                    }
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
+                                newPathExists = Directory.Exists(newPath);
                             }
                             else
                             {
-                                bool _pathExists;
-
-                                if (_type.ToLower() == "folder")
-                                {
-                                    _pathExists = Directory.Exists(_path);
-                                }
-                                else
-                                {
-                                    _pathExists = File.Exists(_path);
-                                }
-
-                                try
-                                {
-                                    if (_pathExists)
-                                    {
-                                        ProcessStartInfo newApp = new ProcessStartInfo();
-                                        newApp.WorkingDirectory = Path.GetDirectoryName(_path);
-                                        newApp.FileName = Path.GetFileName(_path);
-                                        newApp.UseShellExecute = true;
-                                        newApp.Verb = "open";
-
-                                        Process.Start(newApp);
-                                    }
-                                    else
-                                    {
-                                        showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{_path}" +
-                                            $"{Environment.NewLine}{Environment.NewLine}" +
-                                            $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
-                                    }
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
+                                newPathExists = File.Exists(newPath);
                             }
-                        }
-                    }
-                }
-                else
-                {
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                    string userFolder = Path.Combine(selectedServer, "user");
-                    string modsFolder = Path.Combine(userFolder, "mods");
-
-                    foreach (var app in appDict)
-                    {
-                        ThirdPartyInfo appInfo = app.Value;
-
-                        string _name = appInfo.Name;
-                        string _path = appInfo.Path;
-
-                        if (_path.ToLower().StartsWith("mods"))
-                        {
-                            string newPath = _path.ToLower().Replace("mods", modsFolder);
-                            bool newPathExists = File.Exists(newPath);
 
                             try
                             {
@@ -1043,7 +908,7 @@ namespace SPTMiniLauncher
                                 {
                                     showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
                                         $"{Environment.NewLine}{Environment.NewLine}" +
-                                        $"Please download and install the content to use it. Alternatively, remove it from the list of third-party content.");
+                                        $"Please download and install the tool to use it. Alternatively, remove it from Third Party Apps (right-click until you see Remove).");
                                 }
                             }
                             catch (Exception err)
@@ -1054,13 +919,28 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            bool _pathExists = File.Exists(_path);
+                            bool _pathExists;
+
+                            if (_type.ToLower() == "folder")
+                            {
+                                _pathExists = Directory.Exists(_path);
+                            }
+                            else
+                            {
+                                _pathExists = File.Exists(_path);
+                            }
 
                             try
                             {
                                 if (_pathExists)
                                 {
-                                    Process.Start(_path);
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = Path.GetDirectoryName(_path);
+                                    newApp.FileName = Path.GetFileName(_path);
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
+
+                                    Process.Start(newApp);
                                 }
                                 else
                                 {
@@ -1117,7 +997,7 @@ namespace SPTMiniLauncher
             
             listServerOptions(true);
         }
-
+        
         public void checkForSingularProfile(string path)
         {
             string mainFolder = path;
@@ -1138,6 +1018,36 @@ namespace SPTMiniLauncher
                     }
                 }
             }
+        }
+
+        public static Gallery fetchInstallByPath(string galleryFile, string installPath)
+        {
+            try
+            {
+                string galleryContent = File.ReadAllText(galleryFile);
+                JObject galleryObj = JObject.Parse(galleryContent);
+
+                if (galleryObj.ContainsKey("Gallery"))
+                {
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string installName = folder.Value<string>("Path");
+                        if (installName == installPath)
+                        {
+                            string path = folder.Value<string>("Name");
+                            return new Gallery(installPath, path);
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"ERROR: {err}");
+                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", "SPT Mini Launcher", MessageBoxButtons.OK);
+            }
+
+            return null;
         }
 
         public static Gallery fetchInstall(string galleryFile, string name)
@@ -1170,78 +1080,112 @@ namespace SPTMiniLauncher
             return null;
         }
 
-        public void readGallery()
+        public void browseInstallation()
         {
-            if (galleryDictionary.Count > 0)
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dialog.IsFolderPicker = true;
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
             {
-                // instantiate internal array for storing installs
-                try
+                string fullPath = Path.GetFullPath(dialog.FileName);
+
+                if (Directory.Exists(fullPath))
                 {
-                    sptGallery = new string[] { };
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                }
-
-                // instantiate the "add new" button
-                arrInsert(ref sptGallery, "Add new SPT-AKI install");
-
-                foreach (var folder in galleryDictionary)
-                {
-                    clearUI(true);
-                    string name = folder.Key;
-                    Gallery folderInfo = folder.Value;
-
-                    string installName = folderInfo.Name;
-                    string installPath = folderInfo.Path;
-
-                    arrInsert(ref sptGallery, name);
-                }
-
-                Label lastItem = null;
-                foreach (Control ctrl in boxServers.Controls)
-                {
-                    if (ctrl is Label lbl)
+                    if (File.Exists(Path.Combine(fullPath, "Aki.Server.exe")) &&
+                        File.Exists(Path.Combine(fullPath, "Aki.Launcher.exe")) &&
+                        Directory.Exists(Path.Combine(fullPath, "Aki_Data")))
                     {
-                        lastItem = lbl;
+                        boxPath.Text = fullPath;
+                        Properties.Settings.Default.server_path = boxPath.Text;
+                        Properties.Settings.Default.Save();
+                        addGalleryInstall(Properties.Settings.Default.server_path);
                     }
-                }
-
-                for (int i = 0; i < sptGallery.Length; i++)
-                {
-                    Label lbl = new Label();
-                    lbl.AutoSize = false;
-                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                    lbl.TextAlign = ContentAlignment.MiddleLeft;
-                    lbl.Size = new Size(boxServers.Size.Width, boxServerPlaceholder.Size.Height);
-                    lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
-                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                    lbl.BackColor = listBackcolor;
-                    lbl.ForeColor = Color.LightGray;
-                    lbl.Margin = new Padding(1, 1, 1, 1);
-                    lbl.Cursor = Cursors.Hand;
-                    lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
-                    lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
-                    lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                    lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
-
-                    if (sptGallery[i].ToLower() == "add new spt-aki install")
-                    {
-                        lbl.Name = $"gallery_addBtn";
-                    }
-                    else
-                    {
-                        lbl.Name = $"install_{sptGallery[i]}";
-                    }
-
-                    lbl.Text = sptGallery[i];
-                    boxServers.Controls.Add(lbl);
                 }
             }
         }
 
+        public void removeItemFromGalleryJSON(string fullName)
+        {
+            bool galleryFileExists = File.Exists(galleryFile);
+            if (galleryFileExists)
+            {
+                JObject galleryObj = loadGalleryObj();
+
+                JArray Gallery = (JArray)galleryObj["Gallery"];
+                if (Gallery != null)
+                {
+                    JObject item = (JObject)Gallery.FirstOrDefault(appItem => appItem["Name"].ToString() == fullName);
+                    if (item != null)
+                    {
+                        Gallery.Remove(item);
+                        saveGalleryJSON(galleryObj);
+                    }
+                }
+            }
+        }
+
+        public void removeGalleryInstall(string fullName)
+        {
+            removeItemFromGalleryJSON(fullName);
+
+            if (galleryDictionary.ContainsKey(fullName))
+            {
+                try
+                {
+                    galleryDictionary.Remove(fullName);
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                }
+            }
+
+            string[] updatedSPTGallery = sptGallery.Where(item => item != fullName).ToArray();
+            sptGallery = updatedSPTGallery;
+        }
+
+        public void addGalleryInstall(string fullPath)
+        {
+            string installName = Path.GetFileName(fullPath);
+
+            if (!sptGallery.Contains(installName) && !galleryDictionary.ContainsKey(installName))
+            {
+                galleryDictionary.Add(installName, new Gallery(installName, fullPath));
+                arrInsert(ref sptGallery, installName);
+
+                JObject galleryObj = loadGalleryObj();
+                JArray galleryArray = (JArray)galleryObj["Gallery"];
+                galleryArray.Add(new JObject(
+                    new JProperty("Name", installName),
+                    new JProperty("Path", fullPath)));
+
+                saveGalleryJSON(galleryObj);
+                readGallery();
+            }
+        }
+
+        private JObject loadGalleryObj()
+        {
+            bool galleryFileExists = File.Exists(galleryFile);
+            if (galleryFileExists)
+            {
+                string galleryData = File.ReadAllText(galleryFile);
+                return JObject.Parse(galleryData);
+            }
+            return null;
+        }
+
+        private void saveGalleryJSON(JObject galleryObj)
+        {
+            string json = galleryObj.ToString(Formatting.Indented);
+            bool galleryFileExists = File.Exists(galleryFile);
+            if (galleryFileExists)
+                File.WriteAllText(galleryFile, json);
+        }
+
+        /*
         public void listAllServers(string path)
         {
             clearUI(true);
@@ -1342,6 +1286,7 @@ namespace SPTMiniLauncher
                 }
             }
         }
+        */
 
         private void lbl_MouseEnter(object sender, EventArgs e)
         {
@@ -1361,73 +1306,109 @@ namespace SPTMiniLauncher
             }
         }
 
+        public void useInstall(string fullName)
+        {
+            boxSelectedServerTitle.Text = fullName;
+
+            if (TarkovProcessDetector != null)
+                TarkovProcessDetector.Dispose();
+
+            TarkovProcessDetector = new BackgroundWorker();
+            TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
+            TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
+            TarkovProcessDetector.RunWorkerAsync();
+
+            for (int i = boxSelectedServer.Controls.Count - 1; i >= 0; i--)
+            {
+                if ((boxSelectedServer.Controls[i] is Label selected) && (selected.Name.ToLower() != "boxselectedservertitle"))
+                {
+                    try
+                    {
+                        boxSelectedServer.Controls.RemoveAt(i);
+                        selected.Dispose();
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                }
+            }
+
+            try
+            {
+                string name = fullName;
+
+                Gallery foundInstall = fetchInstall(galleryFile, name);
+                if (foundInstall != null)
+                {
+                    string installName = foundInstall.Name;
+                    string installPath = foundInstall.Path;
+
+                    string akiData = Path.Combine(installPath, "Aki_Data");
+                    bool akiDataExists = Directory.Exists(akiData);
+                    if (akiDataExists)
+                    {
+                        string akiServer = Path.Combine(akiData, "Server");
+                        bool akiServerExists = Directory.Exists(akiServer);
+                        if (akiDataExists)
+                        {
+                            string akiConfigs = Path.Combine(akiServer, "configs");
+                            bool akiConfigsExists = Directory.Exists(akiConfigs);
+                            if (akiConfigsExists)
+                            {
+                                core = Path.Combine(akiConfigs, "core.json");
+                                if (File.Exists(core))
+                                {
+                                    string lastUsedName = Path.GetFileName(installPath);
+                                    Properties.Settings.Default.server_path = installPath;
+                                    Properties.Settings.Default.lastUsedInstall = lastUsedName;
+                                    boxPath.Text = Properties.Settings.Default.server_path;
+                                    Properties.Settings.Default.Save();
+
+                                    listServerOptions(true);
+                                    checkForSingularProfile(installPath);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"ERROR: {err.ToString()}");
+                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+            }
+        }
+
         private void lbl_MouseDown(object sender, EventArgs e)
         {
             System.Windows.Forms.Label lbl = (System.Windows.Forms.Label)sender;
 
             if (lbl.Text != "")
             {
-                lbl.BackColor = listSelectedcolor;
-                boxSelectedServerTitle.Text = lbl.Text;
+                string fullName = lbl.Text;
 
-                TarkovProcessDetector = new BackgroundWorker();
-                TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
-                TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
-                TarkovProcessDetector.RunWorkerAsync();
-
-                for (int i = boxSelectedServer.Controls.Count - 1; i >= 0; i--)
+                if ((Control.MouseButtons & MouseButtons.Right) != 0)
                 {
-                    if ((boxSelectedServer.Controls[i] is Label selected) && (selected.Name.ToLower() != "boxselectedservertitle"))
+                    if (lbl.Text.ToLower() != "add new spt-aki install")
                     {
-                        try
+                        if (MessageBox.Show($"Do you wish to remove {fullName} from your Gallery?{Environment.NewLine}{Environment.NewLine}" +
+                                        $"This will not delete your install from your computer.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            boxSelectedServer.Controls.RemoveAt(i);
-                            selected.Dispose();
-                        }
-                        catch (Exception err)
-                        {
-                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            removeGalleryInstall(fullName);
+                            readGallery();
                         }
                     }
                 }
-
-                try
+                else
                 {
-                    string name = lbl.Text;
-                    Gallery foundInstall = fetchInstall(galleryFile, name);
-                    if (foundInstall != null)
-                    {
-                        string installName = foundInstall.Name;
-                        string installPath = foundInstall.Path;
+                    lbl.BackColor = listSelectedcolor;
 
-                        string akiData = Path.Combine(installPath, "Aki_Data");
-                        bool akiDataExists = Directory.Exists(akiData);
-                        if (akiDataExists)
-                        {
-                            string akiServer = Path.Combine(akiData, "Server");
-                            bool akiServerExists = Directory.Exists(akiServer);
-                            if (akiDataExists)
-                            {
-                                string akiConfigs = Path.Combine(akiServer, "configs");
-                                bool akiConfigsExists = Directory.Exists(akiConfigs);
-                                if (akiConfigsExists)
-                                {
-                                    core = Path.Combine(akiConfigs, "core.json");
-                                    if (File.Exists(core))
-                                    {
-                                        listServerOptions(true);
-                                        checkForSingularProfile(installPath);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    if (lbl.Text.ToLower() == "add new spt-aki install")
+                        browseInstallation();
+                    else
+                        useInstall(lbl.Text);
                 }
             }
 
@@ -1727,144 +1708,108 @@ namespace SPTMiniLauncher
             try
             {
                 clearUI(false);
-
-                if (isStreets)
+                for (int i = 0; i < serverOptionsStreets.Length; i++)
                 {
-                    for (int i = 0; i < serverOptionsStreets.Length; i++)
-                    {
-                        Label lbl = new Label();
-                        lbl.AutoSize = false;
-                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                        lbl.TextAlign = ContentAlignment.MiddleLeft;
-                        lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
-                        lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
-                        lbl.Cursor = Cursors.Hand;
+                    Label lbl = new Label();
+                    lbl.AutoSize = false;
+                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                    lbl.TextAlign = ContentAlignment.MiddleLeft;
+                    lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
+                    lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
+                    lbl.Cursor = Cursors.Hand;
 
-                        if (serverOptionsStreets[i].ToLower() == "launch spt-aki")
+                    if (serverOptionsStreets[i].ToLower() == "launch spt-aki")
+                    {
+                        lbl.Name = "launcherRunButton";
+                        lbl.Text = "Launch SPT-AKI";
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.DodgerBlue;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower() == "clear cache")
+                    {
+                        lbl.Name = "launcherClearCacheButton";
+                        lbl.Text = "Clear cache";
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.LightGray;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower() == "stop spt-aki")
+                    {
+                        lbl.Name = "launcherStopSPTIfRunning";
+                        lbl.Text = "Stop SPT-AKI";
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.IndianRed;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower() == "- mods -")
+                    {
+                        lbl.Text = "  Mods";
+                        lbl.Cursor = Cursors.Arrow;
+                        lbl.BackColor = this.BackColor;
+                        lbl.ForeColor = Color.DodgerBlue;
+                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower() == "- actions -")
+                    {
+                        lbl.Text = "  Actions";
+                        lbl.Cursor = Cursors.Arrow;
+                        lbl.BackColor = this.BackColor;
+                        lbl.ForeColor = Color.IndianRed;
+                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower() == "- thirdparty -")
+                    {
+                        lbl.Text = "  Third Party Apps";
+                        lbl.Cursor = Cursors.Arrow;
+                        lbl.BackColor = this.BackColor;
+                        lbl.ForeColor = Color.DarkSeaGreen;
+                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
+                    {
+                        lbl.Text = serverOptionsStreets[i];
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.IndianRed;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    }
+                    else if (serverOptionsStreets[i].ToLower().Contains("open profile -"))
+                    {
+                        string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
+                        bool profilesFolderExists = Directory.Exists(profilesFolder);
+                        if (profilesFolderExists)
                         {
-                            lbl.Name = "launcherRunButton";
-                            lbl.Text = "Launch SPT-AKI";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.DodgerBlue;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower() == "clear cache")
-                        {
-                            lbl.Name = "launcherClearCacheButton";
-                            lbl.Text = "Clear cache";
+                            int _countProfiles = Directory.GetFiles(profilesFolder).Length;
+                            lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
                             lbl.BackColor = listBackcolor;
                             lbl.ForeColor = Color.LightGray;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower() == "stop spt-aki")
-                        {
-                            lbl.Name = "launcherStopSPTIfRunning";
-                            lbl.Text = "Stop SPT-AKI";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower() == "- mods -")
-                        {
-                            lbl.Text = "  Mods";
-                            lbl.Cursor = Cursors.Arrow;
-                            lbl.BackColor = this.BackColor;
-                            lbl.ForeColor = Color.DodgerBlue;
-                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower() == "- actions -")
-                        {
-                            lbl.Text = "  Actions";
-                            lbl.Cursor = Cursors.Arrow;
-                            lbl.BackColor = this.BackColor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower() == "- thirdparty -")
-                        {
-                            lbl.Text = "  Third Party Apps";
-                            lbl.Cursor = Cursors.Arrow;
-                            lbl.BackColor = this.BackColor;
-                            lbl.ForeColor = Color.DarkSeaGreen;
-                            lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
-                        {
-                            lbl.Text = serverOptionsStreets[i];
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else if (serverOptionsStreets[i].ToLower().Contains("open profile -"))
-                        {
-                            if (isLoneServer)
-                            {
-                                string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
-                                bool profilesFolderExists = Directory.Exists(profilesFolder);
-                                if (profilesFolderExists)
-                                {
-                                    int _countProfiles = Directory.GetFiles(profilesFolder).Length;
-                                    lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.LightGray;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                                else
-                                {
-                                    lbl.Text = $"Profiles folder unavailable";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.IndianRed;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string profilesFolder = Path.Combine(selectedServer, "user\\profiles");
-                                bool profilesFolderExists = Directory.Exists(profilesFolder);
-                                if (profilesFolderExists)
-                                {
-                                    int _countProfiles = Directory.GetFiles(profilesFolder).Length;
-                                    lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.LightGray;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                                else
-                                {
-                                    lbl.Text = $"Profiles folder unavailable";
-                                    lbl.BackColor = listBackcolor;
-                                    lbl.ForeColor = Color.IndianRed;
-                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                                }
-                            }
                         }
                         else
                         {
-                            lbl.Text = serverOptionsStreets[i];
+                            lbl.Text = $"Profiles folder unavailable";
                             lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.LightGray;
+                            lbl.ForeColor = Color.IndianRed;
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
-
-                        lbl.Margin = new Padding(1, 1, 1, 1);
-                        lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
-                        lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
-                        lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
-                        lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
-                        boxSelectedServer.Controls.Add(lbl);
-                    }
-
-                    if (isLoneServer)
-                    {
-                        checkThirdPartyApps(Properties.Settings.Default.server_path);
                     }
                     else
                     {
-                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                        checkThirdPartyApps(selectedServer);
+                        lbl.Text = serverOptionsStreets[i];
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.LightGray;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                     }
+
+                    lbl.Margin = new Padding(1, 1, 1, 1);
+                    lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
+                    lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
+                    lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
+                    lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
+                    boxSelectedServer.Controls.Add(lbl);
                 }
+
+                checkThirdPartyApps(Properties.Settings.Default.server_path);
             }
             catch (Exception err)
             {
@@ -1906,18 +1851,10 @@ namespace SPTMiniLauncher
                 if (label.Text.ToLower().Contains("open a profile -"))
                 {
                     profileSelector frm = new profileSelector();
-                    if (isLoneServer)
-                    {
-                        frm.isTrue = true;
-                    }
-                    else
-                    {
-                        frm.isTrue = false;
-                        frm.selectedServer = selectedServer;
-                        frm.boxSelectedServerTitle = boxSelectedServerTitle.Text;
-                    }
 
+                    frm.boxSelectedServerTitle = boxSelectedServerTitle.Text;
                     frm.selector = "profile_open";
+
                     frm.ShowDialog();
                 }
                 else
@@ -1929,27 +1866,31 @@ namespace SPTMiniLauncher
                         {
                             if (MessageBox.Show("Clear cache?\n\nThis will make the Server load significantly slower next launch.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
-                                if (isLoneServer)
+                                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                                bool userFolderExists = Directory.Exists(userFolder);
+                                if (userFolderExists)
                                 {
-                                    clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
-                                }
-                                else
-                                {
-                                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                    clearServerCache(Path.Combine(selectedServer, "user\\cache"));
+                                    string cacheFolder = Path.Combine(userFolder, "cache");
+                                    bool cacheFolderExists = Directory.Exists(cacheFolder);
+                                    if (cacheFolderExists)
+                                    {
+                                        clearServerCache(cacheFolder);
+                                    }
                                 }
                             }
                         }
                         else
                         {
-                            if (isLoneServer)
+                            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                            bool userFolderExists = Directory.Exists(userFolder);
+                            if (userFolderExists)
                             {
-                                clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                clearServerCache(Path.Combine(selectedServer, "user\\cache"));
+                                string cacheFolder = Path.Combine(userFolder, "cache");
+                                bool cacheFolderExists = Directory.Exists(cacheFolder);
+                                if (cacheFolderExists)
+                                {
+                                    clearServerCache(cacheFolder);
+                                }
                             }
                         }
                     }
@@ -2009,7 +1950,6 @@ namespace SPTMiniLauncher
                         "open control panel")
                     {
                         controlWindow wn = new controlWindow();
-                        wn.isTrue = isLoneServer;
                         wn.selectedServer = boxSelectedServerTitle.Text;
                         wn.ShowDialog();
                     }
@@ -2023,38 +1963,17 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (isLoneServer)
+                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                            if (Directory.Exists(modsFolder))
                             {
-                                string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
-                                if (Directory.Exists(modsFolder))
+                                try
                                 {
-                                    try
-                                    {
-                                        Process.Start("explorer.exe", modsFolder);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    Process.Start("explorer.exe", modsFolder);
                                 }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string modsFolder = Path.Combine(selectedServer, "user\\mods");
-
-                                if (Directory.Exists(modsFolder))
+                                catch (Exception err)
                                 {
-                                    try
-                                    {
-                                        Process.Start("explorer.exe", modsFolder);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
                             }
                         }
@@ -2069,62 +1988,30 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (isLoneServer)
+                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                            if (Directory.Exists(modsFolder))
                             {
-                                string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
-                                if (Directory.Exists(modsFolder))
+                                try
                                 {
-                                    try
-                                    {
-                                        Modlist form = new Modlist();
+                                    Modlist form = new Modlist();
 
-                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
-                                        Label loneServer = (Label)form.Controls["loneServer"];
-                                        Label watermark = (Label)form.Controls["watermark"];
-                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
+                                    Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
+                                    Label loneServer = (Label)form.Controls["loneServer"];
+                                    Label watermark = (Label)form.Controls["watermark"];
+                                    GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
-                                        boxPathPlaceholder.Text = modsFolder;
-                                        boxModsType.Text = "Server mods";
-                                        watermark.Visible = true;
-                                        loneServer.Text = "True";
+                                    boxPathPlaceholder.Text = modsFolder;
+                                    boxModsType.Text = "Server mods";
+                                    watermark.Visible = true;
+                                    loneServer.Text = "True";
 
-                                        form.Text = boxSelectedServerTitle.Text;
-                                        form.ShowDialog();
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    form.Text = boxSelectedServerTitle.Text;
+                                    form.ShowDialog();
                                 }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string modsFolder = Path.Combine(selectedServer, "user\\mods");
-
-                                if (Directory.Exists(modsFolder))
+                                catch (Exception err)
                                 {
-                                    try
-                                    {
-                                        Modlist form = new Modlist();
-
-                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
-                                        Label loneServer = (Label)form.Controls["loneServer"];
-                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
-
-                                        boxPathPlaceholder.Text = Path.Combine(selectedServer, "user\\mods");
-                                        boxModsType.Text = "Server mods";
-                                        loneServer.Text = "False";
-
-                                        form.Text = boxSelectedServerTitle.Text;
-                                        form.ShowDialog();
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
                             }
                         }
@@ -2139,38 +2026,17 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (isLoneServer)
+                            string pluginsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
+                            if (Directory.Exists(pluginsFolder))
                             {
-                                string pluginsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
-                                if (Directory.Exists(pluginsFolder))
+                                try
                                 {
-                                    try
-                                    {
-                                        Process.Start("explorer.exe", pluginsFolder);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    Process.Start("explorer.exe", pluginsFolder);
                                 }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string pluginsFolder = Path.Combine(selectedServer, "BepInEx\\plugins");
-
-                                if (Directory.Exists(pluginsFolder))
+                                catch (Exception err)
                                 {
-                                    try
-                                    {
-                                        Process.Start("explorer.exe", pluginsFolder);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
                             }
                         }
@@ -2185,64 +2051,30 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            if (isLoneServer)
+                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
+                            if (Directory.Exists(modsFolder))
                             {
-                                string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
-                                if (Directory.Exists(modsFolder))
+                                try
                                 {
-                                    try
-                                    {
-                                        Modlist form = new Modlist();
+                                    Modlist form = new Modlist();
 
-                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
-                                        Label loneServer = (Label)form.Controls["loneServer"];
-                                        Label watermark = (Label)form.Controls["watermark"];
-                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
+                                    Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
+                                    Label loneServer = (Label)form.Controls["loneServer"];
+                                    Label watermark = (Label)form.Controls["watermark"];
+                                    GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
 
-                                        boxPathPlaceholder.Text = modsFolder;
-                                        boxModsType.Text = "Client mods";
-                                        watermark.Visible = false;
-                                        loneServer.Text = "True";
+                                    boxPathPlaceholder.Text = modsFolder;
+                                    boxModsType.Text = "Client mods";
+                                    watermark.Visible = false;
+                                    loneServer.Text = "True";
 
-                                        form.Text = boxSelectedServerTitle.Text;
-                                        form.ShowDialog();
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    form.Text = boxSelectedServerTitle.Text;
+                                    form.ShowDialog();
                                 }
-                            }
-                            else
-                            {
-                                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                                string modsFolder = Path.Combine(selectedServer, "BepInEx\\plugins");
-
-                                if (Directory.Exists(modsFolder))
+                                catch (Exception err)
                                 {
-                                    try
-                                    {
-                                        Modlist form = new Modlist();
-
-                                        Label boxPathPlaceholder = (Label)form.Controls["boxPathPlaceholder"];
-                                        Label loneServer = (Label)form.Controls["loneServer"];
-                                        Label watermark = (Label)form.Controls["watermark"];
-                                        GroupBox boxModsType = (GroupBox)form.Controls["boxModsType"];
-
-                                        boxPathPlaceholder.Text = Path.Combine(selectedServer, "BepInEx\\plugins");
-                                        boxModsType.Text = "Client mods";
-                                        watermark.Visible = false;
-                                        loneServer.Text = "false";
-
-                                        form.Text = boxSelectedServerTitle.Text;
-                                        form.ShowDialog();
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
                             }
                         }
@@ -2251,38 +2083,17 @@ namespace SPTMiniLauncher
                     else if (label.Text.ToLower() ==
                         "open modloader json")
                     {
-                        if (isLoneServer)
+                        string orderFile = Path.Combine(Properties.Settings.Default.server_path, "user\\mods\\order.json");
+                        if (File.Exists(orderFile))
                         {
-                            string orderFile = Path.Combine(Properties.Settings.Default.server_path, "user\\mods\\order.json");
-                            if (File.Exists(orderFile))
+                            try
                             {
-                                try
-                                {
-                                    Process.Start(orderFile);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
+                                Process.Start(orderFile);
                             }
-                        }
-                        else
-                        {
-                            selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                            string orderFile = Path.Combine(selectedServer, "user\\mods\\order.json");
-
-                            if (File.Exists(orderFile))
+                            catch (Exception err)
                             {
-                                try
-                                {
-                                    Process.Start(orderFile);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
                         }
                     }
@@ -2380,14 +2191,16 @@ namespace SPTMiniLauncher
 
                 if (Properties.Settings.Default.clearCache == 1)
                 {
-                    if (isLoneServer)
+                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                    bool userFolderExists = Directory.Exists(userFolder);
+                    if (userFolderExists)
                     {
-                        clearServerCache(Path.Combine(Properties.Settings.Default.server_path, "user\\cache"));
-                    }
-                    else
-                    {
-                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                        clearServerCache(Path.Combine(selectedServer, "user\\cache"));
+                        string cacheFolder = Path.Combine(userFolder, "cache");
+                        bool cacheFolderExists = Directory.Exists(cacheFolder);
+                        if (cacheFolderExists)
+                        {
+                            clearServerCache(cacheFolder);
+                        }
                     }
                 }
 
@@ -2455,127 +2268,61 @@ namespace SPTMiniLauncher
 
             if (Properties.Settings.Default.timedLauncherToggle)
             {
-                if (isLoneServer)
+                Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                Process akiServer = new Process();
+
+                akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                akiServer.StartInfo.FileName = "Aki.Server.exe";
+                akiServer.StartInfo.CreateNoWindow = true;
+                akiServer.StartInfo.UseShellExecute = false;
+                akiServer.StartInfo.RedirectStandardOutput = true;
+                akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+
+                akiServer.OutputDataReceived += akiServer_OutputDataReceived;
+                akiServer.Exited += akiServer_Exited;
+
+                try
                 {
-                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                    Process akiServer = new Process();
+                    if (akiServerOutputter != null)
+                        akiServerOutputter.Clear();
 
-                    akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                    akiServer.StartInfo.FileName = "Aki.Server.exe";
-                    akiServer.StartInfo.CreateNoWindow = true;
-                    akiServer.StartInfo.UseShellExecute = false;
-                    akiServer.StartInfo.RedirectStandardOutput = true;
-                    akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
+                    akiServerOutputter = new StringBuilder();
+                    akiServer.Start();
+                    akiServer.BeginOutputReadLine();
+                    checkWorker();
 
-                    akiServer.OutputDataReceived += akiServer_OutputDataReceived;
-                    akiServer.Exited += akiServer_Exited;
-
-                    try
-                    {
-                        if (akiServerOutputter != null)
-                            akiServerOutputter.Clear();
-
-                        akiServerOutputter = new StringBuilder();
-                        akiServer.Start();
-                        akiServer.BeginOutputReadLine();
-                        checkWorker();
-
-                        if (Properties.Settings.Default.serverOutputting)
-                            outputwindow.Show();
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                    }
-                    Directory.SetCurrentDirectory(currentDir);
+                    if (Properties.Settings.Default.serverOutputting)
+                        outputwindow.Show();
                 }
-                else
+                catch (Exception err)
                 {
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                    Directory.SetCurrentDirectory(selectedServer);
-                    Process akiServer = new Process();
-
-                    akiServer.StartInfo.WorkingDirectory = selectedServer;
-                    akiServer.StartInfo.FileName = "Aki.Server.exe";
-                    akiServer.StartInfo.CreateNoWindow = true;
-                    akiServer.StartInfo.UseShellExecute = false;
-                    akiServer.StartInfo.RedirectStandardOutput = true;
-                    akiServer.StartInfo.StandardOutputEncoding = Encoding.UTF8;
-
-                    akiServer.OutputDataReceived += akiServer_OutputDataReceived;
-                    akiServer.Exited += akiServer_Exited;
-
-                    try
-                    {
-                        if (akiServerOutputter != null)
-                            akiServerOutputter.Clear();
-
-                        akiServerOutputter = new StringBuilder();
-                        akiServer.Start();
-                        akiServer.BeginOutputReadLine();
-                        checkWorker();
-
-                        if (Properties.Settings.Default.serverOutputting)
-                            outputwindow.Show();
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                    }
-                    Directory.SetCurrentDirectory(currentDir);
+                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
+                Directory.SetCurrentDirectory(currentDir);
             }
             else
             {
-                if (isLoneServer)
+                Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                Process akiServer = new Process();
+
+                akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                akiServer.StartInfo.FileName = "Aki.Server.exe";
+                akiServer.StartInfo.CreateNoWindow = false;
+                akiServer.StartInfo.UseShellExecute = false;
+                akiServer.StartInfo.RedirectStandardOutput = false;
+
+                try
                 {
-                    Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
-                    Process akiServer = new Process();
-
-                    akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                    akiServer.StartInfo.FileName = "Aki.Server.exe";
-                    akiServer.StartInfo.CreateNoWindow = false;
-                    akiServer.StartInfo.UseShellExecute = false;
-                    akiServer.StartInfo.RedirectStandardOutput = false;
-
-                    try
-                    {
-                        akiServer.Start();
-                        checkWorker();
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                    }
-                    Directory.SetCurrentDirectory(currentDir);
+                    akiServer.Start();
+                    checkWorker();
                 }
-                else
+                catch (Exception err)
                 {
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                    Directory.SetCurrentDirectory(selectedServer);
-                    Process akiServer = new Process();
-
-                    akiServer.StartInfo.WorkingDirectory = selectedServer;
-                    akiServer.StartInfo.FileName = "Aki.Server.exe";
-                    akiServer.StartInfo.CreateNoWindow = false;
-                    akiServer.StartInfo.UseShellExecute = false;
-                    akiServer.StartInfo.RedirectStandardOutput = false;
-
-                    try
-                    {
-                        akiServer.Start();
-                        checkWorker();
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                    }
-                    Directory.SetCurrentDirectory(currentDir);
+                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
+                Directory.SetCurrentDirectory(currentDir);
             }
 
             bool settingsFileExists = File.Exists(settingsFile);
@@ -2600,51 +2347,23 @@ namespace SPTMiniLauncher
             int akiPort = 0;
             string ip_address = "";
 
-            if (isLoneServer)
+            string akiPath = Properties.Settings.Default.server_path;
+            string akiData = Path.Combine(akiPath, "Aki_Data");
+            if (Directory.Exists(akiData))
             {
-                string akiPath = Properties.Settings.Default.server_path;
-                string akiData = Path.Combine(akiPath, "Aki_Data");
-                if (Directory.Exists(akiData))
+                string akiDataServer = Path.Combine(akiData, "Server");
+                if (Directory.Exists(akiDataServer))
                 {
-                    string akiDataServer = Path.Combine(akiData, "Server");
-                    if (Directory.Exists(akiDataServer))
+                    string akiDatabase = Path.Combine(akiDataServer, "database");
+                    if (Directory.Exists(akiDatabase))
                     {
-                        string akiDatabase = Path.Combine(akiDataServer, "database");
-                        if (Directory.Exists(akiDatabase))
+                        string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                        if (File.Exists(akiServerJson))
                         {
-                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                            if (File.Exists(akiServerJson))
-                            {
-                                string readJson = File.ReadAllText(akiServerJson);
-                                JObject parsedJson = JObject.Parse(readJson);
-                                akiPort = Convert.ToInt32(parsedJson["port"]);
-                                ip_address = (string)parsedJson["ip"];
-                            }
-                        }
-                    }
-                }
-            }
-            else
-            {
-                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                string akiPath = selectedServer;
-                string akiData = Path.Combine(akiPath, "Aki_Data");
-                if (Directory.Exists(akiData))
-                {
-                    string akiDataServer = Path.Combine(akiData, "Server");
-                    if (Directory.Exists(akiDataServer))
-                    {
-                        string akiDatabase = Path.Combine(akiDataServer, "database");
-                        if (Directory.Exists(akiDatabase))
-                        {
-                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                            if (File.Exists(akiServerJson))
-                            {
-                                string readJson = File.ReadAllText(akiServerJson);
-                                JObject parsedJson = JObject.Parse(readJson);
-                                akiPort = Convert.ToInt32(parsedJson["port"]);
-                                ip_address = (string)parsedJson["ip"];
-                            }
+                            string readJson = File.ReadAllText(akiServerJson);
+                            JObject parsedJson = JObject.Parse(readJson);
+                            akiPort = Convert.ToInt32(parsedJson["port"]);
+                            ip_address = (string)parsedJson["ip"];
                         }
                     }
                 }
@@ -2689,86 +2408,41 @@ namespace SPTMiniLauncher
 
             if (Properties.Settings.Default.bypassLauncher)
             {
-                if (isLoneServer)
+                ProcessStartInfo _tarkov = new ProcessStartInfo();
+                string aid = Properties.Settings.Default.currentProfileAID;
+                Console.WriteLine(aid);
+                int index = aid.IndexOf("-");
+                if (index != -1)
                 {
-                    Console.WriteLine("status 5");
-                    ProcessStartInfo _tarkov = new ProcessStartInfo();
-
-                    string aid = Properties.Settings.Default.currentProfileAID;
-                    Console.WriteLine(aid);
-                    int index = aid.IndexOf("-");
-                    if (index != -1)
+                    aid = aid.Substring(index, aid.Length).Trim();
+                    _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                    if (akiPort != 0)
                     {
-                        aid = aid.Substring(index, aid.Length).Trim();
-                        _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
-                        if (akiPort != 0)
-                        {
-                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                        }
-                        else
-                        {
-
-                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                        }
+                        _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                     }
                     else
                     {
-                        _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
-                        if (akiPort != 0)
-                        {
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                        }
-                        else
-                        {
 
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                        }
+                        _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
                     }
-
-                    Process tarkovGame = new Process();
-                    tarkovGame.StartInfo = _tarkov;
-                    tarkovGame.Start();
                 }
                 else
                 {
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-
-                    ProcessStartInfo _tarkov = new ProcessStartInfo();
-
-                    string aid = Properties.Settings.Default.currentProfileAID;
-                    int index = aid.IndexOf("-");
-                    if (index != -1)
+                    _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                    if (akiPort != 0)
                     {
-                        aid = aid.Substring(index, aid.Length).Trim();
-                        _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
-                        if (akiPort != 0)
-                        {
-                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                        }
-                        else
-                        {
-
-                            _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                        }
+                        _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
                     }
                     else
                     {
-                        _tarkov.FileName = Path.Combine(selectedServer, "EscapeFromTarkov.exe");
-                        if (akiPort != 0)
-                        {
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
-                        }
-                        else
-                        {
 
-                            _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
-                        }
+                        _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
                     }
-
-                    Process tarkovGame = new Process();
-                    tarkovGame.StartInfo = _tarkov;
-                    tarkovGame.Start();
                 }
+
+                Process tarkovGame = new Process();
+                tarkovGame.StartInfo = _tarkov;
+                tarkovGame.Start();
 
                 bool settingsFileExists = File.Exists(settingsFile);
                 if (settingsFileExists)
@@ -2790,45 +2464,19 @@ namespace SPTMiniLauncher
             }
             else
             {
-                if (isLoneServer)
+                Process akiLauncher = new Process();
+                akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "Aki.Launcher.exe");
+                akiLauncher.StartInfo.CreateNoWindow = false;
+
+                try
                 {
-                    Process akiLauncher = new Process();
-                    akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                    akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "Aki.Launcher.exe");
-                    akiLauncher.StartInfo.CreateNoWindow = false;
-
-                    try
-                    {
-                        akiLauncher.Start();
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err}", this.Text, MessageBoxButtons.OK);
-                    }
-
+                    akiLauncher.Start();
                 }
-                else
+                catch (Exception err)
                 {
-                    Process akiLauncher = new Process();
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                    akiLauncher.StartInfo.WorkingDirectory = selectedServer;
-                    akiLauncher.StartInfo.FileName = "Aki.Launcher.exe";
-                    akiLauncher.StartInfo.FileName = Path.Combine(selectedServer, "Aki.Launcher.exe");
-                    akiLauncher.StartInfo.CreateNoWindow = false;
-                    akiLauncher.StartInfo.UseShellExecute = false;
-                    akiLauncher.StartInfo.RedirectStandardOutput = false;
-
-                    try
-                    {
-                        akiLauncher.Start();
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                    }
-
+                    Debug.WriteLine($"ERROR: {err}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err}", this.Text, MessageBoxButtons.OK);
                 }
 
                 Directory.SetCurrentDirectory(currentDir);
@@ -3082,47 +2730,21 @@ namespace SPTMiniLauncher
                 bool akiLauncherTerminated = false;
                 bool eftTerminated = false;
 
-                if (isLoneServer)
+                if (Directory.Exists(Properties.Settings.Default.server_path))
                 {
-                    if (Directory.Exists(Properties.Settings.Default.server_path))
+                    if (Properties.Settings.Default.clearCache == 2)
                     {
-                        if (Properties.Settings.Default.clearCache == 2)
+                        string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
+                        if (Directory.Exists(cacheFolder))
                         {
-                            string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
-                            if (Directory.Exists(cacheFolder))
+                            try
                             {
-                                try
-                                {
-                                    Directory.Delete(cacheFolder, true);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
+                                Directory.Delete(cacheFolder, true);
                             }
-                        }
-                    }
-                }
-                else
-                {
-                    selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                    if (Directory.Exists(selectedServer))
-                    {
-                        if (Properties.Settings.Default.clearCache == 2)
-                        {
-                            string cacheFolder = Path.Combine(selectedServer, "user\\cache");
-                            if (Directory.Exists(cacheFolder))
+                            catch (Exception err)
                             {
-                                try
-                                {
-                                    Directory.Delete(cacheFolder, true);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                }
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
                         }
                     }
@@ -3374,92 +2996,45 @@ namespace SPTMiniLauncher
 
         private void CheckServerWorker_DoWork(object sender, DoWorkEventArgs e)
         {
-            if (isLoneServer)
+            int akiPort;
+            string portPath = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\database\\server.json");
+            bool portExists = File.Exists(portPath);
+            if (portExists)
             {
-                int akiPort;
-                string portPath = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\database\\server.json");
-                bool portExists = File.Exists(portPath);
-                if (portExists)
-                {
-                    string readPort = File.ReadAllText(portPath);
-                    JObject portObject = JObject.Parse(readPort);
-                    akiPort = (int)portObject["port"];
-                }
-                else
-                {
-                    akiPort = 6969;
-                }
-
-                int port = akiPort; // the port to check
-                int timeout = 300000; // the maximum time to wait for the port to open in milliseconds
-                int delay = 1000; // the delay between port checks in milliseconds
-                int elapsed = 0; // the time elapsed since starting to check the port
-
-                while (!CheckPort(port))
-                {
-                    if (elapsed >= timeout)
-                    {
-                        // port was not opened within the timeout period, so cancel the operation
-                        e.Cancel = true;
-                        if (CheckServerWorker != null)
-                            CheckServerWorker.Dispose();
-
-                        showError("We could not detect the Aki Launcher after 5 minutes.\n" +
-                                  "\n" +
-                                  "Max duration reached, launching SPT-AKI.");
-
-                        runLauncher();
-                        return;
-                    }
-
-                    Thread.Sleep(delay); // wait before checking again
-                    elapsed += delay;
-
-                }
+                string readPort = File.ReadAllText(portPath);
+                JObject portObject = JObject.Parse(readPort);
+                akiPort = (int)portObject["port"];
             }
             else
             {
-                int akiPort;
-                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                string portPath = Path.Combine(selectedServer, "Aki_Data\\Server\\database\\server.json");
-                bool portExists = File.Exists(portPath);
-                if (portExists)
+                akiPort = 6969;
+            }
+
+            int port = akiPort; // the port to check
+            int timeout = 300000; // the maximum time to wait for the port to open in milliseconds
+            int delay = 1000; // the delay between port checks in milliseconds
+            int elapsed = 0; // the time elapsed since starting to check the port
+
+            while (!CheckPort(port))
+            {
+                if (elapsed >= timeout)
                 {
-                    string readPort = File.ReadAllText(portPath);
-                    JObject portObject = JObject.Parse(readPort);
-                    akiPort = (int)portObject["port"];
+                    // port was not opened within the timeout period, so cancel the operation
+                    e.Cancel = true;
+                    if (CheckServerWorker != null)
+                        CheckServerWorker.Dispose();
+
+                    showError("We could not detect the Aki Launcher after 5 minutes.\n" +
+                              "\n" +
+                              "Max duration reached, launching SPT-AKI.");
+
+                    runLauncher();
+                    return;
                 }
-                else
-                {
-                    akiPort = 6969;
-                }
 
-                int port = akiPort;
-                int timeout = 300000;
-                int delay = 1000;
-                int elapsed = 0;
+                Thread.Sleep(delay); // wait before checking again
+                elapsed += delay;
 
-                while (!CheckPort(port))
-                {
-                    if (elapsed >= timeout)
-                    {
-                        // port was not opened within the timeout period, so cancel the operation
-                        e.Cancel = true;
-                        if (CheckServerWorker != null)
-                            CheckServerWorker.Dispose();
-
-                        showError("We could not detect the Aki Launcher after 5 minutes.\n" +
-                                  "\n" +
-                                  "Max duration reached, launching SPT-AKI.");
-
-                        runLauncher();
-                        return;
-                    }
-
-                    Thread.Sleep(delay); // wait before checking again
-                    elapsed += delay;
-
-                }
             }
         }
 
@@ -3684,34 +3259,7 @@ namespace SPTMiniLauncher
 
         private void boxBrowse_Click(object sender, EventArgs e)
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dialog.IsFolderPicker = true;
-
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
-            {
-                string fullPath = Path.GetFullPath(dialog.FileName);
-                if (Directory.Exists(fullPath))
-                {
-                    boxPath.Text = fullPath;
-                    Properties.Settings.Default.server_path = boxPath.Text;
-                    Properties.Settings.Default.Save();
-
-                    if (File.Exists(Path.Combine(fullPath, "Aki.Server.exe")) &&
-                        File.Exists(Path.Combine(fullPath, "Aki.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(fullPath, "Aki_Data")))
-                    {
-                        isLoneServer = true;
-                    }
-                    else
-                    {
-                        isLoneServer = false;
-                    }
-
-                    listAllServers(Properties.Settings.Default.server_path);
-                }
-
-            }
+            browseInstallation();
         }
 
         private void boxOpenIn_Click(object sender, EventArgs e)
@@ -3777,41 +3325,23 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    try
-                    {
-                        if (File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Server.exe")) &&
+                    if (File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Server.exe")) &&
                             File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Launcher.exe")) &&
                             Directory.Exists(Path.Combine(Path.GetFullPath(item), "Aki_Data")))
+                    {
+                        try
                         {
                             boxPath.Text = Path.GetFullPath(item);
                             Properties.Settings.Default.server_path = Path.GetFullPath(item);
                             Properties.Settings.Default.Save();
 
-                            isLoneServer = true;
-                            listAllServers(Properties.Settings.Default.server_path);
+                            readGallery();
                         }
-                        else
+                        catch (Exception err)
                         {
-                            try
-                            {
-                                boxPath.Text = Path.GetFullPath(item);
-                                Properties.Settings.Default.server_path = Path.GetFullPath(item);
-                                Properties.Settings.Default.Save();
-
-                                isLoneServer = false;
-                                listAllServers(Properties.Settings.Default.server_path);
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
+                            Debug.WriteLine($"ERROR: {err.ToString()}");
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                         }
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                     }
                 }
             }
@@ -3850,9 +3380,7 @@ namespace SPTMiniLauncher
                         {
                             try
                             {
-                                isLoneServer = true;
-                                listAllServers(Properties.Settings.Default.server_path);
-                                boxPathBox.Select();
+                                readGallery();
                             }
                             catch (Exception err)
                             {
@@ -3860,23 +3388,10 @@ namespace SPTMiniLauncher
                                 MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
                         }
-                        else
-                        {
-                            try
-                            {
-                                isLoneServer = false;
-                                listAllServers(Properties.Settings.Default.server_path);
-                                boxPathBox.Select();
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                        }
-
                     }
                 }
+
+                boxPathBox.Select();
             }
         }
 
@@ -3884,30 +3399,21 @@ namespace SPTMiniLauncher
         {
             if (boxSelectedServerTitle.Text.ToLower() != "spt placeholder" && boxSelectedServerTitle.Text.ToLower() != "no spt detected")
             {
-                if (isLoneServer)
+                try
                 {
-                    try
+                    string currentName = boxSelectedServerTitle.Text;
+                    Gallery foundItem = fetchInstall(galleryFile, currentName);
+                    if (foundItem != null)
                     {
-                        Process.Start("explorer.exe", Properties.Settings.Default.server_path);
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                        string installName = foundItem.Name;
+                        string installPath = foundItem.Path;
+                        Process.Start("explorer.exe", installPath);
                     }
                 }
-                else
+                catch (Exception err)
                 {
-                    try
-                    {
-                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                        Process.Start("explorer.exe", selectedServer);
-                    }
-                    catch (Exception err)
-                    {
-                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                    }
+                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
             }
             else
@@ -3946,7 +3452,7 @@ namespace SPTMiniLauncher
                 e.SuppressKeyPress = true;
                 e.Handled = true;
 
-                listAllServers(Properties.Settings.Default.server_path);
+                readGallery();
                 showError("Refreshed!");
             }
         }

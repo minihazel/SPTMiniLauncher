@@ -177,7 +177,7 @@ namespace SPTMiniLauncher
                         mainForm.appDict.Add(appName, newAppInfo);
 
                         Task.Delay(500);
-                        mainForm.listServerOptions(true);
+                        mainForm.readGallery();
                         isSuccessful = true;
                     }
                     else
@@ -204,7 +204,7 @@ namespace SPTMiniLauncher
                         mainForm.appDict.Add(appName, newAppInfo);
 
                         Task.Delay(500);
-                        mainForm.listServerOptions(true);
+                        mainForm.readGallery();
                         isSuccessful = true;
                     }
                 }
@@ -239,7 +239,7 @@ namespace SPTMiniLauncher
                             }
 
                             Task.Delay(500);
-                            mainForm.listServerOptions(true);
+                            mainForm.readGallery();
                             isSuccessful = true;
                         }
                         else
@@ -276,7 +276,7 @@ namespace SPTMiniLauncher
                             }
 
                             Task.Delay(500);
-                            mainForm.listServerOptions(true);
+                            mainForm.readGallery();
                             isSuccessful = true;
                         }
                         else
@@ -289,7 +289,7 @@ namespace SPTMiniLauncher
 
                 if (isSuccessful)
                 {
-                    mainForm.listServerOptions(true);
+                    mainForm.readGallery();
                     this.Close();
                 }
             }
@@ -301,7 +301,6 @@ namespace SPTMiniLauncher
 
         private void bToolType_Click(object sender, EventArgs e)
         {
-
         }
 
         private void bToolType_MouseDown(object sender, MouseEventArgs e)

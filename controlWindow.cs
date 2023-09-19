@@ -14,7 +14,6 @@ namespace SPTMiniLauncher
 {
     public partial class controlWindow : Form
     {
-        public bool isTrue = false;
         public string fullServerPath = "";
         public string selectedServer = "";
         Form1 mainForm = new Form1();
@@ -26,17 +25,7 @@ namespace SPTMiniLauncher
 
         private void controlWindow_Load(object sender, EventArgs e)
         {
-            if (isTrue)
-            {
-                fullServerPath = Properties.Settings.Default.server_path;
-            }
-            else
-            {
-                fullServerPath = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                Debug.WriteLine(selectedServer);
-                Debug.WriteLine(fullServerPath);
-            }
-
+            fullServerPath = Properties.Settings.Default.server_path;
             AssignEvents();
         }
 

@@ -129,7 +129,6 @@ namespace SPTMiniLauncher
 
         private void boxServerOption_MouseDown(object sender, System.Windows.Forms.MouseEventArgs e)
         {
-
             if ((Control.MouseButtons & MouseButtons.Right) != 0)
             {
                 if (boxModsType.Text.ToLower().Contains("client"))
@@ -584,19 +583,9 @@ namespace SPTMiniLauncher
         public void update()
         {
             Form1 form = new Form1();
-
-            if (loneServer.Text.ToLower() == "true")
-            {
-                string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
-                string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
-                form.updateOrderJSON(modsFolder);
-            }
-            else if (loneServer.Text.ToLower() == "false")
-            {
-                string selectedServer = System.IO.Path.Combine(Properties.Settings.Default.server_path, this.Text);
-                string modsFolder = System.IO.Path.Combine(selectedServer, "user\\mods");
-                form.updateOrderJSON(modsFolder);
-            }
+            string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
+            string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
+            form.updateOrderJSON(modsFolder);
         }
 
         private void Modlist_FormClosing(object sender, FormClosingEventArgs e)

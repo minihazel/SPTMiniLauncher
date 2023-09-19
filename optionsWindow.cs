@@ -47,74 +47,35 @@ namespace SPTMiniLauncher
             bool TarkovExists = File.Exists(TarkovPath);
 
             // Adding all available profiles to array
-            if (!TarkovExists) // Improvised LoneServer functionality
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string profilesFolder = Path.Combine(userFolder, "profiles");
+            bool profilesExists = Directory.Exists(profilesFolder);
+
+            if (profilesExists)
             {
-                string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                string userFolder = Path.Combine(selected, "user");
-                string profilesFolder = Path.Combine(userFolder, "profiles");
-
-                bool profilesExists = Directory.Exists(profilesFolder);
-                if (profilesExists)
+                string[] profiles = Directory.GetFiles(profilesFolder);
+                for (int i = 0; i < profiles.Length; i++)
                 {
-                    string[] profiles = Directory.GetFiles(profilesFolder);
-
-                    for (int i = 0; i < profiles.Length; i++)
+                    string profilePath = Path.Combine(profilesFolder, profiles[i]);
+                    bool profileExists = File.Exists(profilePath);
+                    if (profileExists)
                     {
-                        string profilePath = Path.Combine(profilesFolder, profiles[i]);
-                        bool profileExists = File.Exists(profilePath);
-                        if (profileExists)
-                        {
-                            string readProfile = File.ReadAllText(profiles[i]);
-                            JObject jReadProfile = JObject.Parse(readProfile);
-                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                        string readProfile = File.ReadAllText(profiles[i]);
+                        JObject jReadProfile = JObject.Parse(readProfile);
+                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                            string nameOutput = Path.GetFileName(profiles[i]);
-                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+                        string nameOutput = Path.GetFileName(profiles[i]);
+                        nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
 
-                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
-                        }
-                    }
-                }
-                else
-                {
-                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
-                    {
-                        this.Close();
+                        currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
                     }
                 }
             }
             else
             {
-                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                string profilesFolder = Path.Combine(userFolder, "profiles");
-                bool profilesExists = Directory.Exists(profilesFolder);
-
-                if (profilesExists)
+                if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
                 {
-                    string[] profiles = Directory.GetFiles(profilesFolder);
-                    for (int i = 0; i < profiles.Length; i++)
-                    {
-                        string profilePath = Path.Combine(profilesFolder, profiles[i]);
-                        bool profileExists = File.Exists(profilePath);
-                        if (profileExists)
-                        {
-                            string readProfile = File.ReadAllText(profiles[i]);
-                            JObject jReadProfile = JObject.Parse(readProfile);
-                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
-
-                            string nameOutput = Path.GetFileName(profiles[i]);
-                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
-
-                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
-                        }
-                    }
-                }
-                else
-                {
-                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
-                    {
-                        this.Close();
-                    }
+                    this.Close();
                 }
             }
 
@@ -160,58 +121,27 @@ namespace SPTMiniLauncher
             panelLauncherSettings.BringToFront();
 
             // Setting server port
-            if (TarkovExists)
+            string akiPath = Properties.Settings.Default.server_path;
+            string akiData = Path.Combine(akiPath, "Aki_Data");
+            if (Directory.Exists(akiData))
             {
-                string akiPath = Properties.Settings.Default.server_path;
-                string akiData = Path.Combine(akiPath, "Aki_Data");
-                if (Directory.Exists(akiData))
+                string akiDataServer = Path.Combine(akiData, "Server");
+                if (Directory.Exists(akiDataServer))
                 {
-                    string akiDataServer = Path.Combine(akiData, "Server");
-                    if (Directory.Exists(akiDataServer))
+                    string akiDatabase = Path.Combine(akiDataServer, "database");
+                    if (Directory.Exists(akiDatabase))
                     {
-                        string akiDatabase = Path.Combine(akiDataServer, "database");
-                        if (Directory.Exists(akiDatabase))
+                        string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                        if (File.Exists(akiServerJson))
                         {
-                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                            if (File.Exists(akiServerJson))
-                            {
-                                string readJson = File.ReadAllText(akiServerJson);
-                                JObject jsonObject = JObject.Parse(readJson);
-                                string _port = jsonObject["port"].ToString();
-                                bPortChecking.Text = _port;
-                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
-                            }
+                            string readJson = File.ReadAllText(akiServerJson);
+                            JObject jsonObject = JObject.Parse(readJson);
+                            string _port = jsonObject["port"].ToString();
+                            bPortChecking.Text = _port;
+                            Properties.Settings.Default.usePort = Convert.ToInt32(_port);
                         }
                     }
                 }
-
-            }
-            else
-            {
-                string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                string akiPath = selected;
-                string akiData = Path.Combine(akiPath, "Aki_Data");
-                if (Directory.Exists(akiData))
-                {
-                    string akiDataServer = Path.Combine(akiData, "Server");
-                    if (Directory.Exists(akiDataServer))
-                    {
-                        string akiDatabase = Path.Combine(akiDataServer, "database");
-                        if (Directory.Exists(akiDatabase))
-                        {
-                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                            if (File.Exists(akiServerJson))
-                            {
-                                string readJson = File.ReadAllText(akiServerJson);
-                                JObject jsonObject = JObject.Parse(readJson);
-                                string _port = jsonObject["port"].ToString();
-                                bPortChecking.Text = _port;
-                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
-                            }
-                        }
-                    }
-                }
-
             }
             txtPortCheckBar.Visible = false;
 
@@ -520,44 +450,21 @@ namespace SPTMiniLauncher
             string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
             bool TarkovExists = File.Exists(TarkovPath);
 
-            if (!TarkovExists) // Improvised LoneServer functionality
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string profilesFolder = Path.Combine(userFolder, "profiles");
+            string profileFile = Path.Combine(profilesFolder, $"{input}.json");
+
+            bool profilesFileExists = File.Exists(profileFile);
+            if (profilesFileExists)
             {
-                string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                string userFolder = Path.Combine(selected, "user");
-                string profilesFolder = Path.Combine(userFolder, "profiles");
-                string profileFile = Path.Combine(profilesFolder, $"{input}.json");
+                string readProfile = File.ReadAllText(profileFile);
+                JObject jReadProfile = JObject.Parse(readProfile);
+                string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                bool profilesFileExists = File.Exists(profileFile);
-                if (profilesFileExists)
-                {
-                    string readProfile = File.ReadAllText(profileFile);
-                    JObject jReadProfile = JObject.Parse(readProfile);
-                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                string nameOutput = Path.GetFileName(profileFile);
+                nameOutput = nameOutput.Replace(".json", "");
 
-                    string nameOutput = Path.GetFileName(profileFile);
-                    nameOutput = nameOutput.Replace(".json", "");
-
-                    result = $"{nameOutput} - [{_Nickname}]";
-                }
-            }
-            else
-            {
-                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                string profilesFolder = Path.Combine(userFolder, "profiles");
-                string profileFile = Path.Combine(profilesFolder, $"{input}.json");
-
-                bool profilesFileExists = File.Exists(profileFile);
-                if (profilesFileExists)
-                {
-                    string readProfile = File.ReadAllText(profileFile);
-                    JObject jReadProfile = JObject.Parse(readProfile);
-                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
-
-                    string nameOutput = Path.GetFileName(profileFile);
-                    nameOutput = nameOutput.Replace(".json", "");
-
-                    result = $"{nameOutput} - [{_Nickname}]";
-                }
+                result = $"{nameOutput} - [{_Nickname}]";
             }
 
             return result;
@@ -658,7 +565,7 @@ namespace SPTMiniLauncher
             Form1 frm = new Form1();
             if (frm.boxPath.Text != "" || Directory.Exists(frm.boxPath.Text))
             {
-                frm.listAllServers(Properties.Settings.Default.server_path);
+                frm.readGallery();
             }
             else
             {
@@ -1104,76 +1011,36 @@ namespace SPTMiniLauncher
                 string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                 bool TarkovExists = File.Exists(TarkovPath);
 
-                if (TarkovExists)
+                string akiPath = Properties.Settings.Default.server_path;
+                string akiData = Path.Combine(akiPath, "Aki_Data");
+                if (Directory.Exists(akiData))
                 {
-                    string akiPath = Properties.Settings.Default.server_path;
-                    string akiData = Path.Combine(akiPath, "Aki_Data");
-                    if (Directory.Exists(akiData))
+                    string akiDataServer = Path.Combine(akiData, "Server");
+                    if (Directory.Exists(akiDataServer))
                     {
-                        string akiDataServer = Path.Combine(akiData, "Server");
-                        if (Directory.Exists(akiDataServer))
+                        string akiDatabase = Path.Combine(akiDataServer, "database");
+                        if (Directory.Exists(akiDatabase))
                         {
-                            string akiDatabase = Path.Combine(akiDataServer, "database");
-                            if (Directory.Exists(akiDatabase))
+                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                            if (File.Exists(akiServerJson))
                             {
-                                string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                                if (File.Exists(akiServerJson))
+                                string readJson = File.ReadAllText(akiServerJson);
+                                dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
+                                jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
+                                string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+                                try
                                 {
-                                    string readJson = File.ReadAllText(akiServerJson);
-                                    dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
-                                    jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
-                                    string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
-                                    try
-                                    {
-                                        File.WriteAllText(akiServerJson, output);
-                                        Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    File.WriteAllText(akiServerJson, output);
+                                    Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
                             }
                         }
                     }
-
-                }
-                else
-                {
-                    string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                    string akiPath = selected;
-                    string akiData = Path.Combine(akiPath, "Aki_Data");
-                    if (Directory.Exists(akiData))
-                    {
-                        string akiDataServer = Path.Combine(akiData, "Server");
-                        if (Directory.Exists(akiDataServer))
-                        {
-                            string akiDatabase = Path.Combine(akiDataServer, "database");
-                            if (Directory.Exists(akiDatabase))
-                            {
-                                string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                                if (File.Exists(akiServerJson))
-                                {
-                                    string readJson = File.ReadAllText(akiServerJson);
-                                    dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
-                                    jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
-                                    string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
-                                    try
-                                    {
-                                        File.WriteAllText(akiServerJson, output);
-                                        Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
-                                }
-                            }
-                        }
-                    }
-
                 }
 
                 bPortChecking.Text = txtPortCheckBar.Text;
@@ -1194,19 +1061,9 @@ namespace SPTMiniLauncher
                 string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                 bool TarkovExists = File.Exists(TarkovPath);
 
-                if (!TarkovExists) // Improvised LoneServer functionality
-                {
-                    string selected = Path.Combine(Properties.Settings.Default.server_path, selectedServer);
-                    Directory.Delete(selected, true);
-                    mainForm.showError($"Folder {server} has been deleted.");
-                    mainForm.clearUI(true);
-                }
-                else
-                {
-                    Directory.Delete(Properties.Settings.Default.server_path, true);
-                    mainForm.showError($"Folder {server} has been deleted.");
-                    mainForm.clearUI(true);
-                }
+                Directory.Delete(Properties.Settings.Default.server_path, true);
+                mainForm.showError($"Folder {server} has been deleted.");
+                mainForm.clearUI(true);
 
                 this.Close();
             }

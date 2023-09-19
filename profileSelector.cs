@@ -17,15 +17,11 @@ namespace SPTMiniLauncher
 {
     public partial class profileSelector : Form
     {
-
-        public bool isTrue = false;
-        public bool isSPTActive = false;
-
         public string currentDir;
-        public string selectedServer;
         public string boxSelectedServerTitle;
         public string fullProfilesPath;
         public string selector;
+        public bool isSPTActive = false;
 
         public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
@@ -75,20 +71,12 @@ namespace SPTMiniLauncher
         private void profileSelector_Load(object sender, EventArgs e)
         {
             mForm = new Form1();
-            if (isTrue)
+
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            bool userFolderExists = Directory.Exists(userFolder);
+            if (userFolderExists)
             {
-                string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
-                bool profilesFolderExists = Directory.Exists(profilesFolder);
-                if (profilesFolderExists)
-                {
-                    fullProfilesPath = profilesFolder;
-                    listProfiles(profilesFolder);
-                }
-            }
-            else
-            {
-                selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle);
-                string profilesFolder = Path.Combine(selectedServer, "user\\profiles");
+                string profilesFolder = Path.Combine(userFolder, "profiles");
                 bool profilesFolderExists = Directory.Exists(profilesFolder);
                 if (profilesFolderExists)
                 {
@@ -131,7 +119,6 @@ namespace SPTMiniLauncher
                     string readProfile = File.ReadAllText(_countProfiles[i]);
                     JObject jReadProfile = JObject.Parse(readProfile);
                     string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
-
                     lbl.Text = $"{Path.GetFileName(_countProfiles[i])}  -  {_Nickname}";
                 }
 
@@ -163,46 +150,22 @@ namespace SPTMiniLauncher
 
             if (lbl.Text != "")
             {
-                if (isTrue)
-                {
-                    int index = lbl.Text.IndexOf(".json");
-                    string output = lbl.Text.Substring(0, index + 5);
-                    string cleanOutput = output.Substring(0, output.Length - 5);
+                int index = lbl.Text.IndexOf(".json");
+                string output = lbl.Text.Substring(0, index + 5);
+                string cleanOutput = output.Substring(0, output.Length - 5);
 
-                    bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
-                    if (profileExists)
+                bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
+                if (profileExists)
+                {
+                    if (this.Text.ToLower() == "launch tarkov")
                     {
-                        if (this.Text.ToLower() == "launch tarkov")
-                        {
-                            mForm.selectedAID = cleanOutput;
-                            mForm.isLoneServer = true;
-                            mForm.runServer();
-                        }
-                        else if (this.Text.ToLower() == "select profile")
-                        {
-                            Process.Start(Path.Combine(fullProfilesPath, output));
-                        }
+                        mForm.selectedAID = cleanOutput;
+                        mForm.isLoneServer = true;
+                        mForm.runServer();
                     }
-                }
-                else
-                {
-                    int index = lbl.Text.IndexOf(".json");
-                    string output = lbl.Text.Substring(0, index + 5);
-                    string cleanOutput = output.Substring(0, output.Length - 5);
-
-                    bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
-                    if (profileExists)
+                    else if (this.Text.ToLower() == "select profile")
                     {
-                        if (this.Text.ToLower() == "launch tarkov - select profile")
-                        {
-                            mForm.selectedAID = cleanOutput;
-                            mForm.isLoneServer = true;
-                            mForm.runServer();
-                        }
-                        else if (this.Text.ToLower() == "select profile")
-                        {
-                            Process.Start(Path.Combine(fullProfilesPath, output));
-                        }
+                        Process.Start(Path.Combine(fullProfilesPath, output));
                     }
                 }
             }
@@ -264,9 +227,7 @@ namespace SPTMiniLauncher
         private void profileSelector_FormClosed(object sender, FormClosedEventArgs e)
         {
             if (!isSPTActive)
-            {
                 this.Close();
-            }
         }
     }
 }

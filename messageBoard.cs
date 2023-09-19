@@ -74,21 +74,11 @@ namespace SPTMiniLauncher
 
             Form1 form = new Form1();
             Modlist form2 = new Modlist();
-            Label loneServer = (Label)form2.Controls["loneServer"];
             Label boxPathPlaceholder = (Label)form2.Controls["boxPathPlaceholder"];
 
-            if (loneServer.Text.ToLower() == "true")
-            {
-                string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
-                string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
-                form.updateOrderJSON(modsFolder);
-            }
-            else if (loneServer.Text.ToLower() == "false")
-            {
-                string selectedServer = System.IO.Path.Combine(Properties.Settings.Default.server_path, form2.Text);
-                string modsFolder = System.IO.Path.Combine(selectedServer, "user\\mods");
-                form.updateOrderJSON(modsFolder);
-            }
+            string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
+            string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
+            form.updateOrderJSON(modsFolder);
         }
 
         private void messageBoard_Load(object sender, EventArgs e)
