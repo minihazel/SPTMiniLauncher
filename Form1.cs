@@ -581,6 +581,9 @@ namespace SPTMiniLauncher
 
                 if (isLoneServer)
                 {
+                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
+
                     string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
                     string modsFolder = Path.Combine(userFolder, "mods");
 
@@ -604,9 +607,6 @@ namespace SPTMiniLauncher
                             thirdPartyContent[thirdPartyContent.Length - 1] = _name;
                         }
                     }
-
-                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
 
                     Label lastItem = null;
                     foreach (Control ctrl in boxSelectedServer.Controls)
@@ -652,6 +652,9 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
+                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
+
                     selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
                     string userFolder = Path.Combine(selectedServer, "user");
                     string modsFolder = Path.Combine(userFolder, "mods");
@@ -676,9 +679,6 @@ namespace SPTMiniLauncher
                             thirdPartyContent[thirdPartyContent.Length - 1] = _name;
                         }
                     }
-
-                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
 
                     Label lastItem = null;
                     foreach (Control ctrl in boxSelectedServer.Controls)
