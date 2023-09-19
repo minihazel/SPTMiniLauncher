@@ -43,7 +43,6 @@
             this.boxSelectedServerTitle = new System.Windows.Forms.Label();
             this.boxSelectedServerSeparator = new System.Windows.Forms.Panel();
             this.bOpenOptions = new System.Windows.Forms.Label();
-            this.bToggleOutputWindow = new System.Windows.Forms.Label();
             this.bProfilePlaceholder = new System.Windows.Forms.Label();
             this.boxPathBox.SuspendLayout();
             this.boxServers.SuspendLayout();
@@ -245,23 +244,6 @@
             this.bOpenOptions.MouseEnter += new System.EventHandler(this.bOpenOptions_MouseEnter);
             this.bOpenOptions.MouseLeave += new System.EventHandler(this.bOpenOptions_MouseLeave);
             // 
-            // bToggleOutputWindow
-            // 
-            this.bToggleOutputWindow.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.bToggleOutputWindow.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bToggleOutputWindow.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
-            this.bToggleOutputWindow.Location = new System.Drawing.Point(347, 622);
-            this.bToggleOutputWindow.Name = "bToggleOutputWindow";
-            this.bToggleOutputWindow.Size = new System.Drawing.Size(189, 30);
-            this.bToggleOutputWindow.TabIndex = 8;
-            this.bToggleOutputWindow.Text = "Toggle output window";
-            this.bToggleOutputWindow.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.bToggleOutputWindow.Visible = false;
-            this.bToggleOutputWindow.Click += new System.EventHandler(this.bToggleOutputWindow_Click);
-            this.bToggleOutputWindow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bToggleOutputWindow_MouseDown);
-            this.bToggleOutputWindow.MouseEnter += new System.EventHandler(this.bToggleOutputWindow_MouseEnter);
-            this.bToggleOutputWindow.MouseLeave += new System.EventHandler(this.bToggleOutputWindow_MouseLeave);
-            // 
             // bProfilePlaceholder
             // 
             this.bProfilePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -286,7 +268,6 @@
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 661);
             this.Controls.Add(this.bProfilePlaceholder);
-            this.Controls.Add(this.bToggleOutputWindow);
             this.Controls.Add(this.bOpenOptions);
             this.Controls.Add(this.boxSelectedServer);
             this.Controls.Add(this.boxServers);
@@ -330,7 +311,6 @@
         public System.Windows.Forms.Label boxSelectedServerTitle;
         private System.Windows.Forms.Panel boxSelectedServerSeparator;
         private System.Windows.Forms.Label bOpenOptions;
-        private System.Windows.Forms.Label bToggleOutputWindow;
         public System.Windows.Forms.Label bProfilePlaceholder;
     }
 }

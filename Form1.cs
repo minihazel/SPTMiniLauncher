@@ -3856,12 +3856,10 @@ namespace SPTMiniLauncher
 
         private void bToggleOutputWindow_MouseEnter(object sender, EventArgs e)
         {
-            bToggleOutputWindow.ForeColor = Color.DodgerBlue;
         }
 
         private void bToggleOutputWindow_MouseLeave(object sender, EventArgs e)
         {
-            bToggleOutputWindow.ForeColor = Color.LightGray;
         }
 
         private void Form1_LocationChanged(object sender, EventArgs e)
@@ -3904,17 +3902,7 @@ namespace SPTMiniLauncher
 
         private void bToggleOutputWindow_MouseDown(object sender, MouseEventArgs e)
         {
-            if (outputwindow != null)
-            {
-                if (!outputwindow.Visible)
-                {
-                    outputwindow.Show();
-                }
-                else
-                {
-                    outputwindow.Hide();
-                }
-            }
+            
         }
 
         private void bProfilePlaceholder_Click(object sender, EventArgs e)
