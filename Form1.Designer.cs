@@ -42,9 +42,6 @@
             this.boxSelectedServerPlaceholder = new System.Windows.Forms.Label();
             this.boxSelectedServerTitle = new System.Windows.Forms.Label();
             this.boxSelectedServerSeparator = new System.Windows.Forms.Panel();
-            this.bResetApp = new System.Windows.Forms.Label();
-            this.bResetThirdParty = new System.Windows.Forms.Label();
-            this.bRefresh = new System.Windows.Forms.Label();
             this.bOpenOptions = new System.Windows.Forms.Label();
             this.bToggleOutputWindow = new System.Windows.Forms.Label();
             this.bProfilePlaceholder = new System.Windows.Forms.Label();
@@ -233,54 +230,6 @@
             this.boxSelectedServerSeparator.Size = new System.Drawing.Size(314, 1);
             this.boxSelectedServerSeparator.TabIndex = 6;
             // 
-            // bResetApp
-            // 
-            this.bResetApp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bResetApp.AutoSize = true;
-            this.bResetApp.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bResetApp.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetApp.Location = new System.Drawing.Point(75, 649);
-            this.bResetApp.Name = "bResetApp";
-            this.bResetApp.Size = new System.Drawing.Size(36, 13);
-            this.bResetApp.TabIndex = 3;
-            this.bResetApp.Text = "Reset";
-            this.bResetApp.Visible = false;
-            this.bResetApp.Click += new System.EventHandler(this.bResetApp_Click);
-            this.bResetApp.MouseEnter += new System.EventHandler(this.bResetApp_MouseEnter);
-            this.bResetApp.MouseLeave += new System.EventHandler(this.bResetApp_MouseLeave);
-            // 
-            // bResetThirdParty
-            // 
-            this.bResetThirdParty.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bResetThirdParty.AutoSize = true;
-            this.bResetThirdParty.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bResetThirdParty.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bResetThirdParty.Location = new System.Drawing.Point(126, 649);
-            this.bResetThirdParty.Name = "bResetThirdParty";
-            this.bResetThirdParty.Size = new System.Drawing.Size(119, 13);
-            this.bResetThirdParty.TabIndex = 4;
-            this.bResetThirdParty.Text = "Reset third party apps";
-            this.bResetThirdParty.Visible = false;
-            this.bResetThirdParty.Click += new System.EventHandler(this.bResetThirdParty_Click);
-            this.bResetThirdParty.MouseEnter += new System.EventHandler(this.bResetThirdParty_MouseEnter);
-            this.bResetThirdParty.MouseLeave += new System.EventHandler(this.bResetThirdParty_MouseLeave);
-            // 
-            // bRefresh
-            // 
-            this.bRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.bRefresh.AutoSize = true;
-            this.bRefresh.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bRefresh.Font = new System.Drawing.Font("Bahnschrift Light", 8F);
-            this.bRefresh.Location = new System.Drawing.Point(14, 649);
-            this.bRefresh.Name = "bRefresh";
-            this.bRefresh.Size = new System.Drawing.Size(46, 13);
-            this.bRefresh.TabIndex = 5;
-            this.bRefresh.Text = "Refresh";
-            this.bRefresh.Visible = false;
-            this.bRefresh.Click += new System.EventHandler(this.bRefresh_Click);
-            this.bRefresh.MouseEnter += new System.EventHandler(this.bRefresh_MouseEnter);
-            this.bRefresh.MouseLeave += new System.EventHandler(this.bRefresh_MouseLeave);
-            // 
             // bOpenOptions
             // 
             this.bOpenOptions.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
@@ -339,9 +288,6 @@
             this.Controls.Add(this.bProfilePlaceholder);
             this.Controls.Add(this.bToggleOutputWindow);
             this.Controls.Add(this.bOpenOptions);
-            this.Controls.Add(this.bRefresh);
-            this.Controls.Add(this.bResetThirdParty);
-            this.Controls.Add(this.bResetApp);
             this.Controls.Add(this.boxSelectedServer);
             this.Controls.Add(this.boxServers);
             this.Controls.Add(this.boxPathBox);
@@ -365,7 +311,6 @@
             this.boxServers.ResumeLayout(false);
             this.boxSelectedServer.ResumeLayout(false);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -384,9 +329,6 @@
         private System.Windows.Forms.Label boxSelectedServerPlaceholder;
         public System.Windows.Forms.Label boxSelectedServerTitle;
         private System.Windows.Forms.Panel boxSelectedServerSeparator;
-        private System.Windows.Forms.Label bResetApp;
-        private System.Windows.Forms.Label bResetThirdParty;
-        private System.Windows.Forms.Label bRefresh;
         private System.Windows.Forms.Label bOpenOptions;
         private System.Windows.Forms.Label bToggleOutputWindow;
         public System.Windows.Forms.Label bProfilePlaceholder;

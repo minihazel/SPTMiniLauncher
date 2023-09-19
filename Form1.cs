@@ -3662,29 +3662,15 @@ namespace SPTMiniLauncher
 
         private void bResetApp_Click(object sender, EventArgs e)
         {
-            try
-            {
-                if (MessageBox.Show("Are you sure you want to restart the launcher?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
-                {
-                    Properties.Settings.Default.Reset();
-                    Application.Restart();
-                }
-            }
-            catch (Exception err)
-            {
-                Debug.WriteLine($"ERROR: {err.ToString()}");
-                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-            }
+            
         }
 
         private void bResetApp_MouseEnter(object sender, EventArgs e)
         {
-            bResetApp.ForeColor = Color.DodgerBlue;
         }
 
         private void bResetApp_MouseLeave(object sender, EventArgs e)
         {
-            bResetApp.ForeColor = Color.DarkGray;
         }
 
         private void boxPath_KeyDown(object sender, KeyEventArgs e)
@@ -3784,23 +3770,15 @@ namespace SPTMiniLauncher
 
         private void bResetThirdParty_MouseEnter(object sender, EventArgs e)
         {
-            bResetThirdParty.ForeColor = Color.DodgerBlue;
         }
 
         private void bResetThirdParty_MouseLeave(object sender, EventArgs e)
         {
-            bResetThirdParty.ForeColor = Color.LightGray;
         }
 
         private void bResetThirdParty_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Reset third party apps?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                Properties.Settings.Default.profile_editor_path = "";
-                Properties.Settings.Default.svm_path = "";
-                Properties.Settings.Default.Save();
-                showError("Reset successful");
-            }
+            
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
@@ -3817,24 +3795,15 @@ namespace SPTMiniLauncher
 
         private void bRefresh_Click(object sender, EventArgs e)
         {
-            if (boxPath.Text != "" || Directory.Exists(boxPath.Text))
-            {
-                listAllServers(Properties.Settings.Default.server_path);
-            }
-            else
-            {
-                showError("Please have a standalone installation, or gallery of SPT versions, selected. before you refresh.");
-            }
+            
         }
 
         private void bRefresh_MouseEnter(object sender, EventArgs e)
         {
-            bRefresh.ForeColor = Color.DodgerBlue;
         }
 
         private void bRefresh_MouseLeave(object sender, EventArgs e)
         {
-            bRefresh.ForeColor = Color.LightGray;
         }
 
         private void bOpenOptions_MouseEnter(object sender, EventArgs e)
