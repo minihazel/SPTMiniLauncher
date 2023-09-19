@@ -147,7 +147,7 @@
             // 
             // panelToolType
             // 
-            this.panelToolType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelToolType.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.panelToolType.Controls.Add(this.bToolType);
             this.panelToolType.ForeColor = System.Drawing.Color.LightGray;
             this.panelToolType.Location = new System.Drawing.Point(447, 12);
