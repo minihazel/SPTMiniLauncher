@@ -42,406 +42,413 @@ namespace SPTMiniLauncher
         {
             Form1 mainForm = new Form1();
 
-            // Setting up global boolean for mimicking "isLoneServer" functionality
-            string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
-            bool TarkovExists = File.Exists(TarkovPath);
-
-            // Adding all available profiles to array
-            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-            string profilesFolder = Path.Combine(userFolder, "profiles");
-            bool profilesExists = Directory.Exists(profilesFolder);
-
-            if (profilesExists)
+            if (Properties.Settings.Default.server_path != null)
             {
-                string[] profiles = Directory.GetFiles(profilesFolder);
-                for (int i = 0; i < profiles.Length; i++)
+                // Setting up global boolean for mimicking "isLoneServer" functionality
+                string TarkovPath = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
+                bool TarkovExists = File.Exists(TarkovPath);
+
+                // Adding all available profiles to array
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesExists = Directory.Exists(profilesFolder);
+
+                if (profilesExists)
                 {
-                    string profilePath = Path.Combine(profilesFolder, profiles[i]);
-                    bool profileExists = File.Exists(profilePath);
-                    if (profileExists)
+                    string[] profiles = Directory.GetFiles(profilesFolder);
+                    for (int i = 0; i < profiles.Length; i++)
                     {
-                        string readProfile = File.ReadAllText(profiles[i]);
-                        JObject jReadProfile = JObject.Parse(readProfile);
-                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
-
-                        string nameOutput = Path.GetFileName(profiles[i]);
-                        nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
-
-                        currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
-                    }
-                }
-            }
-            else
-            {
-                if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
-                {
-                    this.Close();
-                }
-            }
-
-            // Sorting profiles for use in the profile cycler
-            if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
-            {
-                bool isProfileInPool = false;
-
-                foreach (string profileAID in currentProfiles)
-                {
-                    int profileIndex = profileAID.IndexOf("-");
-                    string output = profileAID.Substring(0, profileIndex + 5);
-                    string cleanOutput = output.Substring(0, output.Length - 5);
-                    cleanOutput = cleanOutput.Trim();
-
-                    if (cleanOutput == Properties.Settings.Default.currentProfileAID)
-                    {
-                        isProfileInPool = true;
-                        bSPTAKIProfile.Text = displayProfileName(cleanOutput);
-                        break;
-                    }
-                }
-
-                if (!isProfileInPool)
-                {
-                    bSPTAKIProfile.Text = currentProfiles[0];
-
-                    int profileIndex = currentProfiles[0].IndexOf("-");
-                    string output = currentProfiles[0].Substring(0, profileIndex + 5);
-                    string cleanOutput = output.Substring(0, output.Length - 5);
-                    cleanOutput = cleanOutput.Trim();
-
-                    Properties.Settings.Default.currentProfileAID = cleanOutput;
-                    Properties.Settings.Default.Save();
-                }
-            }
-            else
-            {
-                bSPTAKIProfile.Text = currentProfiles[0];
-            }
-
-            // Setting homepage and detection
-            panelLauncherSettings.BringToFront();
-
-            // Setting server port
-            string akiPath = Properties.Settings.Default.server_path;
-            string akiData = Path.Combine(akiPath, "Aki_Data");
-            if (Directory.Exists(akiData))
-            {
-                string akiDataServer = Path.Combine(akiData, "Server");
-                if (Directory.Exists(akiDataServer))
-                {
-                    string akiDatabase = Path.Combine(akiDataServer, "database");
-                    if (Directory.Exists(akiDatabase))
-                    {
-                        string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                        if (File.Exists(akiServerJson))
+                        string profilePath = Path.Combine(profilesFolder, profiles[i]);
+                        bool profileExists = File.Exists(profilePath);
+                        if (profileExists)
                         {
-                            string readJson = File.ReadAllText(akiServerJson);
-                            JObject jsonObject = JObject.Parse(readJson);
-                            string _port = jsonObject["port"].ToString();
-                            bPortChecking.Text = _port;
-                            Properties.Settings.Default.usePort = Convert.ToInt32(_port);
+                            string readProfile = File.ReadAllText(profiles[i]);
+                            JObject jReadProfile = JObject.Parse(readProfile);
+                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+
+                            string nameOutput = Path.GetFileName(profiles[i]);
+                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+
+                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
                         }
                     }
                 }
-            }
-            txtPortCheckBar.Visible = false;
-
-            // Labeling
-            bDeleteServer.Text = $"Click to delete {selectedServer}";
-            bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
-            bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
-
-            // Standard options
-            switch (Properties.Settings.Default.bypassLauncher)
-            {
-                case false:
-                    bEnableBypassAkiLauncher.Text = "Disabled";
-                    bEnableBypassAkiLauncher.ForeColor = Color.IndianRed;
-                    break;
-                case true:
-                    bEnableBypassAkiLauncher.Text = "Enabled";
-                    bEnableBypassAkiLauncher.ForeColor = Color.DodgerBlue;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.hideOptions)
-            {
-                case 0:
-                    bHide.Text = "Disabled";
-                    bHide.ForeColor = Color.IndianRed;
-                    break;
-
-                case 1:
-                    bHide.Text = "Minimize Launcher";
-                    bHide.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case 2:
-                    bHide.Text = "Close Launcher";
-                    bHide.ForeColor = Color.DodgerBlue;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.timedLauncherToggle)
-            {
-                case true:
-                    bEnableTimed.Text = "Enabled";
-                    bEnableTimed.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableTimed.Text = "Disabled";
-                    bEnableTimed.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.tarkovDetector)
-            {
-                case false:
-                    bEnableTarkovDetection.Text = "Disabled";
-                    bEnableTarkovDetection.ForeColor = Color.IndianRed;
-                    bEndDetector.Enabled = false;
-                    break;
-
-                case true:
-                    bEnableTarkovDetection.Text = "Enabled";
-                    bEnableTarkovDetection.ForeColor = Color.DodgerBlue;
-                    bEndDetector.Enabled = true;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.clearCache)
-            {
-                case 0:
-                    bEnableClearCache.Text = "Disabled";
-                    bEnableClearCache.ForeColor = Color.IndianRed;
-                    break;
-
-                case 1:
-                    bEnableClearCache.Text = "On SPT start";
-                    bEnableClearCache.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case 2:
-                    bEnableClearCache.Text = "On SPT stop";
-                    bEnableClearCache.ForeColor = Color.DodgerBlue;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.openLogOnQuit)
-            {
-                case true:
-                    bEnableOpenLog.Text = "Enabled";
-                    bEnableOpenLog.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableOpenLog.Text = "Disabled";
-                    bEnableOpenLog.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.displayConfirmationMessage)
-            {
-                case true:
-                    bEnableConfirmation.Text = "Enabled";
-                    bEnableConfirmation.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableConfirmation.Text = "Disabled";
-                    bEnableConfirmation.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.serverOutputting)
-            {
-                case true:
-                    bEnableServerOutput.Text = "Enabled";
-                    bEnableServerOutput.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableServerOutput.Text = "Disabled";
-                    bEnableServerOutput.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.serverErrorMessages)
-            {
-                case true:
-                    bEnableServerErrors.Text = "Enabled";
-                    bEnableServerErrors.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableServerErrors.Text = "Disabled";
-                    bEnableServerErrors.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.closeOnQuit)
-            {
-                case true:
-                    bCloseOnSPTExit.Text = "Enabled";
-                    bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bCloseOnSPTExit.Text = "Disabled";
-                    bCloseOnSPTExit.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            switch (Properties.Settings.Default.closeControlPanel)
-            {
-                case true:
-                    bEnableControlPanel.Text = "Enabled";
-                    bEnableControlPanel.ForeColor = Color.DodgerBlue;
-                    break;
-
-                case false:
-                    bEnableControlPanel.Text = "Disabled";
-                    bEnableControlPanel.ForeColor = Color.IndianRed;
-                    break;
-            }
-
-            // Playtime counter for server and EFT
-            bool settingsFileExists = File.Exists(settingsFile);
-            if (settingsFileExists)
-            {
-                string settingsContent = File.ReadAllText(settingsFile);
-                JObject settingsObj = JObject.Parse(settingsContent);
-
-                if (settingsObj["timeOptions"] != null)
+                else
                 {
-                    JObject timeOptions = (JObject)settingsObj["timeOptions"];
-
-                    int serverPlaytime = (int)timeOptions["serverTime"];
-                    int tarkovPlaytime = (int)timeOptions["tarkovTime"];
-                    TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
-                    TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
-
-                    // Check if the time is 0
-                    if (serverPlaytime == 0)
+                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
                     {
-                        bServerTimeCounter.Text = "No playtime recorded";
-                        bServerHourCounter.Text = "No playtime recorded";
+                        this.Close();
                     }
-                    else
-                    {
-                        // Format time based on days, hours and minutes
-                        string formattedServerPlaytime = "";
+                }
 
-                        if (serverPlaytimeInSeconds.TotalDays >= 1)
+                // Sorting profiles for use in the profile cycler
+                if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
+                {
+                    bool isProfileInPool = false;
+
+                    foreach (string profileAID in currentProfiles)
+                    {
+                        int profileIndex = profileAID.IndexOf("-");
+                        string output = profileAID.Substring(0, profileIndex + 5);
+                        string cleanOutput = output.Substring(0, output.Length - 5);
+                        cleanOutput = cleanOutput.Trim();
+
+                        if (cleanOutput == Properties.Settings.Default.currentProfileAID)
                         {
-                            if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
+                            isProfileInPool = true;
+                            bSPTAKIProfile.Text = displayProfileName(cleanOutput);
+                            break;
+                        }
+                    }
+
+                    if (!isProfileInPool)
+                    {
+                        bSPTAKIProfile.Text = currentProfiles[0];
+
+                        int profileIndex = currentProfiles[0].IndexOf("-");
+                        string output = currentProfiles[0].Substring(0, profileIndex + 5);
+                        string cleanOutput = output.Substring(0, output.Length - 5);
+                        cleanOutput = cleanOutput.Trim();
+
+                        Properties.Settings.Default.currentProfileAID = cleanOutput;
+                        Properties.Settings.Default.Save();
+                    }
+                }
+                else
+                {
+                    bSPTAKIProfile.Text = currentProfiles[0];
+                }
+
+                // Setting homepage and detection
+                panelLauncherSettings.BringToFront();
+
+                // Setting server port
+                string akiPath = Properties.Settings.Default.server_path;
+                string akiData = Path.Combine(akiPath, "Aki_Data");
+                if (Directory.Exists(akiData))
+                {
+                    string akiDataServer = Path.Combine(akiData, "Server");
+                    if (Directory.Exists(akiDataServer))
+                    {
+                        string akiDatabase = Path.Combine(akiDataServer, "database");
+                        if (Directory.Exists(akiDatabase))
+                        {
+                            string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                            if (File.Exists(akiServerJson))
                             {
-                                int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                int hours = serverPlaytimeInSeconds.Hours;
-                                formattedServerPlaytime = $"{days} days and {hours} hours";
+                                string readJson = File.ReadAllText(akiServerJson);
+                                JObject jsonObject = JObject.Parse(readJson);
+                                string _port = jsonObject["port"].ToString();
+                                bPortChecking.Text = _port;
+                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
+                            }
+                        }
+                    }
+                }
+                txtPortCheckBar.Visible = false;
+
+                // Labeling
+                bDeleteServer.Text = $"Click to delete {selectedServer}";
+                bStartDetector.Text = $"Start detector: {Convert.ToInt32(Properties.Settings.Default.startDetector)} second(s)";
+                bEndDetector.Text = $"End detector: {Convert.ToInt32(Properties.Settings.Default.endDetector)} second(s)";
+
+                // Standard options
+                switch (Properties.Settings.Default.bypassLauncher)
+                {
+                    case false:
+                        bEnableBypassAkiLauncher.Text = "Disabled";
+                        bEnableBypassAkiLauncher.ForeColor = Color.IndianRed;
+                        break;
+                    case true:
+                        bEnableBypassAkiLauncher.Text = "Enabled";
+                        bEnableBypassAkiLauncher.ForeColor = Color.DodgerBlue;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.hideOptions)
+                {
+                    case 0:
+                        bHide.Text = "Disabled";
+                        bHide.ForeColor = Color.IndianRed;
+                        break;
+
+                    case 1:
+                        bHide.Text = "Minimize Launcher";
+                        bHide.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case 2:
+                        bHide.Text = "Close Launcher";
+                        bHide.ForeColor = Color.DodgerBlue;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.timedLauncherToggle)
+                {
+                    case true:
+                        bEnableTimed.Text = "Enabled";
+                        bEnableTimed.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bEnableTimed.Text = "Disabled";
+                        bEnableTimed.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.tarkovDetector)
+                {
+                    case false:
+                        bEnableTarkovDetection.Text = "Disabled";
+                        bEnableTarkovDetection.ForeColor = Color.IndianRed;
+                        bEndDetector.Enabled = false;
+                        break;
+
+                    case true:
+                        bEnableTarkovDetection.Text = "Enabled";
+                        bEnableTarkovDetection.ForeColor = Color.DodgerBlue;
+                        bEndDetector.Enabled = true;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.clearCache)
+                {
+                    case 0:
+                        bEnableClearCache.Text = "Disabled";
+                        bEnableClearCache.ForeColor = Color.IndianRed;
+                        break;
+
+                    case 1:
+                        bEnableClearCache.Text = "On SPT start";
+                        bEnableClearCache.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case 2:
+                        bEnableClearCache.Text = "On SPT stop";
+                        bEnableClearCache.ForeColor = Color.DodgerBlue;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.openLogOnQuit)
+                {
+                    case true:
+                        bEnableOpenLog.Text = "Enabled";
+                        bEnableOpenLog.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bEnableOpenLog.Text = "Disabled";
+                        bEnableOpenLog.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.displayConfirmationMessage)
+                {
+                    case true:
+                        bEnableConfirmation.Text = "Enabled";
+                        bEnableConfirmation.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bEnableConfirmation.Text = "Disabled";
+                        bEnableConfirmation.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.serverOutputting)
+                {
+                    case true:
+                        bEnableServerOutput.Text = "Enabled";
+                        bEnableServerOutput.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bEnableServerOutput.Text = "Disabled";
+                        bEnableServerOutput.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.serverErrorMessages)
+                {
+                    case true:
+                        bEnableServerErrors.Text = "Enabled";
+                        bEnableServerErrors.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bEnableServerErrors.Text = "Disabled";
+                        bEnableServerErrors.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.closeOnQuit)
+                {
+                    case true:
+                        bCloseOnSPTExit.Text = "Enabled";
+                        bCloseOnSPTExit.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bCloseOnSPTExit.Text = "Disabled";
+                        bCloseOnSPTExit.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                switch (Properties.Settings.Default.closeControlPanel)
+                {
+                    case true:
+                        bEnableControlPanel.Text = "Enabled";
+                        bEnableControlPanel.ForeColor = Color.DodgerBlue;
+                        break;
+
+                    case false:
+                        bEnableControlPanel.Text = "Disabled";
+                        bEnableControlPanel.ForeColor = Color.IndianRed;
+                        break;
+                }
+
+                // Playtime counter for server and EFT
+                bool settingsFileExists = File.Exists(settingsFile);
+                if (settingsFileExists)
+                {
+                    string settingsContent = File.ReadAllText(settingsFile);
+                    JObject settingsObj = JObject.Parse(settingsContent);
+
+                    if (settingsObj["timeOptions"] != null)
+                    {
+                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
+
+                        int serverPlaytime = (int)timeOptions["serverTime"];
+                        int tarkovPlaytime = (int)timeOptions["tarkovTime"];
+                        TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
+                        TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
+
+                        // Check if the time is 0
+                        if (serverPlaytime == 0)
+                        {
+                            bServerTimeCounter.Text = "No playtime recorded";
+                            bServerHourCounter.Text = "No playtime recorded";
+                        }
+                        else
+                        {
+                            // Format time based on days, hours and minutes
+                            string formattedServerPlaytime = "";
+
+                            if (serverPlaytimeInSeconds.TotalDays >= 1)
+                            {
+                                if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
+                                {
+                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    formattedServerPlaytime = $"{days} days and {hours} hours";
+                                }
+                                else if (serverPlaytimeInSeconds.TotalHours >= 1)
+                                {
+                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    int minutes = serverPlaytimeInSeconds.Minutes;
+                                    formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                }
+                                else
+                                {
+                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                    int minutes = serverPlaytimeInSeconds.Minutes;
+                                    formattedServerPlaytime = $"{days} days and {minutes} hours";
+                                }
                             }
                             else if (serverPlaytimeInSeconds.TotalHours >= 1)
                             {
-                                int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                int hours = serverPlaytimeInSeconds.Hours;
-                                int minutes = serverPlaytimeInSeconds.Minutes;
-                                formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                if (serverPlaytimeInSeconds.Minutes == 0)
+                                {
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    formattedServerPlaytime = $"{hours} hours";
+                                }
+                                else
+                                {
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    int minutes = serverPlaytimeInSeconds.Minutes;
+                                    formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
+                                }
                             }
                             else
                             {
-                                int days = (int)serverPlaytimeInSeconds.TotalDays;
                                 int minutes = serverPlaytimeInSeconds.Minutes;
-                                formattedServerPlaytime = $"{days} days and {minutes} hours";
+                                formattedServerPlaytime = $"{minutes} minutes";
                             }
+
+                            string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
+                            bServerHourCounter.Text = $"{formattedHour} hours played";
+                            bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
                         }
-                        else if (serverPlaytimeInSeconds.TotalHours >= 1)
+
+                        // Check if the time is 0
+                        if (tarkovPlaytime == 0)
                         {
-                            if (serverPlaytimeInSeconds.Minutes == 0)
-                            {
-                                int hours = serverPlaytimeInSeconds.Hours;
-                                formattedServerPlaytime = $"{hours} hours";
-                            }
-                            else
-                            {
-                                int hours = serverPlaytimeInSeconds.Hours;
-                                int minutes = serverPlaytimeInSeconds.Minutes;
-                                formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
-                            }
+                            bTarkovTimeCounter.Text = "No playtime recorded";
+                            bTarkovHourCount.Text = "No playtime recorded";
                         }
                         else
                         {
-                            int minutes = serverPlaytimeInSeconds.Minutes;
-                            formattedServerPlaytime = $"{minutes} minutes";
-                        }
+                            // Format time based on days, hours and minutes
+                            string formattedTarkovPlaytime = "";
 
-                        string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
-                        bServerHourCounter.Text = $"{formattedHour} hours played";
-                        bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
-                    }
-
-                    // Check if the time is 0
-                    if (tarkovPlaytime == 0)
-                    {
-                        bTarkovTimeCounter.Text = "No playtime recorded";
-                        bTarkovHourCount.Text = "No playtime recorded";
-                    }
-                    else
-                    {
-                        // Format time based on days, hours and minutes
-                        string formattedTarkovPlaytime = "";
-
-                        if (tarkovPlaytimeInSeconds.TotalDays >= 1)
-                        {
-                            if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
+                            if (tarkovPlaytimeInSeconds.TotalDays >= 1)
                             {
-                                int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                int hours = tarkovPlaytimeInSeconds.Hours;
-                                formattedTarkovPlaytime = $"{days} days and {hours} hours";
+                                if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
+                                {
+                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    formattedTarkovPlaytime = $"{days} days and {hours} hours";
+                                }
+                                else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
+                                {
+                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                    formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                }
+                                else
+                                {
+                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                    formattedTarkovPlaytime = $"{days} days and {minutes} hours";
+                                }
                             }
                             else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
                             {
-                                int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                int hours = tarkovPlaytimeInSeconds.Hours;
-                                int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                if (tarkovPlaytimeInSeconds.Minutes == 0)
+                                {
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    formattedTarkovPlaytime = $"{hours} hours";
+                                }
+                                else
+                                {
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                    formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
+                                }
                             }
                             else
                             {
-                                int days = (int)tarkovPlaytimeInSeconds.TotalDays;
                                 int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                formattedTarkovPlaytime = $"{days} days and {minutes} hours";
+                                formattedTarkovPlaytime = $"{minutes} minutes";
                             }
-                        }
-                        else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
-                        {
-                            if (tarkovPlaytimeInSeconds.Minutes == 0)
-                            {
-                                int hours = tarkovPlaytimeInSeconds.Hours;
-                                formattedTarkovPlaytime = $"{hours} hours";
-                            }
-                            else
-                            {
-                                int hours = tarkovPlaytimeInSeconds.Hours;
-                                int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
-                            }
-                        }
-                        else
-                        {
-                            int minutes = tarkovPlaytimeInSeconds.Minutes;
-                            formattedTarkovPlaytime = $"{minutes} minutes";
-                        }
 
-                        string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
-                        bTarkovHourCount.Text = $"{formattedHour} hours played";
-                        bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
+                            string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
+                            bTarkovHourCount.Text = $"{formattedHour} hours played";
+                            bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
+                        }
                     }
                 }
-            }
 
-            // Profile selection shortcut
-            if (isProfileSelect)
-                tabSPTAKI.PerformClick();
+                // Profile selection shortcut
+                if (isProfileSelect)
+                    tabSPTAKI.PerformClick();
+            }
+            else
+            {
+                this.Close();
+            }
         }
 
         public string displayProfileName(string input)

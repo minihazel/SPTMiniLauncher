@@ -108,39 +108,6 @@ namespace SPTMiniLauncher
                 Label messageTitle = (Label)form.Controls["messageTitle"];
                 messageTitle.ForeColor = Color.LightGray;
 
-                if (File.Exists(galleryFile))
-                {
-                    galleryDictionary = new Dictionary<string, Gallery>();
-                    string sptGallery = System.IO.File.ReadAllText(galleryFile);
-                    JObject galleryObj = JObject.Parse(sptGallery);
-                    JArray galleryArray = (JArray)galleryObj["Gallery"];
-
-                    foreach (JObject folder in galleryArray)
-                    {
-                        string name = (string)folder["Name"];
-                        string path = (string)folder["Path"];
-
-                        galleryDictionary[name] = new Gallery(name, path);
-                    }
-                }
-                else
-                {
-                    var galleryData = new JObject
-                    {
-                        ["Gallery"] = new JArray { }
-                    };
-                    string json = galleryData.ToString();
-
-                    try
-                    {
-                        File.WriteAllText(galleryFile, json);
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"An error occurred: {ex.Message}");
-                    }
-                }
-
                 if (File.Exists(thirdPartyFile))
                 {
                     appDict = new Dictionary<string, ThirdPartyInfo>();
@@ -267,14 +234,6 @@ namespace SPTMiniLauncher
                         File.WriteAllText(settingsFile, settingsObject.ToString());
                     }
 
-                    if (Properties.Settings.Default.server_path != null || Properties.Settings.Default.server_path != "" || Properties.Settings.Default.server_path.Length > 0)
-                    {
-                        if (Directory.Exists(Properties.Settings.Default.server_path))
-                        {
-                            readGallery();
-                        }
-                    }
-
                     boxPathBox.Select();
                 }
                 else
@@ -289,6 +248,7 @@ namespace SPTMiniLauncher
                 if (!Directory.Exists(logFolder))
                     Directory.CreateDirectory(logFolder);
 
+                readGallery();
                 if (Properties.Settings.Default.currentProfileAID != null)
                 {
                     string convertedProfile = fetchProfileFromAID(Properties.Settings.Default.currentProfileAID);
@@ -304,6 +264,8 @@ namespace SPTMiniLauncher
                         }
                     }
                 }
+
+
             }
             else
             {
@@ -336,83 +298,112 @@ namespace SPTMiniLauncher
 
         public void readGallery()
         {
+            clearUI(true);
+            try
+            {
+                // instantiate internal array for storing installs and the "add new" button
+                sptGallery = new string[] { };
+                arrInsert(ref sptGallery, "Add new SPT-AKI install");
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"ERROR: {err}");
+                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+            }
+
+            Label lastItem = null;
+            foreach (Control ctrl in boxServers.Controls)
+            {
+                if (ctrl is Label lbl)
+                {
+                    lastItem = lbl;
+                }
+            }
+
             bool galleryFileExists = File.Exists(galleryFile);
             if (galleryFileExists)
             {
-                clearUI(true);
+                galleryDictionary = new Dictionary<string, Gallery>();
+                string sptGallery = System.IO.File.ReadAllText(galleryFile);
+                JObject galleryObj = JObject.Parse(sptGallery);
+                JArray galleryArray = (JArray)galleryObj["Gallery"];
+
+                foreach (JObject folder in galleryArray)
+                {
+                    string name = (string)folder["Name"];
+                    string path = (string)folder["Path"];
+
+                    galleryDictionary[name] = new Gallery(name, path);
+                }
+            }
+            else
+            {
+                var galleryData = new JObject
+                {
+                    ["Gallery"] = new JArray { }
+                };
+                string json = galleryData.ToString();
 
                 try
                 {
-                    // instantiate internal array for storing installs and the "add new" button
-                    sptGallery = new string[] { };
-                    arrInsert(ref sptGallery, "Add new SPT-AKI install");
+                    File.WriteAllText(galleryFile, json);
                 }
                 catch (Exception err)
                 {
                     Debug.WriteLine($"ERROR: {err}");
                     MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
+            }
 
-                if (galleryDictionary != null)
+            if (galleryDictionary != null)
+            {
+                if (galleryDictionary.Count > 0)
                 {
-                    if (galleryDictionary.Count > 0)
+                    foreach (var folder in galleryDictionary)
                     {
-                        foreach (var folder in galleryDictionary)
-                        {
-                            clearUI(true);
-                            string name = folder.Key;
-                            Gallery folderInfo = folder.Value;
+                        clearUI(true);
+                        string name = folder.Key;
+                        Gallery folderInfo = folder.Value;
 
-                            string installName = folderInfo.Name;
-                            string installPath = folderInfo.Path;
+                        string installName = folderInfo.Name;
+                        string installPath = folderInfo.Path;
 
-                            arrInsert(ref sptGallery, name);
-                        }
+                        arrInsert(ref sptGallery, name);
                     }
                 }
+            }
 
-                Label lastItem = null;
+            for (int i = 0; i < sptGallery.Length; i++)
+            {
+                Label lbl = new Label();
+                lbl.AutoSize = false;
+                lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                lbl.TextAlign = ContentAlignment.MiddleLeft;
+                lbl.Size = new Size(boxServers.Size.Width, boxServerPlaceholder.Size.Height);
+                lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
+                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                lbl.BackColor = listBackcolor;
+                lbl.ForeColor = Color.LightGray;
+                lbl.Margin = new Padding(1, 1, 1, 1);
+                lbl.Cursor = Cursors.Hand;
+                lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
+                lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
+                lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
+                lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
 
-                foreach (Control ctrl in boxServers.Controls)
+                if (sptGallery[i].ToLower() == "add new spt-aki install")
                 {
-                    if (ctrl is Label lbl)
-                    {
-                        lastItem = lbl;
-                    }
+                    lbl.Name = $"gallery_addBtn";
+                }
+                else
+                {
+                    lbl.Name = $"install_{sptGallery[i]}";
                 }
 
-                for (int i = 0; i < sptGallery.Length; i++)
-                {
-                    Label lbl = new Label();
-                    lbl.AutoSize = false;
-                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                    lbl.TextAlign = ContentAlignment.MiddleLeft;
-                    lbl.Size = new Size(boxServers.Size.Width, boxServerPlaceholder.Size.Height);
-                    lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
-                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                    lbl.BackColor = listBackcolor;
-                    lbl.ForeColor = Color.LightGray;
-                    lbl.Margin = new Padding(1, 1, 1, 1);
-                    lbl.Cursor = Cursors.Hand;
-                    lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
-                    lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
-                    lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                    lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
+                lbl.Text = sptGallery[i];
+                boxServers.Controls.Add(lbl);
 
-                    if (sptGallery[i].ToLower() == "add new spt-aki install")
-                    {
-                        lbl.Name = $"gallery_addBtn";
-                    }
-                    else
-                    {
-                        lbl.Name = $"install_{sptGallery[i]}";
-                    }
-
-                    lbl.Text = sptGallery[i];
-                    boxServers.Controls.Add(lbl);
-
-                    selectCurrentInstall();
-                }
+                selectCurrentInstall();
             }
         }
 
@@ -1397,6 +1388,12 @@ namespace SPTMiniLauncher
                                         $"This will not delete your install from your computer.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
                             removeGalleryInstall(fullName);
+                            Properties.Settings.Default.currentProfileAID = null;
+                            Properties.Settings.Default.server_path = null;
+                            Properties.Settings.Default.Save();
+
+                            bProfilePlaceholder.Text = "Click here to select a profile";
+                            boxPath.Clear();
                             readGallery();
                         }
                     }
@@ -3264,14 +3261,37 @@ namespace SPTMiniLauncher
 
         private void boxOpenIn_Click(object sender, EventArgs e)
         {
-            try
+            if (boxPath.Text != null || boxPath.Text != "" && boxPath.Text.Length > 0)
             {
-                Process.Start("explorer.exe", Properties.Settings.Default.server_path);
+                Console.WriteLine(boxPath.Text);
+                string fullPath = boxPath.Text;
+                bool fullPathExists = Directory.Exists(fullPath);
+                if (fullPathExists)
+                {
+                    try
+                    {
+                        ProcessStartInfo newApp = new ProcessStartInfo();
+                        newApp.WorkingDirectory = Properties.Settings.Default.server_path;
+                        newApp.FileName = Path.GetFileName(newApp.WorkingDirectory);
+                        newApp.UseShellExecute = true;
+                        newApp.Verb = "open";
+
+                        Process.Start(newApp);
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                }
+                else
+                {
+                    showError("There is no valid path, or the path is empty.");
+                }
             }
-            catch (Exception err)
+            else
             {
-                Debug.WriteLine($"ERROR: {err.ToString()}");
-                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                showError("There is no valid path, or the path is empty.");
             }
         }
 
@@ -3482,8 +3502,7 @@ namespace SPTMiniLauncher
 
         private void bOpenOptions_Click(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.server_path != null ||
-                Properties.Settings.Default.server_path != "" && boxPath.Text != null || boxPath.Text != "")
+            if (Properties.Settings.Default.server_path != null)
             {
                 if (boxSelectedServerTitle.Text != "SPT Placeholder")
                 {
@@ -3571,8 +3590,7 @@ namespace SPTMiniLauncher
 
         private void bProfilePlaceholder_Click(object sender, EventArgs e)
         {
-            if (Properties.Settings.Default.server_path != null ||
-                Properties.Settings.Default.server_path != "" && boxPath.Text != null || boxPath.Text != "")
+            if (Properties.Settings.Default.server_path != null)
             {
                 if (boxSelectedServerTitle.Text != "SPT Placeholder")
                 {
