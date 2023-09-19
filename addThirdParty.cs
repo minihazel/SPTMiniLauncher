@@ -84,6 +84,8 @@ namespace SPTMiniLauncher
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
                     string fullPath = Path.GetFullPath(dialog.FileName);
+                    fullPath = fullPath.Replace("\"", "");
+
                     if (Directory.Exists(fullPath))
                     {
                         string[] parts = fullPath.Split('\\');
@@ -117,6 +119,7 @@ namespace SPTMiniLauncher
                 if (open.ShowDialog() == DialogResult.OK)
                 {
                     string fullFilePath = open.FileName;
+                    fullFilePath = fullFilePath.Replace("\"", "");
 
                     string[] parts = fullFilePath.Split('\\');
                     int userIndex = Array.IndexOf(parts, "user");
