@@ -37,10 +37,12 @@ namespace SPTMiniLauncher
         public string selectedServer;
         public string settingsFile;
         public string thirdPartyFile;
+        public string galleryFile;
         public string firstTime;
         public string core;
         public string selectedAID;
         public string[] thirdPartyContent = { };
+        public string[] sptGallery = { };
         public DateTime startTimeTarkov;
         public DateTime startTimeServer;
 
@@ -54,6 +56,7 @@ namespace SPTMiniLauncher
         public outputWindow outputwindow;
         private List<string> globalProcesses;
         public Dictionary<string, ThirdPartyInfo> appDict { get; set; }
+        public Dictionary<string, Gallery> galleryDictionary { get; set; }
         public static Form1 Instance { get; private set; }
 
         // background working
@@ -96,12 +99,46 @@ namespace SPTMiniLauncher
 
                 settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
                 thirdPartyFile = System.IO.Path.Combine(Environment.CurrentDirectory, "Third Party Apps.json");
+                galleryFile = System.IO.Path.Combine(Environment.CurrentDirectory, "Gallery.json");
                 // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
 
                 messageBoard form = new messageBoard();
                 RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
                 Label messageTitle = (Label)form.Controls["messageTitle"];
                 messageTitle.ForeColor = Color.LightGray;
+
+                if (File.Exists(galleryFile))
+                {
+                    galleryDictionary = new Dictionary<string, Gallery>();
+                    string sptGallery = System.IO.File.ReadAllText(galleryFile);
+                    JObject galleryObj = JObject.Parse(sptGallery);
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
+
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string name = (string)folder["Name"];
+                        string path = (string)folder["Path"];
+
+                        galleryDictionary[name] = new Gallery(name, path);
+                    }
+                }
+                else
+                {
+                    var galleryData = new JObject
+                    {
+                        ["Gallery"] = new JArray { }
+                    };
+                    string json = galleryData.ToString();
+
+                    try
+                    {
+                        File.WriteAllText(galleryFile, json);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
 
                 if (File.Exists(thirdPartyFile))
                 {
@@ -241,13 +278,15 @@ namespace SPTMiniLauncher
                                 {
                                     isLoneServer = true;
                                     outputwindow.isTrue = true;
-                                    listAllServers(boxPath.Text);
+                                    readGallery();
+                                    // listAllServers(boxPath.Text);
                                 }
                                 else
                                 {
                                     isLoneServer = false;
                                     outputwindow.isTrue = false;
-                                    listAllServers(boxPath.Text);
+                                    readGallery();
+                                    // listAllServers(boxPath.Text);
                                 }
                             }
                         }
@@ -263,7 +302,8 @@ namespace SPTMiniLauncher
                                 // boxPath.Text = Environment.CurrentDirectory;
                                 Properties.Settings.Default.server_path = boxPath.Text;
                                 Properties.Settings.Default.Save();
-                                listAllServers(boxPath.Text);
+                                readGallery();
+                                // listAllServers(boxPath.Text);
                             }
                             else
                             {
@@ -564,9 +604,39 @@ namespace SPTMiniLauncher
             }
         }
 
+        public static void arrInsert(ref string[] array, string item)
+        {
+            Array.Resize(ref array, array.Length + 1);
+            array[array.Length - 1] = item;
+        }
+
+        public void saveDimensions()
+        {
+            int curWidth = this.Size.Width;
+            int curHeight = this.Size.Height;
+
+            bool settingsFileExists = File.Exists(settingsFile);
+            if (settingsFileExists)
+            {
+                string readSettings = File.ReadAllText(settingsFile);
+                JObject settingsObject = JObject.Parse(readSettings);
+
+                if (!settingsObject.ContainsKey("mainWidth"))
+                    settingsObject.Add("mainWidth", 695);
+
+                if (!settingsObject.ContainsKey("mainHeight"))
+                    settingsObject.Add("mainHeight", 690);
+
+                settingsObject["mainWidth"] = curWidth;
+                settingsObject["mainHeight"] = curHeight;
+
+                string updatedJSON = settingsObject.ToString();
+                File.WriteAllText(settingsFile, updatedJSON);
+            }
+        }
+
         public void checkThirdPartyApps(string path)
         {
-
             if (appDict.Count > 0)
             {
                 try
@@ -1051,7 +1121,7 @@ namespace SPTMiniLauncher
         public void checkForSingularProfile(string path)
         {
             string mainFolder = path;
-            string userFolder = Path.Combine(path, "user");
+            string userFolder = Path.Combine(mainFolder, "user");
             bool userExists = Directory.Exists(userFolder);
             if (userExists)
             {
@@ -1070,28 +1140,105 @@ namespace SPTMiniLauncher
             }
         }
 
-        public void saveDimensions()
+        public static Gallery fetchInstall(string galleryFile, string name)
         {
-            int curWidth = this.Size.Width;
-            int curHeight = this.Size.Height;
-
-            bool settingsFileExists = File.Exists(settingsFile);
-            if (settingsFileExists)
+            try
             {
-                string readSettings = File.ReadAllText(settingsFile);
-                JObject settingsObject = JObject.Parse(readSettings);
+                string galleryContent = File.ReadAllText(galleryFile);
+                JObject galleryObj = JObject.Parse(galleryContent);
 
-                if (!settingsObject.ContainsKey("mainWidth"))
-                    settingsObject.Add("mainWidth", 695);
+                if (galleryObj.ContainsKey("Gallery"))
+                {
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string installName = folder.Value<string>("Name");
+                        if (installName == name)
+                        {
+                            string path = folder.Value<string>("Path");
+                            return new Gallery(name, path);
+                        }
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"ERROR: {err}");
+                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", "SPT Mini Launcher", MessageBoxButtons.OK);
+            }
 
-                if (!settingsObject.ContainsKey("mainHeight"))
-                    settingsObject.Add("mainHeight", 690);
+            return null;
+        }
 
-                settingsObject["mainWidth"] = curWidth;
-                settingsObject["mainHeight"] = curHeight;
+        public void readGallery()
+        {
+            if (galleryDictionary.Count > 0)
+            {
+                // instantiate internal array for storing installs
+                try
+                {
+                    sptGallery = new string[] { };
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"ERROR: {err}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                }
 
-                string updatedJSON = settingsObject.ToString();
-                File.WriteAllText(settingsFile, updatedJSON);
+                // instantiate the "add new" button
+                arrInsert(ref sptGallery, "Add new SPT-AKI install");
+
+                foreach (var folder in galleryDictionary)
+                {
+                    clearUI(true);
+                    string name = folder.Key;
+                    Gallery folderInfo = folder.Value;
+
+                    string installName = folderInfo.Name;
+                    string installPath = folderInfo.Path;
+
+                    arrInsert(ref sptGallery, name);
+                }
+
+                Label lastItem = null;
+                foreach (Control ctrl in boxServers.Controls)
+                {
+                    if (ctrl is Label lbl)
+                    {
+                        lastItem = lbl;
+                    }
+                }
+
+                for (int i = 0; i < sptGallery.Length; i++)
+                {
+                    Label lbl = new Label();
+                    lbl.AutoSize = false;
+                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                    lbl.TextAlign = ContentAlignment.MiddleLeft;
+                    lbl.Size = new Size(boxServers.Size.Width, boxServerPlaceholder.Size.Height);
+                    lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
+                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    lbl.BackColor = listBackcolor;
+                    lbl.ForeColor = Color.LightGray;
+                    lbl.Margin = new Padding(1, 1, 1, 1);
+                    lbl.Cursor = Cursors.Hand;
+                    lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
+                    lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
+                    lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
+                    lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
+
+                    if (sptGallery[i].ToLower() == "add new spt-aki install")
+                    {
+                        lbl.Name = $"gallery_addBtn";
+                    }
+                    else
+                    {
+                        lbl.Name = $"install_{sptGallery[i]}";
+                    }
+
+                    lbl.Text = sptGallery[i];
+                    boxServers.Controls.Add(lbl);
+                }
             }
         }
 
@@ -1247,23 +1394,33 @@ namespace SPTMiniLauncher
 
                 try
                 {
-                    if (isLoneServer)
+                    string name = lbl.Text;
+                    Gallery foundInstall = fetchInstall(galleryFile, name);
+                    if (foundInstall != null)
                     {
-                        core = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\configs\\core.json");
-                        if (File.Exists(core))
+                        string installName = foundInstall.Name;
+                        string installPath = foundInstall.Path;
+
+                        string akiData = Path.Combine(installPath, "Aki_Data");
+                        bool akiDataExists = Directory.Exists(akiData);
+                        if (akiDataExists)
                         {
-                            checkVersion(core);
-                            checkForSingularProfile(Properties.Settings.Default.server_path);
-                        }
-                    }
-                    else
-                    {
-                        selectedServer = Path.Combine(Properties.Settings.Default.server_path, boxSelectedServerTitle.Text);
-                        core = Path.Combine(selectedServer, "Aki_Data\\Server\\configs\\core.json");
-                        if (File.Exists(core))
-                        {
-                            checkVersion(core);
-                            checkForSingularProfile(selectedServer);
+                            string akiServer = Path.Combine(akiData, "Server");
+                            bool akiServerExists = Directory.Exists(akiServer);
+                            if (akiDataExists)
+                            {
+                                string akiConfigs = Path.Combine(akiServer, "configs");
+                                bool akiConfigsExists = Directory.Exists(akiConfigs);
+                                if (akiConfigsExists)
+                                {
+                                    core = Path.Combine(akiConfigs, "core.json");
+                                    if (File.Exists(core))
+                                    {
+                                        listServerOptions(true);
+                                        checkForSingularProfile(installPath);
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -1273,6 +1430,7 @@ namespace SPTMiniLauncher
                     MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                 }
             }
+
             boxPathBox.Select();
         }
 
@@ -3955,6 +4113,18 @@ namespace SPTMiniLauncher
             Name = name;
             Path = path;
             Type = type;
+        }
+    }
+
+    public class Gallery
+    {
+        public string Name { get; set; }
+        public string Path { get; set; }
+
+        public Gallery(string name, string path)
+        {
+            Name = name;
+            Path = path;
         }
     }
 }
