@@ -144,6 +144,9 @@ namespace SPTMiniLauncher
 
         private void bApplyThirdPartyApp_Click(object sender, EventArgs e)
         {
+            if (txtPathToApp.Text.Contains("\""))
+                txtPathToApp.Text.Replace("\"", "");
+
             bool isSuccessful = false;
 
             if (mainForm != null)
