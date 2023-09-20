@@ -2184,7 +2184,6 @@ namespace SPTMiniLauncher
                 if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
                 {
                     string fullPath = Properties.Settings.Default.server_path;
-                    string fullName = Path.GetFileName(fullPath);
 
                     string userFolder = Path.Combine(fullPath, "user");
                     bool userFolderExists = Directory.Exists(userFolder);
