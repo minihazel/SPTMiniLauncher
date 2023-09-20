@@ -2177,35 +2177,67 @@ namespace SPTMiniLauncher
 
         public void startLaunch()
         {
-            if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
-            {
-                switch (Properties.Settings.Default.hideOptions)
-                {
-                    case 1:
-                        minimizeLauncherWindow();
-                        break;
-                }
+            bool profileMatchesServerAccount = false;
 
-                if (Properties.Settings.Default.clearCache == 1)
+            if (Properties.Settings.Default.server_path != null)
+            {
+                if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
                 {
-                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                    string fullPath = Properties.Settings.Default.server_path;
+                    string fullName = Path.GetFileName(fullPath);
+
+                    string userFolder = Path.Combine(fullPath, "user");
                     bool userFolderExists = Directory.Exists(userFolder);
                     if (userFolderExists)
                     {
-                        string cacheFolder = Path.Combine(userFolder, "cache");
-                        bool cacheFolderExists = Directory.Exists(cacheFolder);
-                        if (cacheFolderExists)
+                        string profilesFolder = Path.Combine(userFolder, "profiles");
+                        bool profilesFolderExists = Directory.Exists(profilesFolder);
+                        if (profilesFolderExists)
                         {
-                            clearServerCache(cacheFolder);
+                            string[] profiles = Directory.GetFiles(profilesFolder, "*.json");
+                            foreach (string profile in profiles)
+                            {
+                                string profileId = Path.GetFileNameWithoutExtension(profile);
+                                if (profileId == Properties.Settings.Default.currentProfileAID)
+                                {
+                                    profileMatchesServerAccount = true;
+                                    break;
+                                }
+                            }
+                        }
+
+                        if (Properties.Settings.Default.clearCache == 1)
+                        {
+                            string cacheFolder = Path.Combine(userFolder, "cache");
+                            bool cacheFolderExists = Directory.Exists(cacheFolder);
+                            if (cacheFolderExists)
+                                clearServerCache(cacheFolder);
                         }
                     }
-                }
 
-                runServer();
-            }
-            else
-            {
-                showError("You don\'t have a profile selected. Please head into Options -> SPT-AKI Settings and select a profile, then try again!");
+                    if (profileMatchesServerAccount)
+                    {
+                        switch (Properties.Settings.Default.hideOptions)
+                        {
+                            case 1:
+                                minimizeLauncherWindow();
+                                break;
+                        }
+
+                        runServer();
+                    }
+                    else
+                    {
+                        string fullProfile = fetchProfileFromAID(Properties.Settings.Default.currentProfileAID);
+                        string serverName = boxSelectedServerTitle.Text;
+
+                        showError($"It seems that {fullProfile} does not exist in {serverName}");
+                    }
+                }
+                else
+                {
+                    showError("You don\'t have a profile selected. Please head into Options -> SPT-AKI Settings and select a profile, then try again!");
+                }
             }
         }
 
