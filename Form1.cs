@@ -347,6 +347,19 @@ namespace SPTMiniLauncher
                 try
                 {
                     File.WriteAllText(galleryFile, json);
+
+                    galleryDictionary = new Dictionary<string, Gallery>();
+                    string sptGallery = System.IO.File.ReadAllText(galleryFile);
+                    JObject galleryObj = JObject.Parse(sptGallery);
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
+
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string name = (string)folder["Name"];
+                        string path = (string)folder["Path"];
+
+                        galleryDictionary[name] = new Gallery(name, path);
+                    }
                 }
                 catch (Exception err)
                 {
@@ -534,7 +547,6 @@ namespace SPTMiniLauncher
                 }
 
                 File.WriteAllText(orderFile, order.ToString());
-
             }
             catch (Exception err)
             {
@@ -1139,21 +1151,73 @@ namespace SPTMiniLauncher
 
         public void addGalleryInstall(string fullPath)
         {
+            bool galleryFileExists = File.Exists(galleryFile);
+            if (galleryFileExists)
+            {
+                galleryDictionary = new Dictionary<string, Gallery>();
+                string sptGallery = System.IO.File.ReadAllText(galleryFile);
+                JObject galleryObj = JObject.Parse(sptGallery);
+                JArray galleryArray = (JArray)galleryObj["Gallery"];
+
+                foreach (JObject folder in galleryArray)
+                {
+                    string name = (string)folder["Name"];
+                    string path = (string)folder["Path"];
+
+                    galleryDictionary[name] = new Gallery(name, path);
+                }
+            }
+            else
+            {
+                var galleryData = new JObject
+                {
+                    ["Gallery"] = new JArray { }
+                };
+                string json = galleryData.ToString();
+
+                try
+                {
+                    File.WriteAllText(galleryFile, json);
+
+                    galleryDictionary = new Dictionary<string, Gallery>();
+                    string sptGallery = System.IO.File.ReadAllText(galleryFile);
+                    JObject galleryObj = JObject.Parse(sptGallery);
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
+
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string name = (string)folder["Name"];
+                        string path = (string)folder["Path"];
+
+                        galleryDictionary[name] = new Gallery(name, path);
+                    }
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"ERROR: {err}");
+                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                }
+            }
+
+
             string installName = Path.GetFileName(fullPath);
 
-            if (!sptGallery.Contains(installName) && !galleryDictionary.ContainsKey(installName))
+            if (galleryDictionary != null)
             {
-                galleryDictionary.Add(installName, new Gallery(installName, fullPath));
-                arrInsert(ref sptGallery, installName);
+                if (!sptGallery.Contains(installName) && !galleryDictionary.ContainsKey(installName))
+                {
+                    galleryDictionary.Add(installName, new Gallery(installName, fullPath));
+                    arrInsert(ref sptGallery, installName);
 
-                JObject galleryObj = loadGalleryObj();
-                JArray galleryArray = (JArray)galleryObj["Gallery"];
-                galleryArray.Add(new JObject(
-                    new JProperty("Name", installName),
-                    new JProperty("Path", fullPath)));
+                    JObject galleryObj = loadGalleryObj();
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
+                    galleryArray.Add(new JObject(
+                        new JProperty("Name", installName),
+                        new JProperty("Path", fullPath)));
 
-                saveGalleryJSON(galleryObj);
-                readGallery();
+                    saveGalleryJSON(galleryObj);
+                    readGallery();
+                }
             }
         }
 
@@ -1356,6 +1420,31 @@ namespace SPTMiniLauncher
                                     Properties.Settings.Default.lastUsedInstall = lastUsedName;
                                     boxPath.Text = Properties.Settings.Default.server_path;
                                     Properties.Settings.Default.Save();
+
+                                    string userFolder = Path.Combine(installPath, "user");
+                                    bool userFolderExists = Directory.Exists(userFolder);
+                                    if (userFolderExists)
+                                    {
+                                        string modsFolder = Path.Combine(userFolder, "mods");
+                                        bool modsFolderExists = Directory.Exists(modsFolder);
+                                        if (modsFolderExists)
+                                        {
+                                            string orderJSON = Path.Combine(modsFolder, "order.json");
+                                            bool orderJSONExists = File.Exists(orderJSON);
+                                            if (orderJSONExists)
+                                            {
+                                                try
+                                                {
+                                                    updateOrderJSON(modsFolder);
+                                                }
+                                                catch (Exception err)
+                                                {
+                                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                                    // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                                }
+                                            }
+                                        }
+                                    }
 
                                     listServerOptions(true);
                                     checkForSingularProfile(installPath);

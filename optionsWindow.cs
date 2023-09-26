@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.WindowsAPICodePack.Dialogs;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace SPTMiniLauncher
 {
     public partial class optionsWindow : Form
     {
+        public string currentDir = Environment.CurrentDirectory;
         public List<string> currentProfiles = new List<string>();
         public Color selectedColor = Color.FromArgb(255, 38, 38, 38);
         public Color idleColor = Color.FromArgb(255, 28, 28, 28);
@@ -1073,6 +1075,115 @@ namespace SPTMiniLauncher
                 mainForm.clearUI(true);
 
                 this.Close();
+            }
+        }
+
+        private void btnImportExistingConfig_Click(object sender, EventArgs e)
+        {
+            string sptminiSuccess = "";
+            string tpaSuccess = "";
+            string gallerySuccess = "";
+
+            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            dialog.IsFolderPicker = true;
+
+            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            {
+                string fullPath = Path.GetFullPath(dialog.FileName);
+
+                if (Directory.Exists(fullPath))
+                {
+                    if (File.Exists(Path.Combine(fullPath, Path.GetFileName(Application.ExecutablePath))) &&
+                        File.Exists(Path.Combine(fullPath, "SPT Mini.json")) &&
+                        File.Exists(Path.Combine(fullPath, "Third Party Apps.json")) &&
+                        File.Exists(Path.Combine(fullPath, "Gallery.json")))
+                    {
+                        string[] configs = {
+                            Path.Combine(fullPath, "SPT Mini.json"),
+                            Path.Combine(fullPath, "Third Party Apps.json"),
+                            Path.Combine(fullPath, "Gallery.json")
+                        };
+
+                        string sptmini_config = configs[0];
+                        string tpa_config = configs[1];
+                        string galleryjson = configs[2];
+
+                        bool sptminiExists = File.Exists(Path.Combine(currentDir, "SPT Mini.json"));
+                        bool tpaExists = File.Exists(Path.Combine(currentDir, "Third Party Apps.json"));
+                        bool galleryExists = File.Exists(Path.Combine(currentDir, "Gallery.json"));
+
+                        try
+                        {
+                            if (sptminiExists)
+                            {
+                                File.Delete(sptmini_config);
+                                File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])));
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])));
+                                    sptminiSuccess = "Imported successfully";
+                                }
+                                catch (Exception err)
+                                {
+                                    sptminiSuccess = "Failed to import";
+                                }
+                            }
+
+                            if (tpaExists)
+                            {
+                                File.Delete(tpa_config);
+                                File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])));
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])));
+                                    tpaSuccess = "Imported successfully";
+                                }
+                                catch (Exception err)
+                                {
+                                    tpaSuccess = "Failed to import";
+                                }
+                            }
+
+                            if (galleryExists)
+                            {
+                                File.Delete(galleryjson);
+                                File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])));
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])));
+                                    gallerySuccess = "Imported successfully";
+                                }
+                                catch (Exception err)
+                                {
+                                    gallerySuccess = "Failed to import";
+                                }
+                            }
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine($"ERROR: {err.ToString()}");
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                        }
+
+                        string content = $"Import finished:{Environment.NewLine}{Environment.NewLine}" +
+                            $"{Environment.NewLine}" +
+                            $"SPT Mini.json: {sptminiSuccess}{Environment.NewLine}" +
+                            $"Third Party Apps.json: {tpaSuccess}{Environment.NewLine}" +
+                            $"Gallery.json: {gallerySuccess}";
+
+                        mainForm.showError(content);
+                    }
+                }
             }
         }
     }

@@ -104,6 +104,8 @@
             this.bServerHourCounter = new System.Windows.Forms.Button();
             this.panelServerTimeCounter = new System.Windows.Forms.GroupBox();
             this.bServerTimeCounter = new System.Windows.Forms.Button();
+            this.panelImportExistingConfig = new System.Windows.Forms.GroupBox();
+            this.btnImportExistingConfig = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -131,6 +133,7 @@
             this.panelTarkovTimeCounter.SuspendLayout();
             this.panelServerHourCount.SuspendLayout();
             this.panelServerTimeCounter.SuspendLayout();
+            this.panelImportExistingConfig.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -550,6 +553,7 @@
             // 
             // panelLauncherSettings
             // 
+            this.panelLauncherSettings.Controls.Add(this.panelImportExistingConfig);
             this.panelLauncherSettings.Controls.Add(this.panelDeleteCurrentServer);
             this.panelLauncherSettings.Controls.Add(this.panelCloseControl);
             this.panelLauncherSettings.Controls.Add(this.panel3);
@@ -1094,6 +1098,34 @@
             this.bServerTimeCounter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bServerTimeCounter.UseVisualStyleBackColor = true;
             // 
+            // panelImportExistingConfig
+            // 
+            this.panelImportExistingConfig.Controls.Add(this.btnImportExistingConfig);
+            this.panelImportExistingConfig.ForeColor = System.Drawing.Color.LightGray;
+            this.panelImportExistingConfig.Location = new System.Drawing.Point(497, 462);
+            this.panelImportExistingConfig.Name = "panelImportExistingConfig";
+            this.panelImportExistingConfig.Size = new System.Drawing.Size(220, 65);
+            this.panelImportExistingConfig.TabIndex = 22;
+            this.panelImportExistingConfig.TabStop = false;
+            this.panelImportExistingConfig.Text = "Import existing configuration";
+            this.optionsToolTip.SetToolTip(this.panelImportExistingConfig, "If enabled, SPT Launcher will close when the Aki Server & Launcher close.");
+            // 
+            // btnImportExistingConfig
+            // 
+            this.btnImportExistingConfig.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.btnImportExistingConfig.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.btnImportExistingConfig.FlatAppearance.BorderSize = 0;
+            this.btnImportExistingConfig.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnImportExistingConfig.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.btnImportExistingConfig.Location = new System.Drawing.Point(15, 23);
+            this.btnImportExistingConfig.Name = "btnImportExistingConfig";
+            this.btnImportExistingConfig.Size = new System.Drawing.Size(180, 30);
+            this.btnImportExistingConfig.TabIndex = 4;
+            this.btnImportExistingConfig.Text = "Browse...";
+            this.btnImportExistingConfig.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnImportExistingConfig.UseVisualStyleBackColor = true;
+            this.btnImportExistingConfig.Click += new System.EventHandler(this.btnImportExistingConfig_Click);
+            // 
             // optionsWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
@@ -1152,6 +1184,7 @@
             this.panelTarkovTimeCounter.ResumeLayout(false);
             this.panelServerHourCount.ResumeLayout(false);
             this.panelServerTimeCounter.ResumeLayout(false);
+            this.panelImportExistingConfig.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1232,5 +1265,7 @@
         private System.Windows.Forms.Button bTarkovTimeCounter;
         private System.Windows.Forms.GroupBox panelTarkovHourCount;
         private System.Windows.Forms.Button bTarkovHourCount;
+        private System.Windows.Forms.GroupBox panelImportExistingConfig;
+        private System.Windows.Forms.Button btnImportExistingConfig;
     }
 }

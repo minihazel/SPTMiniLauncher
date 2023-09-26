@@ -72,13 +72,21 @@ namespace SPTMiniLauncher
                 Application.Restart();
             }
 
+            /*
             Form1 form = new Form1();
             Modlist form2 = new Modlist();
             Label boxPathPlaceholder = (Label)form2.Controls["boxPathPlaceholder"];
 
-            string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
-            string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
-            form.updateOrderJSON(modsFolder);
+            if (boxPathPlaceholder.Text != null && boxPathPlaceholder.Text.Length > 1)
+            {
+                if (Properties.Settings.Default.server_path != null)
+                {
+                    string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
+                    string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
+                    form.updateOrderJSON(modsFolder);
+                }
+            }
+            */
         }
 
         private void messageBoard_Load(object sender, EventArgs e)

@@ -118,7 +118,6 @@
             this.boxPath.Name = "boxPath";
             this.boxPath.Size = new System.Drawing.Size(441, 17);
             this.boxPath.TabIndex = 2;
-            this.boxPath.Text = "Placeholder";
             this.boxPath.KeyDown += new System.Windows.Forms.KeyEventHandler(this.boxPath_KeyDown);
             // 
             // boxServers
