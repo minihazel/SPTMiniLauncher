@@ -79,6 +79,7 @@ namespace SPTMiniLauncher
             "Open profile -",
             "Open control panel",
             "Open modloader JSON",
+            "Export mods",
             "- THIRDPARTY -"
         };
 
@@ -2181,6 +2182,21 @@ namespace SPTMiniLauncher
                                 Debug.WriteLine($"ERROR: {err.ToString()}");
                                 MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
+                        }
+                    }
+
+                    else if (label.Text.ToLower() ==
+                        "export mods")
+                    {
+                        bool serverFolderExists = Directory.Exists(Properties.Settings.Default.server_path);
+
+                        if (serverFolderExists)
+                        {
+                            string serverName = boxSelectedServerTitle.Text;
+                            modExport exportForm = new modExport();
+
+                            exportForm.Text = $"Select mods to export from {serverName}";
+                            exportForm.ShowDialog();
                         }
                     }
 
