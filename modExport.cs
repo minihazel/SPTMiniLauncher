@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -9,11 +10,14 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Forms;
+using System.IO.Compression;
+using System.Security.Cryptography;
 
 namespace SPTMiniLauncher
 {
     public partial class modExport : Form
     {
+        string mainFolder;
         public string currentDir = Environment.CurrentDirectory;
         string[] serverMods = { };
         string[] clientMods = { };
@@ -25,6 +29,32 @@ namespace SPTMiniLauncher
         public Color listSelectedcolor = Color.FromArgb(255, 38, 38, 38);
 
         public Color listHovercolor = Color.FromArgb(255, 33, 33, 33);
+
+        public static string GetRelativePath(string fromPath, string toPath)
+        {
+            if (string.IsNullOrEmpty(fromPath) || string.IsNullOrEmpty(toPath))
+            {
+                throw new ArgumentNullException("Paths cannot be null or empty.");
+            }
+
+            Uri fromUri = new Uri(fromPath);
+            Uri toUri = new Uri(toPath);
+
+            if (fromUri.Scheme != toUri.Scheme)
+            {
+                return toPath;
+            }
+
+            Uri relativeUri = fromUri.MakeRelativeUri(toUri);
+            string relativePath = Uri.UnescapeDataString(relativeUri.ToString());
+
+            if (toUri.Scheme.Equals("file", StringComparison.OrdinalIgnoreCase))
+            {
+                relativePath = relativePath.Replace(Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar);
+            }
+
+            return relativePath;
+        }
 
         public modExport()
         {
@@ -67,6 +97,9 @@ namespace SPTMiniLauncher
 
         private void modExport_Load(object sender, EventArgs e)
         {
+            // mainFolder = Path.Combine(currentDir, "Exported mods");
+            mainFolder = currentDir;
+
             loadClientMods();
             loadServerMods();
 
@@ -84,6 +117,7 @@ namespace SPTMiniLauncher
         {
             int clientMods = int.Parse(bCounterClientMods.Text);
             int serverMods = int.Parse(bCounterServerMods.Text);
+            string result = "";
 
             IEnumerable<Label> selectedClientMods = panelClientMods.Controls
                 .OfType<Label>()
@@ -92,24 +126,92 @@ namespace SPTMiniLauncher
                 .OfType<Label>()
                 .Where(lbl => lbl.ForeColor == Color.DodgerBlue);
 
-            string content = $"Do you want to export {clientMods.ToString()} client mods and {serverMods.ToString()} server mods?";
-            if (System.Windows.Forms.MessageBox.Show(content, this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (selectedClientMods.Any() && clientMods > 0)
             {
-                string result = "";
+                result = await ExportClientModsAsync();
+            }
 
-                if (selectedClientMods.Any() && clientMods > 0)
+            if (selectedServerMods.Any() && serverMods > 0)
+            {
+                result += await ExportServerModsAsync();
+            }
+
+            await zipMods();
+
+            result += $"Mods exported successfully. Would you like to open the transferred archive?";
+
+            statusExportingMods.Visible = false;
+            if (System.Windows.Forms.MessageBox.Show(result, "Export result", MessageBoxButtons.OK) == DialogResult.Yes)
+            {
+                try
                 {
-                    result = await ExportClientModsAsync();
+                    ProcessStartInfo newApp = new ProcessStartInfo();
+                    newApp.WorkingDirectory = currentDir;
+                    newApp.FileName = Path.GetFileName(newApp.WorkingDirectory);
+                    newApp.UseShellExecute = true;
+                    newApp.Verb = "open";
+
+                    Process.Start(newApp);
+                }
+                catch (Exception err)
+                {
+                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                    System.Windows.Forms.MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                }
+            }
+        }
+
+        public static void AddFolderContentsToZip(ZipArchive archive, string folderPath, string entryPath)
+        {
+            string[] files = Directory.GetFiles(folderPath, "*", SearchOption.AllDirectories);
+            foreach (string file in files)
+            {
+                string relativePath = GetRelativePath(folderPath, file);
+                string entryName = Path.Combine(entryPath, relativePath);
+                archive.CreateEntryFromFile(file, entryName);
+            }
+        }
+
+        private async Task zipMods()
+        {
+            try
+            {
+                string homeBepinFolder = Path.Combine(mainFolder, "BepInEx");
+                string homePluginsFolder = Path.Combine(homeBepinFolder, "plugins");
+                string homeUserFolder = Path.Combine(mainFolder, "user");
+                string homeModsFolder = Path.Combine(homeUserFolder, "mods");
+
+                string zipPath = Path.Combine(currentDir, "Exported mods.zip");
+                bool fileExists = File.Exists(zipPath);
+                if (!fileExists)
+                {
+                    ZipFile.CreateFromDirectory(homeBepinFolder, zipPath, CompressionLevel.NoCompression, true);
                 }
 
-                if (selectedServerMods.Any() && serverMods > 0)
+                using (FileStream zipFileStream = new FileStream(zipPath, FileMode.Open, FileAccess.ReadWrite, FileShare.ReadWrite))
                 {
-                    result += await ExportServerModsAsync();
+                    using (ZipArchive archive = new ZipArchive(zipFileStream, ZipArchiveMode.Update))
+                    {
+                        AddFolderContentsToZip(archive, homeUserFolder, "");
+                    }
                 }
 
-                result += $"Mods exported successfully. Would you like to open ";
+                /*
+                bool homeBepinFolderExists = Directory.Exists(homeBepinFolder);
+                if (homeBepinFolderExists)
+                {
+                    Directory.Delete(homeBepinFolder, true);
+                }
 
-                System.Windows.Forms.MessageBox.Show(result, "Export result", (MessageBoxButtons)MessageBoxButton.OK);
+                bool homeUserFolderExists = Directory.Exists(homeUserFolder);
+                if (homeUserFolderExists)
+                    Directory.Delete(homeUserFolder, true);
+                */
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"ERROR: {err.ToString()}");
+                System.Windows.Forms.MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
             }
         }
 
@@ -118,14 +220,16 @@ namespace SPTMiniLauncher
             try
             {
                 // Prepare client mods
-                string homeBepinFolder = Path.Combine(currentDir, "BepInEx");
+                string homeBepinFolder = Path.Combine(mainFolder, "BepInEx");
                 string homePluginsFolder = Path.Combine(homeBepinFolder, "plugins");
 
                 bool homeBepinFolderExists = Directory.Exists(homeBepinFolder);
                 if (homeBepinFolderExists)
+                {
                     Directory.Delete(homeBepinFolder, true);
+                }
 
-                Directory.CreateDirectory(Path.Combine(currentDir, "BepInEx"));
+                Directory.CreateDirectory(Path.Combine(mainFolder, "BepInEx"));
                 Directory.CreateDirectory(Path.Combine(homeBepinFolder, "plugins"));
 
                 // Enumerate and fetch
@@ -155,6 +259,7 @@ namespace SPTMiniLauncher
                             if (fileExists)
                             {
                                 File.Copy(fullPath, homeFullPath);
+                                File.SetAttributes(homeFullPath, FileAttributes.Normal);
 
                                 movedItems.Add(Path.GetFileName(homeFullPath));
                             }
@@ -187,14 +292,16 @@ namespace SPTMiniLauncher
             try
             {
                 // Prepare server mods
-                string homeUserFolder = Path.Combine(currentDir, "user");
+                string homeUserFolder = Path.Combine(mainFolder, "user");
                 string homeModsFolder = Path.Combine(homeUserFolder, "mods");
 
                 bool homeUserFolderExists = Directory.Exists(homeUserFolder);
                 if (homeUserFolderExists)
+                {
                     Directory.Delete(homeUserFolder, true);
+                }
 
-                Directory.CreateDirectory(Path.Combine(currentDir, "user"));
+                Directory.CreateDirectory(Path.Combine(mainFolder, "user"));
                 Directory.CreateDirectory(Path.Combine(homeUserFolder, "mods"));
 
                 // Enumerate and fetch
@@ -244,14 +351,16 @@ namespace SPTMiniLauncher
         private void exportClientMods()
         {
             // Prepare client mods
-            string homeBepinFolder = Path.Combine(currentDir, "BepInEx");
+            string homeBepinFolder = Path.Combine(mainFolder, "BepInEx");
             string homePluginsFolder = Path.Combine(homeBepinFolder, "plugins");
 
             bool homeBepinFolderExists = Directory.Exists(homeBepinFolder);
             if (homeBepinFolderExists)
+            {
                 Directory.Delete(homeBepinFolder, true);
+            }
 
-            Directory.CreateDirectory(Path.Combine(currentDir, "BepInEx"));
+            Directory.CreateDirectory(Path.Combine(mainFolder, "BepInEx"));
             Directory.CreateDirectory(Path.Combine(homeBepinFolder, "plugins"));
 
             // Enumerate and fetch
@@ -280,6 +389,7 @@ namespace SPTMiniLauncher
                         {
                             fullPath = $"{fullPath}.dll";
                             File.Copy(fullPath, homeFullPath);
+                            File.SetAttributes(homeFullPath, FileAttributes.Normal);
                         }
                         else
                         {
@@ -297,14 +407,14 @@ namespace SPTMiniLauncher
         private void exportServerMods()
         {
             // Prepare server mods
-            string homeUserFolder = Path.Combine(currentDir, "user");
+            string homeUserFolder = Path.Combine(mainFolder, "user");
             string homeModsFolder = Path.Combine(homeUserFolder, "mods");
 
             bool homeUserFolderExists = Directory.Exists(homeUserFolder);
             if (homeUserFolderExists)
                 Directory.Delete(homeUserFolder, true);
 
-            Directory.CreateDirectory(Path.Combine(currentDir, "user"));
+            Directory.CreateDirectory(Path.Combine(mainFolder, "user"));
             Directory.CreateDirectory(Path.Combine(homeUserFolder, "mods"));
 
             // Enumerate and fetch
@@ -349,6 +459,7 @@ namespace SPTMiniLauncher
             {
                 string destFile = Path.Combine(destination, Path.GetFileName(file));
                 File.Copy(file, destFile, true); // Set to true to overwrite files if they already exist
+                File.SetAttributes(destFile, FileAttributes.Normal);
             }
 
             foreach (string subDirectory in Directory.GetDirectories(source))
@@ -613,9 +724,37 @@ namespace SPTMiniLauncher
             refreshServerCounter();
         }
 
-        private void bExportSelectedMods_Click(object sender, EventArgs e)
+        private async void bExportSelectedMods_Click(object sender, EventArgs e)
         {
-            exportModsAsync();
+            int clientMods = int.Parse(bCounterClientMods.Text);
+            int serverMods = int.Parse(bCounterServerMods.Text);
+
+            string homeBepinFolder = Path.Combine(mainFolder, "BepInEx");
+            string homeUserFolder = Path.Combine(mainFolder, "user");
+
+            string content = $"Do you wish to export {clientMods} client mods and {serverMods} server mods? This may take a minute.";
+            if (System.Windows.Forms.MessageBox.Show(content, this.Text, (MessageBoxButtons)MessageBoxButton.YesNo) == DialogResult.Yes)
+            {
+                statusExportingMods.Visible = true;
+                await exportModsAsync();
+
+                bool homeBepinFolderExists = Directory.Exists(homeBepinFolder);
+                bool homeUserFolderExists = Directory.Exists(homeUserFolder);
+
+                if (homeBepinFolderExists && homeUserFolderExists)
+                {
+                    try
+                    {
+                        Directory.Delete(homeBepinFolder, true);
+                        Directory.Delete(homeUserFolder, true);
+                    }
+                    catch (Exception err)
+                    {
+                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                        System.Windows.Forms.MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                    }
+                }
+            }
         }
     }
 }

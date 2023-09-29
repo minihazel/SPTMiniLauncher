@@ -41,6 +41,7 @@
             this.panelServerMods = new System.Windows.Forms.Panel();
             this.bCounterClientMods = new System.Windows.Forms.Label();
             this.bCounterServerMods = new System.Windows.Forms.Label();
+            this.statusExportingMods = new System.Windows.Forms.Label();
             this.panelExportSelectedMods.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -174,6 +175,9 @@
             // 
             // panelClientMods
             // 
+            this.panelClientMods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.panelClientMods.AutoScroll = true;
             this.panelClientMods.Location = new System.Drawing.Point(12, 70);
             this.panelClientMods.Name = "panelClientMods";
             this.panelClientMods.Size = new System.Drawing.Size(320, 323);
@@ -181,6 +185,9 @@
             // 
             // panelServerMods
             // 
+            this.panelServerMods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panelServerMods.AutoScroll = true;
             this.panelServerMods.Location = new System.Drawing.Point(347, 70);
             this.panelServerMods.Name = "panelServerMods";
             this.panelServerMods.Size = new System.Drawing.Size(320, 323);
@@ -210,12 +217,26 @@
             this.bCounterServerMods.Text = "0";
             this.bCounterServerMods.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
             // 
+            // statusExportingMods
+            // 
+            this.statusExportingMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.statusExportingMods.BackColor = System.Drawing.Color.Transparent;
+            this.statusExportingMods.Location = new System.Drawing.Point(12, 458);
+            this.statusExportingMods.Name = "statusExportingMods";
+            this.statusExportingMods.Padding = new System.Windows.Forms.Padding(3, 0, 0, 7);
+            this.statusExportingMods.Size = new System.Drawing.Size(214, 40);
+            this.statusExportingMods.TabIndex = 13;
+            this.statusExportingMods.Text = "Exporting mods...";
+            this.statusExportingMods.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
+            this.statusExportingMods.Visible = false;
+            // 
             // modExport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 531);
+            this.Controls.Add(this.statusExportingMods);
             this.Controls.Add(this.bCounterServerMods);
             this.Controls.Add(this.bCounterClientMods);
             this.Controls.Add(this.panelServerMods);
@@ -230,7 +251,7 @@
             this.Controls.Add(this.titleClientMods);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
-            this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(695, 570);
             this.Name = "modExport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -255,5 +276,6 @@
         private System.Windows.Forms.Panel panelServerMods;
         private System.Windows.Forms.Label bCounterClientMods;
         private System.Windows.Forms.Label bCounterServerMods;
+        private System.Windows.Forms.Label statusExportingMods;
     }
 }
