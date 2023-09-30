@@ -21,6 +21,8 @@ namespace SPTMiniLauncher
         public string currentDir = Environment.CurrentDirectory;
         string[] serverMods = { };
         string[] clientMods = { };
+        private int mainWidth = 0;
+        private int mainHeight = 0;
 
         //public Color listBackcolor = Color.FromArgb(255, 35, 35, 35);
         public Color listBackcolor = Color.FromArgb(255, 28, 28, 28);
@@ -56,9 +58,11 @@ namespace SPTMiniLauncher
             return relativePath;
         }
 
-        public modExport()
+        public modExport(int mWidth, int mHeight)
         {
             InitializeComponent();
+            mainWidth = mWidth;
+            mainHeight = mHeight;
         }
 
         protected override void WndProc(ref Message m)
@@ -98,6 +102,7 @@ namespace SPTMiniLauncher
         private void modExport_Load(object sender, EventArgs e)
         {
             // mainFolder = Path.Combine(currentDir, "Exported mods");
+            this.Size = new System.Drawing.Size(mainWidth, mainHeight);
             mainFolder = currentDir;
 
             loadClientMods();
@@ -623,8 +628,11 @@ namespace SPTMiniLauncher
                 lbl.MouseEnter += new EventHandler(mods_MouseEnter);
                 lbl.MouseLeave += new EventHandler(mods_MouseLeave);
                 lbl.MouseDown += new MouseEventHandler(mods_MouseDown);
+                lbl.MouseDoubleClick += new MouseEventHandler(mods_MouseDoubleClick);
                 panelClientMods.Controls.Add(lbl);
             }
+
+            bCounterClientMods.Text = clientMods.Length.ToString();
         }
 
         private void generateServerMods()
@@ -648,8 +656,11 @@ namespace SPTMiniLauncher
                 lbl.MouseEnter += new EventHandler(mods_MouseEnter);
                 lbl.MouseLeave += new EventHandler(mods_MouseLeave);
                 lbl.MouseDown += new MouseEventHandler(mods_MouseDown);
+                lbl.MouseDoubleClick += new MouseEventHandler(mods_MouseDoubleClick);
                 panelServerMods.Controls.Add(lbl);
             }
+
+            bCounterServerMods.Text = serverMods.Length.ToString();
         }
 
         private void mods_MouseEnter(object sender, EventArgs e)
@@ -681,6 +692,7 @@ namespace SPTMiniLauncher
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
             if (label.Text != "")
             {
+                /*
                 if (label.ForeColor == Color.DodgerBlue)
                 {
                     label.Text = label.Text.Replace("[*] ", "");
@@ -697,6 +709,59 @@ namespace SPTMiniLauncher
                     refreshClientCounter();
                 else
                     refreshServerCounter();
+                */
+            }
+        }
+
+        private void mods_MouseDoubleClick(object sender, MouseEventArgs e)
+        {
+            System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
+            if (label.Text != "")
+            {
+                string parentName = label.Parent.Name.ToLower();
+                if (parentName == "panelclientmods")
+                {
+                    string bepinFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx");
+                    bool bepinFolderExists = Directory.Exists(bepinFolder);
+                    if (bepinFolderExists)
+                    {
+                        string pluginsFolder = Path.Combine(bepinFolder, "plugins");
+                        bool pluginsFolderExists = Directory.Exists(pluginsFolder);
+                        if (pluginsFolderExists)
+                        {
+                            if (!label.Text.EndsWith(".dll"))
+                            {
+                                ProcessStartInfo newApp = new ProcessStartInfo();
+                                newApp.WorkingDirectory = pluginsFolder;
+                                newApp.FileName = Path.GetFileName(label.Text);
+                                newApp.UseShellExecute = true;
+                                newApp.Verb = "open";
+
+                                Process.Start(newApp);
+                            }
+                        }
+                    }
+                }
+                else if (parentName == "panelservermods")
+                {
+                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                    bool userFolderExists = Directory.Exists(userFolder);
+                    if (userFolderExists)
+                    {
+                        string modsFolder = Path.Combine(userFolder, "mods");
+                        bool modsFolderExists = Directory.Exists(modsFolder);
+                        if (modsFolderExists)
+                        {
+                            ProcessStartInfo newApp = new ProcessStartInfo();
+                            newApp.WorkingDirectory = modsFolder;
+                            newApp.FileName = Path.GetFileName(label.Text);
+                            newApp.UseShellExecute = true;
+                            newApp.Verb = "open";
+
+                            Process.Start(newApp);
+                        }
+                    }
+                }
             }
         }
 

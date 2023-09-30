@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(modExport));
             this.titleClientMods = new System.Windows.Forms.Label();
             this.titleServerMods = new System.Windows.Forms.Label();
             this.bSelectAllClientMods = new System.Windows.Forms.Button();
@@ -53,7 +54,7 @@
             this.titleClientMods.Padding = new System.Windows.Forms.Padding(3, 0, 0, 10);
             this.titleClientMods.Size = new System.Drawing.Size(275, 40);
             this.titleClientMods.TabIndex = 1;
-            this.titleClientMods.Text = "CLIENT MODS SELECTED:";
+            this.titleClientMods.Text = "CLIENT MODS";
             this.titleClientMods.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // titleServerMods
@@ -65,7 +66,7 @@
             this.titleServerMods.Padding = new System.Windows.Forms.Padding(3, 0, 0, 10);
             this.titleServerMods.Size = new System.Drawing.Size(275, 40);
             this.titleServerMods.TabIndex = 2;
-            this.titleServerMods.Text = "SERVER MODS SELECTED:";
+            this.titleServerMods.Text = "SERVER MODS";
             this.titleServerMods.TextAlign = System.Drawing.ContentAlignment.BottomLeft;
             // 
             // bSelectAllClientMods
@@ -76,13 +77,14 @@
             this.bSelectAllClientMods.FlatAppearance.BorderSize = 0;
             this.bSelectAllClientMods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bSelectAllClientMods.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bSelectAllClientMods.Location = new System.Drawing.Point(12, 399);
+            this.bSelectAllClientMods.Location = new System.Drawing.Point(12, 529);
             this.bSelectAllClientMods.Name = "bSelectAllClientMods";
             this.bSelectAllClientMods.Size = new System.Drawing.Size(150, 30);
             this.bSelectAllClientMods.TabIndex = 3;
             this.bSelectAllClientMods.Text = "Select all";
             this.bSelectAllClientMods.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.bSelectAllClientMods.UseVisualStyleBackColor = true;
+            this.bSelectAllClientMods.Visible = false;
             this.bSelectAllClientMods.Click += new System.EventHandler(this.bSelectAllClientMods_Click);
             // 
             // bUnselectAllClientMods
@@ -93,13 +95,14 @@
             this.bUnselectAllClientMods.FlatAppearance.BorderSize = 0;
             this.bUnselectAllClientMods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bUnselectAllClientMods.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bUnselectAllClientMods.Location = new System.Drawing.Point(182, 399);
+            this.bUnselectAllClientMods.Location = new System.Drawing.Point(182, 529);
             this.bUnselectAllClientMods.Name = "bUnselectAllClientMods";
             this.bUnselectAllClientMods.Size = new System.Drawing.Size(150, 30);
             this.bUnselectAllClientMods.TabIndex = 4;
             this.bUnselectAllClientMods.Text = "Unselect all";
             this.bUnselectAllClientMods.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bUnselectAllClientMods.UseVisualStyleBackColor = true;
+            this.bUnselectAllClientMods.Visible = false;
             this.bUnselectAllClientMods.Click += new System.EventHandler(this.bUnselectAllClientMods_Click);
             // 
             // bUnselectAllServerMods
@@ -110,13 +113,14 @@
             this.bUnselectAllServerMods.FlatAppearance.BorderSize = 0;
             this.bUnselectAllServerMods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bUnselectAllServerMods.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bUnselectAllServerMods.Location = new System.Drawing.Point(517, 399);
+            this.bUnselectAllServerMods.Location = new System.Drawing.Point(517, 529);
             this.bUnselectAllServerMods.Name = "bUnselectAllServerMods";
             this.bUnselectAllServerMods.Size = new System.Drawing.Size(150, 30);
             this.bUnselectAllServerMods.TabIndex = 6;
             this.bUnselectAllServerMods.Text = "Unselect all";
             this.bUnselectAllServerMods.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bUnselectAllServerMods.UseVisualStyleBackColor = true;
+            this.bUnselectAllServerMods.Visible = false;
             this.bUnselectAllServerMods.Click += new System.EventHandler(this.bUnselectAllServerMods_Click);
             // 
             // bSelectAllServerMods
@@ -127,13 +131,14 @@
             this.bSelectAllServerMods.FlatAppearance.BorderSize = 0;
             this.bSelectAllServerMods.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.bSelectAllServerMods.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bSelectAllServerMods.Location = new System.Drawing.Point(347, 399);
+            this.bSelectAllServerMods.Location = new System.Drawing.Point(347, 529);
             this.bSelectAllServerMods.Name = "bSelectAllServerMods";
             this.bSelectAllServerMods.Size = new System.Drawing.Size(150, 30);
             this.bSelectAllServerMods.TabIndex = 5;
             this.bSelectAllServerMods.Text = "Select all";
             this.bSelectAllServerMods.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.bSelectAllServerMods.UseVisualStyleBackColor = true;
+            this.bSelectAllServerMods.Visible = false;
             this.bSelectAllServerMods.Click += new System.EventHandler(this.bSelectAllServerMods_Click);
             // 
             // separatorExportMods
@@ -143,7 +148,7 @@
             this.separatorExportMods.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.separatorExportMods.Location = new System.Drawing.Point(339, 18);
             this.separatorExportMods.Name = "separatorExportMods";
-            this.separatorExportMods.Size = new System.Drawing.Size(1, 402);
+            this.separatorExportMods.Size = new System.Drawing.Size(1, 630);
             this.separatorExportMods.TabIndex = 7;
             // 
             // panelExportSelectedMods
@@ -151,12 +156,13 @@
             this.panelExportSelectedMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.panelExportSelectedMods.Controls.Add(this.bExportSelectedMods);
             this.panelExportSelectedMods.ForeColor = System.Drawing.Color.LightGray;
-            this.panelExportSelectedMods.Location = new System.Drawing.Point(229, 445);
+            this.panelExportSelectedMods.Location = new System.Drawing.Point(229, 575);
             this.panelExportSelectedMods.Name = "panelExportSelectedMods";
             this.panelExportSelectedMods.Size = new System.Drawing.Size(220, 65);
             this.panelExportSelectedMods.TabIndex = 8;
             this.panelExportSelectedMods.TabStop = false;
             this.panelExportSelectedMods.Text = " Export all selected mods ";
+            this.panelExportSelectedMods.Visible = false;
             // 
             // bExportSelectedMods
             // 
@@ -180,7 +186,7 @@
             this.panelClientMods.AutoScroll = true;
             this.panelClientMods.Location = new System.Drawing.Point(12, 70);
             this.panelClientMods.Name = "panelClientMods";
-            this.panelClientMods.Size = new System.Drawing.Size(320, 323);
+            this.panelClientMods.Size = new System.Drawing.Size(320, 578);
             this.panelClientMods.TabIndex = 9;
             // 
             // panelServerMods
@@ -190,7 +196,7 @@
             this.panelServerMods.AutoScroll = true;
             this.panelServerMods.Location = new System.Drawing.Point(347, 70);
             this.panelServerMods.Name = "panelServerMods";
-            this.panelServerMods.Size = new System.Drawing.Size(320, 323);
+            this.panelServerMods.Size = new System.Drawing.Size(320, 578);
             this.panelServerMods.TabIndex = 10;
             // 
             // bCounterClientMods
@@ -221,7 +227,7 @@
             // 
             this.statusExportingMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.statusExportingMods.BackColor = System.Drawing.Color.Transparent;
-            this.statusExportingMods.Location = new System.Drawing.Point(12, 458);
+            this.statusExportingMods.Location = new System.Drawing.Point(12, 588);
             this.statusExportingMods.Name = "statusExportingMods";
             this.statusExportingMods.Padding = new System.Windows.Forms.Padding(3, 0, 0, 7);
             this.statusExportingMods.Size = new System.Drawing.Size(214, 40);
@@ -235,27 +241,28 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
-            this.ClientSize = new System.Drawing.Size(679, 531);
-            this.Controls.Add(this.statusExportingMods);
+            this.ClientSize = new System.Drawing.Size(679, 661);
+            this.Controls.Add(this.separatorExportMods);
             this.Controls.Add(this.bCounterServerMods);
             this.Controls.Add(this.bCounterClientMods);
             this.Controls.Add(this.panelServerMods);
             this.Controls.Add(this.panelClientMods);
             this.Controls.Add(this.panelExportSelectedMods);
-            this.Controls.Add(this.separatorExportMods);
             this.Controls.Add(this.bUnselectAllServerMods);
             this.Controls.Add(this.bSelectAllServerMods);
             this.Controls.Add(this.bUnselectAllClientMods);
             this.Controls.Add(this.bSelectAllClientMods);
             this.Controls.Add(this.titleServerMods);
             this.Controls.Add(this.titleClientMods);
+            this.Controls.Add(this.statusExportingMods);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Margin = new System.Windows.Forms.Padding(4);
             this.MinimumSize = new System.Drawing.Size(695, 570);
             this.Name = "modExport";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Export mods";
+            this.Text = "Mod Viewer";
             this.Load += new System.EventHandler(this.modExport_Load);
             this.panelExportSelectedMods.ResumeLayout(false);
             this.ResumeLayout(false);

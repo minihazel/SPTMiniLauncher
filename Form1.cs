@@ -74,12 +74,13 @@ namespace SPTMiniLauncher
             "Launch SPT-AKI",
             "Stop SPT-AKI",
             "- MODS -",
+            "View installed mods",
             "Open server mods",
             "Open client mods",
+            "Open modloader JSON",
+            "- MISCELLANEOUS -",
             "Open profile -",
             "Open control panel",
-            "Open modloader JSON",
-            "Export mods",
             "- THIRDPARTY -"
         };
 
@@ -1241,6 +1242,39 @@ namespace SPTMiniLauncher
                 File.WriteAllText(galleryFile, json);
         }
 
+        public int fetchInstalledMods()
+        {
+            int clientFolders = 0;
+            int clientFiles = 0;
+            int serverFolders = 0;
+
+            string clientModsBepinFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx");
+            string clientModsPluginsFolder = Path.Combine(clientModsBepinFolder, "plugins");
+
+            string serverModsUserFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string serverModsModsFolder = Path.Combine(serverModsUserFolder, "mods");
+
+            bool bepinexExists = Directory.Exists(clientModsBepinFolder);
+            bool pluginsExists = Directory.Exists(clientModsPluginsFolder);
+            if (bepinexExists && pluginsExists)
+            {
+                clientFolders = Directory.GetDirectories(clientModsPluginsFolder).Length;
+                clientFiles = Directory.GetFiles(clientModsPluginsFolder, "*.dll").Length;
+            }
+
+            bool userExists = Directory.Exists(serverModsUserFolder);
+            bool modsExists = Directory.Exists(serverModsModsFolder);
+            if (userExists && modsExists)
+            {
+                serverFolders = Directory.GetDirectories(serverModsModsFolder).Length;
+            }
+
+            int total = clientFiles + clientFiles + serverFolders;
+            total = total - 1;
+
+            return total;
+        }
+
         /*
         public void listAllServers(string path)
         {
@@ -1837,6 +1871,14 @@ namespace SPTMiniLauncher
                         lbl.ForeColor = Color.DodgerBlue;
                         lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                     }
+                    else if (serverOptionsStreets[i].ToLower() == "- miscellaneous -")
+                    {
+                        lbl.Text = "  Miscellaneous";
+                        lbl.Cursor = Cursors.Arrow;
+                        lbl.BackColor = this.BackColor;
+                        lbl.ForeColor = Color.FromArgb(255, 180, 46, 107);
+                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                    }
                     else if (serverOptionsStreets[i].ToLower() == "- actions -")
                     {
                         lbl.Text = "  Actions";
@@ -1880,6 +1922,22 @@ namespace SPTMiniLauncher
                             lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                         }
                     }
+                    else if (serverOptionsStreets[i].ToLower() == "view installed mods")
+                    {
+                        int installedmods = fetchInstalledMods();
+
+                        if (installedmods == 0)
+                            lbl.Text = $"No mods to view";
+                        else if (installedmods == 1)
+                            lbl.Text = $"View installed mod - {fetchInstalledMods().ToString()} total";
+                        else if(installedmods > 1)
+                            lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+
+                        lbl.Name = "launcherViewInstalledMods";
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.LightGray;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    }
                     else
                     {
                         lbl.Text = serverOptionsStreets[i];
@@ -1908,7 +1966,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseEnter(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 label.BackColor = listHovercolor;
             }
@@ -1917,9 +1975,18 @@ namespace SPTMiniLauncher
         private void lbl2_MouseLeave(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 label.BackColor = listBackcolor;
+            }
+        }
+
+        private void lbl2_MouseUp(object sender, EventArgs e)
+        {
+            System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            {
+                label.BackColor = label.BackColor = listHovercolor;
             }
         }
 
@@ -1930,7 +1997,7 @@ namespace SPTMiniLauncher
             // Includes right-click and left-click systems
 
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
             {
                 string currentDir = Directory.GetCurrentDirectory();
                 label.BackColor = listSelectedcolor;
@@ -2186,18 +2253,42 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
-                        "export mods")
+                        "export mods into zip")
+                    {
+                        bool serverFolderExists = Directory.Exists(Properties.Settings.Default.server_path);
+
+                        if (serverFolderExists)
+                        {
+                            string warning = $"As per the SPT-AKI Workshop rules / file submission guidelines:\n\n";
+
+                            string serverName = boxSelectedServerTitle.Text;
+                            modExport exportForm = new modExport(this.Size.Width, this.Size.Height);
+
+                            exportForm.Text = $"Select mods to export from {serverName}";
+                            exportForm.ShowDialog();
+                        }
+                    }
+
+                    else if (label.Text.ToLower() ==
+                        "import existing mods via zip")
                     {
                         bool serverFolderExists = Directory.Exists(Properties.Settings.Default.server_path);
 
                         if (serverFolderExists)
                         {
                             string serverName = boxSelectedServerTitle.Text;
-                            modExport exportForm = new modExport();
 
-                            exportForm.Text = $"Select mods to export from {serverName}";
-                            exportForm.ShowDialog();
                         }
+                    }
+
+                    else if (label.Text.ToLower()
+                        .StartsWith("view installed mod"))
+                    {
+                        string serverName = boxSelectedServerTitle.Text;
+                        modExport exportForm = new modExport(this.Size.Width, this.Size.Height);
+
+                        exportForm.Text = $"Mod Viewer - {serverName}";
+                        exportForm.ShowDialog();
                     }
 
                     else if (label.Text.ToLower() ==
@@ -3358,15 +3449,6 @@ namespace SPTMiniLauncher
                 {
                     Debug.WriteLine($"FIND FAILURE: {err.ToString()}");
                 }
-            }
-        }
-
-        private void lbl2_MouseUp(object sender, EventArgs e)
-        {
-            System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
-            {
-                label.BackColor = label.BackColor = listHovercolor;
             }
         }
 
