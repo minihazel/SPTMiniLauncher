@@ -206,6 +206,22 @@ namespace SPTMiniLauncher
                         saveDimensions();
                     }
 
+                    if (settingsObject["Developer_Options"] != null)
+                    {
+                        if (settingsObject["Developer_Options"]["Simple_Mode"] == null)
+                        {
+                            settingsObject["Developer_Options"]["Simple_Mode"] = false;
+                        }
+                    }
+                    else
+                    {
+                        settingsObject["Developer_Options"] = new JObject();
+                        settingsObject["Developer_Options"]["Simple_Mode"] = false;
+
+                        string updatedJSON = settingsObject.ToString();
+                        File.WriteAllText(settingsFile, updatedJSON);
+                    }
+
                     if (settingsObject["timeOptions"] != null)
                     {
                         if (settingsObject["timeOptions"]["serverTime"] == null)
@@ -266,8 +282,6 @@ namespace SPTMiniLauncher
                         }
                     }
                 }
-
-
             }
             else
             {
@@ -639,6 +653,21 @@ namespace SPTMiniLauncher
         {
             Array.Resize(ref array, array.Length + 1);
             array[array.Length - 1] = item;
+        }
+
+        public static void arrRemove(ref string[] array, string item)
+        {
+            int index = Array.IndexOf(array, item);
+
+            if (index != -1)
+            {
+                for (int i = index; i < array.Length - 1; i++)
+                {
+                    array[i] = array[i + 1];
+                }
+
+                Array.Resize(ref array, array.Length - 1);
+            }
         }
 
         public void saveDimensions()
@@ -1230,6 +1259,20 @@ namespace SPTMiniLauncher
             {
                 string galleryData = File.ReadAllText(galleryFile);
                 return JObject.Parse(galleryData);
+            }
+            return null;
+        }
+
+        private JObject loadDevOptions()
+        {
+            bool settingsFileExists = File.Exists(settingsFile);
+            if (settingsFileExists)
+            {
+                string settingsData = File.ReadAllText(settingsFile);
+                JObject settingsContent = JObject.Parse(settingsData);
+
+                JObject devOptions = (JObject)settingsContent["Developer_Options"];
+                return devOptions;
             }
             return null;
         }
@@ -1829,131 +1872,244 @@ namespace SPTMiniLauncher
             try
             {
                 clearUI(false);
-                for (int i = 0; i < serverOptionsStreets.Length; i++)
+
+                List<string> tempList = new List<string>();
+
+                JObject devOptions = loadDevOptions();
+                bool simpleMode = (bool)devOptions["Simple"];
+
+                if (simpleMode != null)
                 {
-                    Label lbl = new Label();
-                    lbl.AutoSize = false;
-                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                    lbl.TextAlign = ContentAlignment.MiddleLeft;
-                    lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
-                    lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
-                    lbl.Cursor = Cursors.Hand;
-
-                    if (serverOptionsStreets[i].ToLower() == "launch spt-aki")
+                    if (!simpleMode)
                     {
-                        lbl.Name = "launcherRunButton";
-                        lbl.Text = "Launch SPT-AKI";
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.DodgerBlue;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "clear cache")
-                    {
-                        lbl.Name = "launcherClearCacheButton";
-                        lbl.Text = "Clear cache";
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.LightGray;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "stop spt-aki")
-                    {
-                        lbl.Name = "launcherStopSPTIfRunning";
-                        lbl.Text = "Stop SPT-AKI";
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.IndianRed;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "- mods -")
-                    {
-                        lbl.Text = "  Mods";
-                        lbl.Cursor = Cursors.Arrow;
-                        lbl.BackColor = this.BackColor;
-                        lbl.ForeColor = Color.DodgerBlue;
-                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "- miscellaneous -")
-                    {
-                        lbl.Text = "  Miscellaneous";
-                        lbl.Cursor = Cursors.Arrow;
-                        lbl.BackColor = this.BackColor;
-                        lbl.ForeColor = Color.FromArgb(255, 180, 46, 107);
-                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "- actions -")
-                    {
-                        lbl.Text = "  Actions";
-                        lbl.Cursor = Cursors.Arrow;
-                        lbl.BackColor = this.BackColor;
-                        lbl.ForeColor = Color.IndianRed;
-                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "- thirdparty -")
-                    {
-                        lbl.Text = "  Third Party Apps";
-                        lbl.Cursor = Cursors.Arrow;
-                        lbl.BackColor = this.BackColor;
-                        lbl.ForeColor = Color.DarkSeaGreen;
-                        lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
-                    {
-                        lbl.Text = serverOptionsStreets[i];
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.IndianRed;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                    }
-                    else if (serverOptionsStreets[i].ToLower().Contains("open profile -"))
-                    {
-                        string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
-                        bool profilesFolderExists = Directory.Exists(profilesFolder);
-                        if (profilesFolderExists)
+                        for (int i = 0; i < serverOptionsStreets.Length; i++)
                         {
-                            int _countProfiles = Directory.GetFiles(profilesFolder).Length;
-                            lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.LightGray;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                        else
-                        {
-                            lbl.Text = $"Profiles folder unavailable";
-                            lbl.BackColor = listBackcolor;
-                            lbl.ForeColor = Color.IndianRed;
-                            lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        }
-                    }
-                    else if (serverOptionsStreets[i].ToLower() == "view installed mods")
-                    {
-                        int installedmods = fetchInstalledMods();
+                            Label lbl = new Label();
+                            lbl.AutoSize = false;
+                            lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                            lbl.TextAlign = ContentAlignment.MiddleLeft;
+                            lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
+                            lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
+                            lbl.Cursor = Cursors.Hand;
 
-                        if (installedmods == 0)
-                            lbl.Text = $"No mods to view";
-                        else if (installedmods == 1)
-                            lbl.Text = $"View installed mod - {fetchInstalledMods().ToString()} total";
-                        else if(installedmods > 1)
-                            lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+                            if (serverOptionsStreets[i].ToLower() == "launch spt-aki")
+                            {
+                                lbl.Name = "launcherRunButton";
+                                lbl.Text = "Launch SPT-AKI";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.DodgerBlue;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "clear cache")
+                            {
+                                lbl.Name = "launcherClearCacheButton";
+                                lbl.Text = "Clear cache";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.LightGray;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "stop spt-aki")
+                            {
+                                lbl.Name = "launcherStopSPTIfRunning";
+                                lbl.Text = "Stop SPT-AKI";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.IndianRed;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "- mods -")
+                            {
+                                lbl.Text = "  Mods";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.DodgerBlue;
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "- miscellaneous -")
+                            {
+                                lbl.Text = "  Miscellaneous";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.FromArgb(255, 180, 46, 107);
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "- actions -")
+                            {
+                                lbl.Text = "  Actions";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.IndianRed;
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "- thirdparty -")
+                            {
+                                lbl.Text = "  Third Party Apps";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.DarkSeaGreen;
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower().Contains("not detected"))
+                            {
+                                lbl.Text = serverOptionsStreets[i];
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.IndianRed;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreets[i].ToLower().Contains("open profile -"))
+                            {
+                                string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
+                                bool profilesFolderExists = Directory.Exists(profilesFolder);
+                                if (profilesFolderExists)
+                                {
+                                    int _countProfiles = Directory.GetFiles(profilesFolder).Length;
+                                    lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.LightGray;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                                else
+                                {
+                                    lbl.Text = $"Profiles folder unavailable";
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.IndianRed;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                            }
+                            else if (serverOptionsStreets[i].ToLower() == "view installed mods")
+                            {
+                                int installedmods = fetchInstalledMods();
 
-                        lbl.Name = "launcherViewInstalledMods";
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.LightGray;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                if (installedmods == 0)
+                                    lbl.Text = $"No mods to view";
+                                else if (installedmods == 1)
+                                    lbl.Text = $"View installed mod - {fetchInstalledMods().ToString()} total";
+                                else if (installedmods > 1)
+                                    lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+
+                                lbl.Name = "launcherViewInstalledMods";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.LightGray;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else
+                            {
+                                lbl.Text = serverOptionsStreets[i];
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.LightGray;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+
+                            lbl.Margin = new Padding(1, 1, 1, 1);
+                            lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
+                            lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
+                            lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
+                            lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
+                            boxSelectedServer.Controls.Add(lbl);
+                        }
                     }
                     else
                     {
-                        lbl.Text = serverOptionsStreets[i];
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.LightGray;
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                        string[] serverOptionsStreetsSimple = {
+                            "- ACTIONS -",
+                            "Clear cache",
+                            "Launch SPT-AKI",
+                            "Stop SPT-AKI",
+                            "- MODS -",
+                            "View installed mods",
+                            "- THIRDPARTY -"
+                        };
+
+                        for (int i = 0; i < serverOptionsStreetsSimple.Length; i++)
+                        {
+                            Label lbl = new Label();
+                            lbl.AutoSize = false;
+                            lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                            lbl.TextAlign = ContentAlignment.MiddleLeft;
+                            lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
+                            lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
+                            lbl.Cursor = Cursors.Hand;
+
+                            if (serverOptionsStreetsSimple[i].ToLower() == "launch spt-aki")
+                            {
+                                lbl.Name = "launcherRunButton";
+                                lbl.Text = "Launch SPT-AKI";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.DodgerBlue;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreetsSimple[i].ToLower() == "clear cache")
+                            {
+                                lbl.Name = "launcherClearCacheButton";
+                                lbl.Text = "Clear cache";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.LightGray;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreetsSimple[i].ToLower() == "stop spt-aki")
+                            {
+                                lbl.Name = "launcherStopSPTIfRunning";
+                                lbl.Text = "Stop SPT-AKI";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.IndianRed;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreetsSimple[i].ToLower() == "- mods -")
+                            {
+                                lbl.Text = "  Mods";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.DodgerBlue;
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreetsSimple[i].ToLower() == "- actions -")
+                            {
+                                lbl.Text = "  Actions";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.IndianRed;
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreetsSimple[i].ToLower() == "- thirdparty -")
+                            {
+                                lbl.Text = "  Third Party Apps";
+                                lbl.Cursor = Cursors.Arrow;
+                                lbl.BackColor = this.BackColor;
+                                lbl.ForeColor = Color.DarkSeaGreen;
+                                lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                            }
+                            else if (serverOptionsStreetsSimple[i].ToLower() == "view installed mods")
+                            {
+                                int installedmods = fetchInstalledMods();
+
+                                if (installedmods == 0)
+                                    lbl.Text = $"No mods to view";
+                                else if (installedmods == 1)
+                                    lbl.Text = $"View installed mod - {fetchInstalledMods().ToString()} total";
+                                else if (installedmods > 1)
+                                    lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+
+                                lbl.Name = "launcherViewInstalledMods";
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.LightGray;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+                            else
+                            {
+                                lbl.Text = serverOptionsStreetsSimple[i];
+                                lbl.BackColor = listBackcolor;
+                                lbl.ForeColor = Color.LightGray;
+                                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                            }
+
+                            lbl.Margin = new Padding(1, 1, 1, 1);
+                            lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
+                            lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
+                            lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
+                            lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
+                            boxSelectedServer.Controls.Add(lbl);
+                        }
                     }
-
-                    lbl.Margin = new Padding(1, 1, 1, 1);
-                    lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
-                    lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
-                    lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
-                    lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
-                    boxSelectedServer.Controls.Add(lbl);
                 }
-
                 checkThirdPartyApps(Properties.Settings.Default.server_path);
             }
             catch (Exception err)
