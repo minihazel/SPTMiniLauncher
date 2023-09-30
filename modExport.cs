@@ -692,6 +692,54 @@ namespace SPTMiniLauncher
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
             if (label.Text != "")
             {
+                if (!chkOpenToggle.Checked)
+                {
+                    string parentName = label.Parent.Name.ToLower();
+                    if (parentName == "panelclientmods")
+                    {
+                        string bepinFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx");
+                        bool bepinFolderExists = Directory.Exists(bepinFolder);
+                        if (bepinFolderExists)
+                        {
+                            string pluginsFolder = Path.Combine(bepinFolder, "plugins");
+                            bool pluginsFolderExists = Directory.Exists(pluginsFolder);
+                            if (pluginsFolderExists)
+                            {
+                                if (!label.Text.EndsWith(".dll"))
+                                {
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = pluginsFolder;
+                                    newApp.FileName = Path.GetFileName(label.Text);
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
+
+                                    Process.Start(newApp);
+                                }
+                            }
+                        }
+                    }
+                    else if (parentName == "panelservermods")
+                    {
+                        string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                        bool userFolderExists = Directory.Exists(userFolder);
+                        if (userFolderExists)
+                        {
+                            string modsFolder = Path.Combine(userFolder, "mods");
+                            bool modsFolderExists = Directory.Exists(modsFolder);
+                            if (modsFolderExists)
+                            {
+                                ProcessStartInfo newApp = new ProcessStartInfo();
+                                newApp.WorkingDirectory = modsFolder;
+                                newApp.FileName = Path.GetFileName(label.Text);
+                                newApp.UseShellExecute = true;
+                                newApp.Verb = "open";
+
+                                Process.Start(newApp);
+                            }
+                        }
+                    }
+                }
+
                 /*
                 if (label.ForeColor == Color.DodgerBlue)
                 {
