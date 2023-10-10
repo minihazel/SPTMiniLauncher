@@ -1886,9 +1886,7 @@ namespace SPTMiniLauncher
                 List<string> tempList = new List<string>();
 
                 JObject devOptions = loadDevOptions();
-                if (devOptions.ContainsKey("SimpleMode"))
-                {
-                    bool simpleMode = (bool)devOptions["SimpleMode"];
+                bool simpleMode = (bool)devOptions["Simple"];
 
                     if (simpleMode != null)
                     {
