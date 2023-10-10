@@ -64,14 +64,17 @@ namespace SPTMiniLauncher
                         bool profileExists = File.Exists(profilePath);
                         if (profileExists)
                         {
-                            string readProfile = File.ReadAllText(profiles[i]);
-                            JObject jReadProfile = JObject.Parse(readProfile);
-                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                            using (StreamReader sr = new StreamReader(profiles[i]))
+                            {
+                                string readProfile = sr.ReadToEnd();
+                                JObject jReadProfile = JObject.Parse(readProfile);
+                                string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                            string nameOutput = Path.GetFileName(profiles[i]);
-                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+                                string nameOutput = Path.GetFileName(profiles[i]);
+                                nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
 
-                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                                currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
+                            }
                         }
                     }
                 }
@@ -138,11 +141,14 @@ namespace SPTMiniLauncher
                             string akiServerJson = Path.Combine(akiDatabase, "server.json");
                             if (File.Exists(akiServerJson))
                             {
-                                string readJson = File.ReadAllText(akiServerJson);
-                                JObject jsonObject = JObject.Parse(readJson);
-                                string _port = jsonObject["port"].ToString();
-                                bPortChecking.Text = _port;
-                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
+                                using (StreamReader sr = new StreamReader(akiServerJson))
+                                {
+                                    string readJson = sr.ReadToEnd();
+                                    JObject jsonObject = JObject.Parse(readJson);
+                                    string _port = jsonObject["port"].ToString();
+                                    bPortChecking.Text = _port;
+                                    Properties.Settings.Default.usePort = Convert.ToInt32(_port);
+                                }
                             }
                         }
                     }
@@ -313,132 +319,135 @@ namespace SPTMiniLauncher
                 bool settingsFileExists = File.Exists(settingsFile);
                 if (settingsFileExists)
                 {
-                    string settingsContent = File.ReadAllText(settingsFile);
-                    JObject settingsObj = JObject.Parse(settingsContent);
-
-                    if (settingsObj["timeOptions"] != null)
+                    using (StreamReader sr = new StreamReader(settingsFile))
                     {
-                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                        string settingsContent = sr.ReadToEnd();
+                        JObject settingsObj = JObject.Parse(settingsContent);
 
-                        int serverPlaytime = (int)timeOptions["serverTime"];
-                        int tarkovPlaytime = (int)timeOptions["tarkovTime"];
-                        TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
-                        TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
-
-                        // Check if the time is 0
-                        if (serverPlaytime == 0)
+                        if (settingsObj["timeOptions"] != null)
                         {
-                            bServerTimeCounter.Text = "No playtime recorded";
-                            bServerHourCounter.Text = "No playtime recorded";
-                        }
-                        else
-                        {
-                            // Format time based on days, hours and minutes
-                            string formattedServerPlaytime = "";
+                            JObject timeOptions = (JObject)settingsObj["timeOptions"];
 
-                            if (serverPlaytimeInSeconds.TotalDays >= 1)
+                            int serverPlaytime = (int)timeOptions["serverTime"];
+                            int tarkovPlaytime = (int)timeOptions["tarkovTime"];
+                            TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
+                            TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
+
+                            // Check if the time is 0
+                            if (serverPlaytime == 0)
                             {
-                                if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
+                                bServerTimeCounter.Text = "No playtime recorded";
+                                bServerHourCounter.Text = "No playtime recorded";
+                            }
+                            else
+                            {
+                                // Format time based on days, hours and minutes
+                                string formattedServerPlaytime = "";
+
+                                if (serverPlaytimeInSeconds.TotalDays >= 1)
                                 {
-                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                    int hours = serverPlaytimeInSeconds.Hours;
-                                    formattedServerPlaytime = $"{days} days and {hours} hours";
+                                    if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
+                                    {
+                                        int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                        int hours = serverPlaytimeInSeconds.Hours;
+                                        formattedServerPlaytime = $"{days} days and {hours} hours";
+                                    }
+                                    else if (serverPlaytimeInSeconds.TotalHours >= 1)
+                                    {
+                                        int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                        int hours = serverPlaytimeInSeconds.Hours;
+                                        int minutes = serverPlaytimeInSeconds.Minutes;
+                                        formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                    }
+                                    else
+                                    {
+                                        int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                        int minutes = serverPlaytimeInSeconds.Minutes;
+                                        formattedServerPlaytime = $"{days} days and {minutes} hours";
+                                    }
                                 }
                                 else if (serverPlaytimeInSeconds.TotalHours >= 1)
                                 {
-                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                    int hours = serverPlaytimeInSeconds.Hours;
-                                    int minutes = serverPlaytimeInSeconds.Minutes;
-                                    formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                    if (serverPlaytimeInSeconds.Minutes == 0)
+                                    {
+                                        int hours = serverPlaytimeInSeconds.Hours;
+                                        formattedServerPlaytime = $"{hours} hours";
+                                    }
+                                    else
+                                    {
+                                        int hours = serverPlaytimeInSeconds.Hours;
+                                        int minutes = serverPlaytimeInSeconds.Minutes;
+                                        formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
+                                    }
                                 }
                                 else
                                 {
-                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
                                     int minutes = serverPlaytimeInSeconds.Minutes;
-                                    formattedServerPlaytime = $"{days} days and {minutes} hours";
+                                    formattedServerPlaytime = $"{minutes} minutes";
                                 }
+
+                                string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
+                                bServerHourCounter.Text = $"{formattedHour} hours played";
+                                bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
                             }
-                            else if (serverPlaytimeInSeconds.TotalHours >= 1)
+
+                            // Check if the time is 0
+                            if (tarkovPlaytime == 0)
                             {
-                                if (serverPlaytimeInSeconds.Minutes == 0)
-                                {
-                                    int hours = serverPlaytimeInSeconds.Hours;
-                                    formattedServerPlaytime = $"{hours} hours";
-                                }
-                                else
-                                {
-                                    int hours = serverPlaytimeInSeconds.Hours;
-                                    int minutes = serverPlaytimeInSeconds.Minutes;
-                                    formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
-                                }
+                                bTarkovTimeCounter.Text = "No playtime recorded";
+                                bTarkovHourCount.Text = "No playtime recorded";
                             }
                             else
                             {
-                                int minutes = serverPlaytimeInSeconds.Minutes;
-                                formattedServerPlaytime = $"{minutes} minutes";
-                            }
+                                // Format time based on days, hours and minutes
+                                string formattedTarkovPlaytime = "";
 
-                            string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
-                            bServerHourCounter.Text = $"{formattedHour} hours played";
-                            bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
-                        }
-
-                        // Check if the time is 0
-                        if (tarkovPlaytime == 0)
-                        {
-                            bTarkovTimeCounter.Text = "No playtime recorded";
-                            bTarkovHourCount.Text = "No playtime recorded";
-                        }
-                        else
-                        {
-                            // Format time based on days, hours and minutes
-                            string formattedTarkovPlaytime = "";
-
-                            if (tarkovPlaytimeInSeconds.TotalDays >= 1)
-                            {
-                                if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
+                                if (tarkovPlaytimeInSeconds.TotalDays >= 1)
                                 {
-                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                    int hours = tarkovPlaytimeInSeconds.Hours;
-                                    formattedTarkovPlaytime = $"{days} days and {hours} hours";
+                                    if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
+                                    {
+                                        int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                        int hours = tarkovPlaytimeInSeconds.Hours;
+                                        formattedTarkovPlaytime = $"{days} days and {hours} hours";
+                                    }
+                                    else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
+                                    {
+                                        int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                        int hours = tarkovPlaytimeInSeconds.Hours;
+                                        int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                        formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                    }
+                                    else
+                                    {
+                                        int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                        int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                        formattedTarkovPlaytime = $"{days} days and {minutes} hours";
+                                    }
                                 }
                                 else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
                                 {
-                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                    int hours = tarkovPlaytimeInSeconds.Hours;
-                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                    formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
+                                    if (tarkovPlaytimeInSeconds.Minutes == 0)
+                                    {
+                                        int hours = tarkovPlaytimeInSeconds.Hours;
+                                        formattedTarkovPlaytime = $"{hours} hours";
+                                    }
+                                    else
+                                    {
+                                        int hours = tarkovPlaytimeInSeconds.Hours;
+                                        int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                        formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
+                                    }
                                 }
                                 else
                                 {
-                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
                                     int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                    formattedTarkovPlaytime = $"{days} days and {minutes} hours";
+                                    formattedTarkovPlaytime = $"{minutes} minutes";
                                 }
-                            }
-                            else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
-                            {
-                                if (tarkovPlaytimeInSeconds.Minutes == 0)
-                                {
-                                    int hours = tarkovPlaytimeInSeconds.Hours;
-                                    formattedTarkovPlaytime = $"{hours} hours";
-                                }
-                                else
-                                {
-                                    int hours = tarkovPlaytimeInSeconds.Hours;
-                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                    formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
-                                }
-                            }
-                            else
-                            {
-                                int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                formattedTarkovPlaytime = $"{minutes} minutes";
-                            }
 
-                            string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
-                            bTarkovHourCount.Text = $"{formattedHour} hours played";
-                            bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
+                                string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
+                                bTarkovHourCount.Text = $"{formattedHour} hours played";
+                                bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
+                            }
                         }
                     }
                 }
@@ -466,14 +475,17 @@ namespace SPTMiniLauncher
             bool profilesFileExists = File.Exists(profileFile);
             if (profilesFileExists)
             {
-                string readProfile = File.ReadAllText(profileFile);
-                JObject jReadProfile = JObject.Parse(readProfile);
-                string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                using (StreamReader sr = new StreamReader(profileFile))
+                {
+                    string readProfile = sr.ReadToEnd();
+                    JObject jReadProfile = JObject.Parse(readProfile);
+                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                string nameOutput = Path.GetFileName(profileFile);
-                nameOutput = nameOutput.Replace(".json", "");
+                    string nameOutput = Path.GetFileName(profileFile);
+                    nameOutput = nameOutput.Replace(".json", "");
 
-                result = $"{nameOutput} - [{_Nickname}]";
+                    result = $"{nameOutput} - [{_Nickname}]";
+                }
             }
 
             return result;
@@ -1033,19 +1045,22 @@ namespace SPTMiniLauncher
                             string akiServerJson = Path.Combine(akiDatabase, "server.json");
                             if (File.Exists(akiServerJson))
                             {
-                                string readJson = File.ReadAllText(akiServerJson);
-                                dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
-                                jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
-                                string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
-                                try
+                                using (StreamReader sr = new StreamReader(akiServerJson))
                                 {
-                                    File.WriteAllText(akiServerJson, output);
-                                    Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
-                                }
-                                catch (Exception err)
-                                {
-                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    string readJson = sr.ReadToEnd();
+                                    dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
+                                    jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
+                                    string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+                                    try
+                                    {
+                                        File.WriteAllText(akiServerJson, output);
+                                        Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        Debug.WriteLine($"ERROR: {err.ToString()}");
+                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                    }
                                 }
                             }
                         }

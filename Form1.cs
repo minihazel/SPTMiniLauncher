@@ -115,17 +115,21 @@ namespace SPTMiniLauncher
                 if (File.Exists(thirdPartyFile))
                 {
                     appDict = new Dictionary<string, ThirdPartyInfo>();
-                    string thirdPartyContent = System.IO.File.ReadAllText(thirdPartyFile);
-                    JObject thirdParty = JObject.Parse(thirdPartyContent);
-                    JArray appsArray = (JArray)thirdParty["ThirdPartyApps"];
 
-                    foreach (JObject app in appsArray)
+                    using (StreamReader sr = new StreamReader(thirdPartyFile))
                     {
-                        string name = (string)app["Name"];
-                        string path = (string)app["Path"];
-                        string type = (string)app["Type"];
+                        string thirdPartyContent = sr.ReadToEnd();
+                        JObject thirdParty = JObject.Parse(thirdPartyContent);
+                        JArray appsArray = (JArray)thirdParty["ThirdPartyApps"];
 
-                        appDict[name] = new ThirdPartyInfo(name, path, type);
+                        foreach (JObject app in appsArray)
+                        {
+                            string name = (string)app["Name"];
+                            string path = (string)app["Path"];
+                            string type = (string)app["Type"];
+
+                            appDict[name] = new ThirdPartyInfo(name, path, type);
+                        }
                     }
                 }
                 else
@@ -173,17 +177,20 @@ namespace SPTMiniLauncher
 
                     try
                     {
-                        string thirdPartyContent = System.IO.File.ReadAllText(thirdPartyFile);
-                        JObject thirdParty = JObject.Parse(thirdPartyContent);
-                        JArray appsArray = (JArray)thirdParty["ThirdPartyApps"];
-
-                        foreach (JObject app in appsArray)
+                        using (StreamReader sr = new StreamReader(thirdPartyFile))
                         {
-                            string name = (string)app["Name"];
-                            string path = (string)app["Path"];
-                            string type = (string)app["Type"];
+                            string thirdPartyContent = sr.ReadToEnd();
+                            JObject thirdParty = JObject.Parse(thirdPartyContent);
+                            JArray appsArray = (JArray)thirdParty["ThirdPartyApps"];
 
-                            appDict[name] = new ThirdPartyInfo(name, path, type);
+                            foreach (JObject app in appsArray)
+                            {
+                                string name = (string)app["Name"];
+                                string path = (string)app["Path"];
+                                string type = (string)app["Type"];
+
+                                appDict[name] = new ThirdPartyInfo(name, path, type);
+                            }
                         }
                     }
                     catch (Exception ex)
@@ -195,79 +202,83 @@ namespace SPTMiniLauncher
                 if (File.Exists(settingsFile))
                 {
                     globalProcesses = new List<string> { "Aki.Server", "Aki.Launcher", "EscapeFromTarkov" };
-                    string readSettings = File.ReadAllText(settingsFile);
-                    JObject settingsObject = JObject.Parse(readSettings);
 
-                    if (settingsObject.ContainsKey("mainWidth") && settingsObject.ContainsKey("mainHeight"))
+                    using (StreamReader sr = new StreamReader(settingsFile))
                     {
-                        this.Width = (int)settingsObject["mainWidth"];
-                        this.Height = (int)settingsObject["mainHeight"];
-                    }
-                    else
-                    {
-                        saveDimensions();
-                    }
+                        string readSettings = sr.ReadToEnd();
+                        JObject settingsObject = JObject.Parse(readSettings);
 
-                    if (settingsObject.ContainsKey("Developer_Options"))
-                    {
-                        JObject devOptions = (JObject)settingsObject["Developer_Options"];
-                        if (!devOptions.ContainsKey("Simple_Mode"))
+                        if (settingsObject.ContainsKey("mainWidth") && settingsObject.ContainsKey("mainHeight"))
                         {
+                            this.Width = (int)settingsObject["mainWidth"];
+                            this.Height = (int)settingsObject["mainHeight"];
+                        }
+                        else
+                        {
+                            saveDimensions();
+                        }
+
+                        if (settingsObject.ContainsKey("Developer_Options"))
+                        {
+                            JObject devOptions = (JObject)settingsObject["Developer_Options"];
+                            if (!devOptions.ContainsKey("Simple_Mode"))
+                            {
+                                settingsObject["Developer_Options"]["Simple_Mode"] = false;
+                                string updatedJSON = settingsObject.ToString();
+                                File.WriteAllText(settingsFile, updatedJSON);
+                            }
+                        }
+                        else
+                        {
+                            settingsObject["Developer_Options"] = new JObject();
                             settingsObject["Developer_Options"]["Simple_Mode"] = false;
+
                             string updatedJSON = settingsObject.ToString();
                             File.WriteAllText(settingsFile, updatedJSON);
                         }
-                    }
-                    else
-                    {
-                        settingsObject["Developer_Options"] = new JObject();
-                        settingsObject["Developer_Options"]["Simple_Mode"] = false;
 
-                        string updatedJSON = settingsObject.ToString();
-                        File.WriteAllText(settingsFile, updatedJSON);
-                    }
-
-                    if (!settingsObject.ContainsKey("timeOptions"))
-                    {
-                        settingsObject["timeOptions"] = new JObject();
-                        settingsObject["timeOptions"]["serverTime"] = 0;
-                        settingsObject["timeOptions"]["tarkovTime"] = 0;
-
-                        string updatedJSON = settingsObject.ToString();
-                        File.WriteAllText(settingsFile, updatedJSON);
-                    }
-                    else
-                    {
-                        JObject timeOptions = (JObject)settingsObject["timeOptions"];
-                        if (!timeOptions.ContainsKey("serverTime"))
+                        if (!settingsObject.ContainsKey("timeOptions"))
+                        {
+                            settingsObject["timeOptions"] = new JObject();
                             settingsObject["timeOptions"]["serverTime"] = 0;
-                        if (!timeOptions.ContainsKey("tarkovTime"))
                             settingsObject["timeOptions"]["tarkovTime"] = 0;
 
-                        string updatedJSON = settingsObject.ToString();
-                        File.WriteAllText(settingsFile, updatedJSON);
-                    }
-
-                    if (!settingsObject.ContainsKey("showFirstTimeMessage"))
-                    {
-                        settingsObject["showFirstTimeMessage"] = true;
-                        string updatedJSON = settingsObject.ToString();
-                        File.WriteAllText(settingsFile, updatedJSON);
-
-                        Application.Restart();
-                    }
-                    else
-                    {
-                        if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
+                            string updatedJSON = settingsObject.ToString();
+                            File.WriteAllText(settingsFile, updatedJSON);
+                        }
+                        else
                         {
-                            settingsObject.Property("showFirstTimeMessage").Value = "false";
+                            JObject timeOptions = (JObject)settingsObject["timeOptions"];
+                            if (!timeOptions.ContainsKey("serverTime"))
+                                settingsObject["timeOptions"]["serverTime"] = 0;
+                            if (!timeOptions.ContainsKey("tarkovTime"))
+                                settingsObject["timeOptions"]["tarkovTime"] = 0;
 
-                            messageTitle.Text = "First time setup";
-                            messageBox.Text = Properties.Settings.Default.firstTimeMessage; /* File.ReadAllText(firstTime); */
+                            string updatedJSON = settingsObject.ToString();
+                            File.WriteAllText(settingsFile, updatedJSON);
+                        }
 
-                            form.Size = new Size(623, 730);
-                            form.ShowDialog();
-                            File.WriteAllText(settingsFile, settingsObject.ToString());
+                        if (!settingsObject.ContainsKey("showFirstTimeMessage"))
+                        {
+                            settingsObject["showFirstTimeMessage"] = true;
+                            string updatedJSON = settingsObject.ToString();
+                            File.WriteAllText(settingsFile, updatedJSON);
+
+                            Application.Restart();
+                        }
+                        else
+                        {
+                            if (settingsObject["showFirstTimeMessage"].ToString().ToLower() == "true")
+                            {
+                                settingsObject.Property("showFirstTimeMessage").Value = "false";
+
+                                messageTitle.Text = "First time setup";
+                                messageBox.Text = Properties.Settings.Default.firstTimeMessage; /* File.ReadAllText(firstTime); */
+
+                                form.Size = new Size(623, 730);
+                                form.ShowDialog();
+                                File.WriteAllText(settingsFile, settingsObject.ToString());
+                            }
                         }
                     }
 
@@ -359,16 +370,20 @@ namespace SPTMiniLauncher
             if (galleryFileExists)
             {
                 galleryDictionary = new Dictionary<string, Gallery>();
-                string sptGallery = System.IO.File.ReadAllText(galleryFile);
-                JObject galleryObj = JObject.Parse(sptGallery);
-                JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                foreach (JObject folder in galleryArray)
+                using (StreamReader sr = new StreamReader(galleryFile))
                 {
-                    string name = (string)folder["Name"];
-                    string path = (string)folder["Path"];
+                    string sptGallery = sr.ReadToEnd();
+                    JObject galleryObj = JObject.Parse(sptGallery);
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                    galleryDictionary[name] = new Gallery(name, path);
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string name = (string)folder["Name"];
+                        string path = (string)folder["Path"];
+
+                        galleryDictionary[name] = new Gallery(name, path);
+                    }
                 }
             }
             else
@@ -384,16 +399,20 @@ namespace SPTMiniLauncher
                     File.WriteAllText(galleryFile, json);
 
                     galleryDictionary = new Dictionary<string, Gallery>();
-                    string sptGallery = System.IO.File.ReadAllText(galleryFile);
-                    JObject galleryObj = JObject.Parse(sptGallery);
-                    JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                    foreach (JObject folder in galleryArray)
+                    using (StreamReader sr = new StreamReader(galleryFile))
                     {
-                        string name = (string)folder["Name"];
-                        string path = (string)folder["Path"];
+                        string sptGallery = sr.ReadToEnd();
+                        JObject galleryObj = JObject.Parse(sptGallery);
+                        JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                        galleryDictionary[name] = new Gallery(name, path);
+                        foreach (JObject folder in galleryArray)
+                        {
+                            string name = (string)folder["Name"];
+                            string path = (string)folder["Path"];
+
+                            galleryDictionary[name] = new Gallery(name, path);
+                        }
                     }
                 }
                 catch (Exception err)
@@ -487,20 +506,23 @@ namespace SPTMiniLauncher
                     bool fullAIDExists = File.Exists(fullAID);
                     if (fullAIDExists)
                     {
-                        string fileContent = File.ReadAllText(fullAID);
-                        JObject parsedFile = JObject.Parse(fileContent);
-                        JObject info = (JObject)parsedFile["info"];
-                        string infoAID = (string)info["id"];
-
-                        JObject characters = (JObject)parsedFile["characters"];
-                        JObject pmc = (JObject)characters["pmc"];
-                        JObject Info = (JObject)pmc["Info"];
-
-                        string Nickname = (string)Info["Nickname"];
-
-                        if (infoAID == profileAID)
+                        using (StreamReader sr = new StreamReader(fullAID))
                         {
-                            return Nickname;
+                            string fileContent = sr.ReadToEnd();
+                            JObject parsedFile = JObject.Parse(fileContent);
+                            JObject info = (JObject)parsedFile["info"];
+                            string infoAID = (string)info["id"];
+
+                            JObject characters = (JObject)parsedFile["characters"];
+                            JObject pmc = (JObject)characters["pmc"];
+                            JObject Info = (JObject)pmc["Info"];
+
+                            string Nickname = (string)Info["Nickname"];
+
+                            if (infoAID == profileAID)
+                            {
+                                return Nickname;
+                            }
                         }
                     }
                 }
@@ -551,37 +573,40 @@ namespace SPTMiniLauncher
                     File.WriteAllText(orderFile, json);
                 }
 
-                string orderJSON = File.ReadAllText(orderFile);
-                JObject order = JObject.Parse(orderJSON);
-                string[] modsFolder = Directory.GetDirectories(path);
-
-                List<JToken> removeMods = new List<JToken>();
-                foreach (JToken mod in order["order"])
+                using (StreamReader sr = new StreamReader(orderFile))
                 {
-                    string modName = mod.Value<string>();
-                    if (!Array.Exists(modsFolder, s => Path.GetFileName(s).Equals(modName)))
+                    string orderJSON = sr.ReadToEnd();
+                    JObject order = JObject.Parse(orderJSON);
+                    string[] modsFolder = Directory.GetDirectories(path);
+
+                    List<JToken> removeMods = new List<JToken>();
+                    foreach (JToken mod in order["order"])
                     {
-                        removeMods.Add(mod);
+                        string modName = mod.Value<string>();
+                        if (!Array.Exists(modsFolder, s => Path.GetFileName(s).Equals(modName)))
+                        {
+                            removeMods.Add(mod);
+                        }
                     }
-                }
 
-                foreach (JToken mod in removeMods)
-                {
-                    mod.Remove();
-                }
-
-                foreach (string mod in modsFolder)
-                {
-                    string name = Path.GetFileName(mod);
-                    bool exists = ((JArray)order["order"]).Any(t => t.Value<string>() == name);
-
-                    if (!exists)
+                    foreach (JToken mod in removeMods)
                     {
-                        ((JArray)order["order"]).Add(name);
+                        mod.Remove();
                     }
-                }
 
-                File.WriteAllText(orderFile, order.ToString());
+                    foreach (string mod in modsFolder)
+                    {
+                        string name = Path.GetFileName(mod);
+                        bool exists = ((JArray)order["order"]).Any(t => t.Value<string>() == name);
+
+                        if (!exists)
+                        {
+                            ((JArray)order["order"]).Add(name);
+                        }
+                    }
+
+                    File.WriteAllText(orderFile, order.ToString());
+                }
             }
             catch (Exception err)
             {
@@ -697,20 +722,23 @@ namespace SPTMiniLauncher
             bool settingsFileExists = File.Exists(settingsFile);
             if (settingsFileExists)
             {
-                string readSettings = File.ReadAllText(settingsFile);
-                JObject settingsObject = JObject.Parse(readSettings);
+                using (StreamReader sr = new StreamReader(settingsFile))
+                {
+                    string readSettings = sr.ReadToEnd();
+                    JObject settingsObject = JObject.Parse(readSettings);
 
-                if (!settingsObject.ContainsKey("mainWidth"))
-                    settingsObject.Add("mainWidth", 695);
+                    if (!settingsObject.ContainsKey("mainWidth"))
+                        settingsObject.Add("mainWidth", 695);
 
-                if (!settingsObject.ContainsKey("mainHeight"))
-                    settingsObject.Add("mainHeight", 690);
+                    if (!settingsObject.ContainsKey("mainHeight"))
+                        settingsObject.Add("mainHeight", 690);
 
-                settingsObject["mainWidth"] = curWidth;
-                settingsObject["mainHeight"] = curHeight;
+                    settingsObject["mainWidth"] = curWidth;
+                    settingsObject["mainHeight"] = curHeight;
 
-                string updatedJSON = settingsObject.ToString();
-                File.WriteAllText(settingsFile, updatedJSON);
+                    string updatedJSON = settingsObject.ToString();
+                    File.WriteAllText(settingsFile, updatedJSON);
+                }
             }
         }
 
@@ -888,21 +916,24 @@ namespace SPTMiniLauncher
                 bool thirdPartyFileExists = File.Exists(thirdPartyFile);
                 if (thirdPartyFileExists)
                 {
-                    string thirdPartyJSON = File.ReadAllText(thirdPartyFile);
-                    JObject obj = JObject.Parse(thirdPartyJSON);
-
-                    foreach (JObject item in (JArray)obj["ThirdPartyApps"])
+                    using (StreamReader sr = new StreamReader(thirdPartyFile))
                     {
-                        if (item["Name"].ToString() == appName)
-                        {
-                            item["Path"] = newPath;
-                            item["Type"] = type;
-                            break;
-                        }
-                    }
+                        string thirdPartyJSON = sr.ReadToEnd();
+                        JObject obj = JObject.Parse(thirdPartyJSON);
 
-                    string updatedContent = obj.ToString();
-                    File.WriteAllText(thirdPartyFile, updatedContent);
+                        foreach (JObject item in (JArray)obj["ThirdPartyApps"])
+                        {
+                            if (item["Name"].ToString() == appName)
+                            {
+                                item["Path"] = newPath;
+                                item["Type"] = type;
+                                break;
+                            }
+                        }
+
+                        string updatedContent = obj.ToString();
+                        File.WriteAllText(thirdPartyFile, updatedContent);
+                    }
 
                     listServerOptions(true);
                 }
@@ -1031,19 +1062,22 @@ namespace SPTMiniLauncher
             bool thirdPartyFileExists = File.Exists(thirdPartyFile);
             if (thirdPartyFileExists)
             {
-                string thirdPartycontent = File.ReadAllText(thirdPartyFile);
-                JObject obj = JObject.Parse(thirdPartycontent);
-
-                JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
-                if (thirdPartyApps != null)
+                using (StreamReader sr = new StreamReader(thirdPartyFile))
                 {
-                    JObject item = (JObject)thirdPartyApps.FirstOrDefault(appItem => appItem["Name"].ToString() == appName);
-                    if (item != null)
-                    {
-                        thirdPartyApps.Remove(item); // Remove the item from the JSON file
+                    string thirdPartycontent = sr.ReadToEnd();
+                    JObject obj = JObject.Parse(thirdPartycontent);
 
-                        string updatedContent = obj.ToString();
-                        File.WriteAllText(thirdPartyFile, updatedContent); // Save the updated JSON content
+                    JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
+                    if (thirdPartyApps != null)
+                    {
+                        JObject item = (JObject)thirdPartyApps.FirstOrDefault(appItem => appItem["Name"].ToString() == appName);
+                        if (item != null)
+                        {
+                            thirdPartyApps.Remove(item); // Remove the item from the JSON file
+
+                            string updatedContent = obj.ToString();
+                            File.WriteAllText(thirdPartyFile, updatedContent); // Save the updated JSON content
+                        }
                     }
                 }
             }
@@ -1077,19 +1111,22 @@ namespace SPTMiniLauncher
         {
             try
             {
-                string galleryContent = File.ReadAllText(galleryFile);
-                JObject galleryObj = JObject.Parse(galleryContent);
-
-                if (galleryObj.ContainsKey("Gallery"))
+                using (StreamReader sr = new StreamReader(galleryFile))
                 {
-                    JArray galleryArray = (JArray)galleryObj["Gallery"];
-                    foreach (JObject folder in galleryArray)
+                    string galleryContent = sr.ReadToEnd();
+                    JObject galleryObj = JObject.Parse(galleryContent);
+
+                    if (galleryObj.ContainsKey("Gallery"))
                     {
-                        string installName = folder.Value<string>("Path");
-                        if (installName == installPath)
+                        JArray galleryArray = (JArray)galleryObj["Gallery"];
+                        foreach (JObject folder in galleryArray)
                         {
-                            string path = folder.Value<string>("Name");
-                            return new Gallery(installPath, path);
+                            string installName = folder.Value<string>("Path");
+                            if (installName == installPath)
+                            {
+                                string path = folder.Value<string>("Name");
+                                return new Gallery(installPath, path);
+                            }
                         }
                     }
                 }
@@ -1107,19 +1144,22 @@ namespace SPTMiniLauncher
         {
             try
             {
-                string galleryContent = File.ReadAllText(galleryFile);
-                JObject galleryObj = JObject.Parse(galleryContent);
-
-                if (galleryObj.ContainsKey("Gallery"))
+                using (StreamReader sr = new StreamReader(galleryFile))
                 {
-                    JArray galleryArray = (JArray)galleryObj["Gallery"];
-                    foreach (JObject folder in galleryArray)
+                    string galleryContent = sr.ReadToEnd();
+                    JObject galleryObj = JObject.Parse(galleryContent);
+
+                    if (galleryObj.ContainsKey("Gallery"))
                     {
-                        string installName = folder.Value<string>("Name");
-                        if (installName == name)
+                        JArray galleryArray = (JArray)galleryObj["Gallery"];
+                        foreach (JObject folder in galleryArray)
                         {
-                            string path = folder.Value<string>("Path");
-                            return new Gallery(name, path);
+                            string installName = folder.Value<string>("Name");
+                            if (installName == name)
+                            {
+                                string path = folder.Value<string>("Path");
+                                return new Gallery(name, path);
+                            }
                         }
                     }
                 }
@@ -1205,16 +1245,20 @@ namespace SPTMiniLauncher
             if (galleryFileExists)
             {
                 galleryDictionary = new Dictionary<string, Gallery>();
-                string sptGallery = System.IO.File.ReadAllText(galleryFile);
-                JObject galleryObj = JObject.Parse(sptGallery);
-                JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                foreach (JObject folder in galleryArray)
+                using (StreamReader sr = new StreamReader(galleryFile))
                 {
-                    string name = (string)folder["Name"];
-                    string path = (string)folder["Path"];
+                    string sptGallery = sr.ReadToEnd();
+                    JObject galleryObj = JObject.Parse(sptGallery);
+                    JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                    galleryDictionary[name] = new Gallery(name, path);
+                    foreach (JObject folder in galleryArray)
+                    {
+                        string name = (string)folder["Name"];
+                        string path = (string)folder["Path"];
+
+                        galleryDictionary[name] = new Gallery(name, path);
+                    }
                 }
             }
             else
@@ -1230,16 +1274,20 @@ namespace SPTMiniLauncher
                     File.WriteAllText(galleryFile, json);
 
                     galleryDictionary = new Dictionary<string, Gallery>();
-                    string sptGallery = System.IO.File.ReadAllText(galleryFile);
-                    JObject galleryObj = JObject.Parse(sptGallery);
-                    JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                    foreach (JObject folder in galleryArray)
+                    using (StreamReader sr = new StreamReader(galleryFile))
                     {
-                        string name = (string)folder["Name"];
-                        string path = (string)folder["Path"];
+                        string sptGallery = sr.ReadToEnd();
+                        JObject galleryObj = JObject.Parse(sptGallery);
+                        JArray galleryArray = (JArray)galleryObj["Gallery"];
 
-                        galleryDictionary[name] = new Gallery(name, path);
+                        foreach (JObject folder in galleryArray)
+                        {
+                            string name = (string)folder["Name"];
+                            string path = (string)folder["Path"];
+
+                            galleryDictionary[name] = new Gallery(name, path);
+                        }
                     }
                 }
                 catch (Exception err)
@@ -1276,8 +1324,11 @@ namespace SPTMiniLauncher
             bool galleryFileExists = File.Exists(galleryFile);
             if (galleryFileExists)
             {
-                string galleryData = File.ReadAllText(galleryFile);
-                return JObject.Parse(galleryData);
+                using (StreamReader sr = new StreamReader(galleryFile))
+                {
+                    string galleryData = sr.ReadToEnd();
+                    return JObject.Parse(galleryData);
+                }
             }
             return null;
         }
@@ -1287,21 +1338,24 @@ namespace SPTMiniLauncher
             bool settingsFileExists = File.Exists(settingsFile);
             if (settingsFileExists)
             {
-                string settingsData = File.ReadAllText(settingsFile);
-                JObject settingsContent = JObject.Parse(settingsData);
-
-                if (settingsContent.ContainsKey("Developer_Options"))
+                using (StreamReader sr = new StreamReader(settingsFile))
                 {
-                    JObject devOptions = (JObject)settingsContent["Developer_Options"];
-                    return devOptions;
-                }
-                else
-                {
-                    settingsContent["Developer_Options"] = new JObject();
-                    settingsContent["Developer_Options"]["Simple_Mode"] = false;
+                    string settingsData = sr.ReadToEnd();
+                    JObject settingsContent = JObject.Parse(settingsData);
 
-                    string updatedJSON = settingsContent.ToString();
-                    File.WriteAllText(settingsFile, updatedJSON);
+                    if (settingsContent.ContainsKey("Developer_Options"))
+                    {
+                        JObject devOptions = (JObject)settingsContent["Developer_Options"];
+                        return devOptions;
+                    }
+                    else
+                    {
+                        settingsContent["Developer_Options"] = new JObject();
+                        settingsContent["Developer_Options"]["Simple_Mode"] = false;
+
+                        string updatedJSON = settingsContent.ToString();
+                        File.WriteAllText(settingsFile, updatedJSON);
+                    }
                 }
             }
             return null;
@@ -1613,16 +1667,19 @@ namespace SPTMiniLauncher
         {
             try
             {
-                string read = File.ReadAllText(path);
-                JObject parsed = JObject.Parse(read);
+                using (StreamReader sr = new StreamReader(path))
+                {
+                    string read = sr.ReadToEnd();
+                    JObject parsed = JObject.Parse(read);
 
-                if (parsed["compatibleTarkovVersion"].ToString().Contains("0.13"))
-                {
-                    listServerOptions(true);
-                }
-                else
-                {
-                    listServerOptions(false);
+                    if (parsed["compatibleTarkovVersion"].ToString().Contains("0.13"))
+                    {
+                        listServerOptions(true);
+                    }
+                    else
+                    {
+                        listServerOptions(false);
+                    }
                 }
             }
             catch (Exception err)
@@ -1660,14 +1717,17 @@ namespace SPTMiniLauncher
                     bool settingsFileExists = File.Exists(settingsFile);
                     if (settingsFileExists)
                     {
-                        string settingsContent = File.ReadAllText(settingsFile);
-                        JObject settingsObj = JObject.Parse(settingsContent);
+                        using (StreamReader sr = new StreamReader(settingsFile))
+                        {
+                            string settingsContent = sr.ReadToEnd();
+                            JObject settingsObj = JObject.Parse(settingsContent);
 
-                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
-                        int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
+                            JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                            int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
 
-                        TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
-                        startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
+                            TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
+                            startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
+                        }
                     }
 
                     if (TarkovProcessDetector != null)
@@ -2747,14 +2807,17 @@ namespace SPTMiniLauncher
             bool settingsFileExists = File.Exists(settingsFile);
             if (settingsFileExists)
             {
-                string settingsContent = File.ReadAllText(settingsFile);
-                JObject settingsObj = JObject.Parse(settingsContent);
+                using (StreamReader sr = new StreamReader(settingsFile))
+                {
+                    string settingsContent = sr.ReadToEnd();
+                    JObject settingsObj = JObject.Parse(settingsContent);
 
-                JObject timeOptions = (JObject)settingsObj["timeOptions"];
-                int previousServerSeconds = (int)timeOptions["serverTime"];
+                    JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                    int previousServerSeconds = (int)timeOptions["serverTime"];
 
-                TimeSpan elapsedServerDuration = TimeSpan.FromSeconds(previousServerSeconds);
-                startTimeServer = DateTime.Now - elapsedServerDuration;
+                    TimeSpan elapsedServerDuration = TimeSpan.FromSeconds(previousServerSeconds);
+                    startTimeServer = DateTime.Now - elapsedServerDuration;
+                }
             }
         }
 
@@ -2779,10 +2842,13 @@ namespace SPTMiniLauncher
                         string akiServerJson = Path.Combine(akiDatabase, "server.json");
                         if (File.Exists(akiServerJson))
                         {
-                            string readJson = File.ReadAllText(akiServerJson);
-                            JObject parsedJson = JObject.Parse(readJson);
-                            akiPort = Convert.ToInt32(parsedJson["port"]);
-                            ip_address = (string)parsedJson["ip"];
+                            using (StreamReader sr = new StreamReader(akiServerJson))
+                            {
+                                string readJson = sr.ReadToEnd();
+                                JObject parsedJson = JObject.Parse(readJson);
+                                akiPort = Convert.ToInt32(parsedJson["port"]);
+                                ip_address = (string)parsedJson["ip"];
+                            }
                         }
                     }
                 }
@@ -2866,14 +2932,17 @@ namespace SPTMiniLauncher
                 bool settingsFileExists = File.Exists(settingsFile);
                 if (settingsFileExists)
                 {
-                    string settingsContent = File.ReadAllText(settingsFile);
-                    JObject settingsObj = JObject.Parse(settingsContent);
+                    using (StreamReader sr = new StreamReader(settingsFile))
+                    {
+                        string settingsContent = sr.ReadToEnd();
+                        JObject settingsObj = JObject.Parse(settingsContent);
 
-                    JObject timeOptions = (JObject)settingsObj["timeOptions"];
-                    int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
+                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                        int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
 
-                    TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
-                    startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
+                        TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
+                        startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
+                    }
                 }
 
                 TarkovEndDetector = new BackgroundWorker();
@@ -3353,24 +3422,27 @@ namespace SPTMiniLauncher
                     bool settingsFileExists = File.Exists(settingsFile);
                     if (settingsFileExists)
                     {
-                        string settingsContent = File.ReadAllText(settingsFile);
-                        JObject settingsObj = JObject.Parse(settingsContent);
-
-                        if (settingsObj["timeOptions"] != null)
+                        using (StreamReader sr = new StreamReader(settingsFile))
                         {
-                            JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                            string settingsContent = sr.ReadToEnd();
+                            JObject settingsObj = JObject.Parse(settingsContent);
 
-                            DateTime endTime = DateTime.Now;
-                            TimeSpan playtimeServer = endTime - startTimeServer;
-                            TimeSpan playtimeTarkov = endTime - startTimeTarkov;
+                            if (settingsObj["timeOptions"] != null)
+                            {
+                                JObject timeOptions = (JObject)settingsObj["timeOptions"];
 
-                            int serverPlaytimeSeconds = (int)playtimeServer.TotalSeconds;
-                            int tarkovPlaytimeSeconds = (int)playtimeTarkov.TotalSeconds;
-                            timeOptions["serverTime"] = (int)serverPlaytimeSeconds;
-                            timeOptions["tarkovTime"] = (int)serverPlaytimeSeconds;
+                                DateTime endTime = DateTime.Now;
+                                TimeSpan playtimeServer = endTime - startTimeServer;
+                                TimeSpan playtimeTarkov = endTime - startTimeTarkov;
 
-                            string updatedJSON = settingsObj.ToString();
-                            File.WriteAllText(settingsFile, updatedJSON);
+                                int serverPlaytimeSeconds = (int)playtimeServer.TotalSeconds;
+                                int tarkovPlaytimeSeconds = (int)playtimeTarkov.TotalSeconds;
+                                timeOptions["serverTime"] = (int)serverPlaytimeSeconds;
+                                timeOptions["tarkovTime"] = (int)serverPlaytimeSeconds;
+
+                                string updatedJSON = settingsObj.ToString();
+                                File.WriteAllText(settingsFile, updatedJSON);
+                            }
                         }
                     }
 
@@ -3420,9 +3492,12 @@ namespace SPTMiniLauncher
             bool portExists = File.Exists(portPath);
             if (portExists)
             {
-                string readPort = File.ReadAllText(portPath);
-                JObject portObject = JObject.Parse(readPort);
-                akiPort = (int)portObject["port"];
+                using (StreamReader sr = new StreamReader(portPath))
+                {
+                    string readPort = sr.ReadToEnd();
+                    JObject portObject = JObject.Parse(readPort);
+                    akiPort = (int)portObject["port"];
+                }
             }
             else
             {
