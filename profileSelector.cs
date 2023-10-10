@@ -116,13 +116,10 @@ namespace SPTMiniLauncher
                 bool profileExists = File.Exists(_countProfiles[i]);
                 if (profileExists)
                 {
-                    using (StreamReader sr = new StreamReader(_countProfiles[i]))
-                    {
-                        string readProfile = sr.ReadToEnd();
-                        JObject jReadProfile = JObject.Parse(readProfile);
-                        string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
-                        lbl.Text = $"{Path.GetFileName(_countProfiles[i])}  -  {_Nickname}";
-                    }
+                    string readProfile = File.ReadAllText(_countProfiles[i]);
+                    JObject jReadProfile = JObject.Parse(readProfile);
+                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                    lbl.Text = $"{Path.GetFileName(_countProfiles[i])}  -  {_Nickname}";
                 }
 
                 panelProfiles.Controls.Add(lbl);

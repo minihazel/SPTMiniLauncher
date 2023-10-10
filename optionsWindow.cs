@@ -55,6 +55,9 @@ namespace SPTMiniLauncher
                 string profilesFolder = Path.Combine(userFolder, "profiles");
                 bool profilesExists = Directory.Exists(profilesFolder);
 
+                panelImportExistingConfig.Text = "SPT Launcher Config Editor";
+                btnImportExistingConfig.Text = "Open Editor";
+
                 if (profilesExists)
                 {
                     string[] profiles = Directory.GetFiles(profilesFolder);
@@ -64,17 +67,14 @@ namespace SPTMiniLauncher
                         bool profileExists = File.Exists(profilePath);
                         if (profileExists)
                         {
-                            using (StreamReader sr = new StreamReader(profiles[i]))
-                            {
-                                string readProfile = sr.ReadToEnd();
-                                JObject jReadProfile = JObject.Parse(readProfile);
-                                string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                            string readProfile = File.ReadAllText(profiles[i]);
+                            JObject jReadProfile = JObject.Parse(readProfile);
+                            string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                                string nameOutput = Path.GetFileName(profiles[i]);
-                                nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
+                            string nameOutput = Path.GetFileName(profiles[i]);
+                            nameOutput = nameOutput.Substring(0, nameOutput.Length - 5);
 
-                                currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
-                            }
+                            currentProfiles.Add($"{nameOutput} - [{_Nickname}]");
                         }
                     }
                 }
@@ -141,14 +141,11 @@ namespace SPTMiniLauncher
                             string akiServerJson = Path.Combine(akiDatabase, "server.json");
                             if (File.Exists(akiServerJson))
                             {
-                                using (StreamReader sr = new StreamReader(akiServerJson))
-                                {
-                                    string readJson = sr.ReadToEnd();
-                                    JObject jsonObject = JObject.Parse(readJson);
-                                    string _port = jsonObject["port"].ToString();
-                                    bPortChecking.Text = _port;
-                                    Properties.Settings.Default.usePort = Convert.ToInt32(_port);
-                                }
+                                string readJson = File.ReadAllText(akiServerJson);
+                                JObject jsonObject = JObject.Parse(readJson);
+                                string _port = jsonObject["port"].ToString();
+                                bPortChecking.Text = _port;
+                                Properties.Settings.Default.usePort = Convert.ToInt32(_port);
                             }
                         }
                     }
@@ -319,135 +316,132 @@ namespace SPTMiniLauncher
                 bool settingsFileExists = File.Exists(settingsFile);
                 if (settingsFileExists)
                 {
-                    using (StreamReader sr = new StreamReader(settingsFile))
+                    string settingsContent = File.ReadAllText(settingsFile);
+                    JObject settingsObj = JObject.Parse(settingsContent);
+
+                    if (settingsObj["timeOptions"] != null)
                     {
-                        string settingsContent = sr.ReadToEnd();
-                        JObject settingsObj = JObject.Parse(settingsContent);
+                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
 
-                        if (settingsObj["timeOptions"] != null)
+                        int serverPlaytime = (int)timeOptions["serverTime"];
+                        int tarkovPlaytime = (int)timeOptions["tarkovTime"];
+                        TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
+                        TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
+
+                        // Check if the time is 0
+                        if (serverPlaytime == 0)
                         {
-                            JObject timeOptions = (JObject)settingsObj["timeOptions"];
+                            bServerTimeCounter.Text = "No playtime recorded";
+                            bServerHourCounter.Text = "No playtime recorded";
+                        }
+                        else
+                        {
+                            // Format time based on days, hours and minutes
+                            string formattedServerPlaytime = "";
 
-                            int serverPlaytime = (int)timeOptions["serverTime"];
-                            int tarkovPlaytime = (int)timeOptions["tarkovTime"];
-                            TimeSpan serverPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["serverTime"]);
-                            TimeSpan tarkovPlaytimeInSeconds = TimeSpan.FromSeconds((int)timeOptions["tarkovTime"]);
-
-                            // Check if the time is 0
-                            if (serverPlaytime == 0)
+                            if (serverPlaytimeInSeconds.TotalDays >= 1)
                             {
-                                bServerTimeCounter.Text = "No playtime recorded";
-                                bServerHourCounter.Text = "No playtime recorded";
-                            }
-                            else
-                            {
-                                // Format time based on days, hours and minutes
-                                string formattedServerPlaytime = "";
-
-                                if (serverPlaytimeInSeconds.TotalDays >= 1)
+                                if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
                                 {
-                                    if (serverPlaytimeInSeconds.TotalHours >= 1 && serverPlaytimeInSeconds.Minutes == 0)
-                                    {
-                                        int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                        int hours = serverPlaytimeInSeconds.Hours;
-                                        formattedServerPlaytime = $"{days} days and {hours} hours";
-                                    }
-                                    else if (serverPlaytimeInSeconds.TotalHours >= 1)
-                                    {
-                                        int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                        int hours = serverPlaytimeInSeconds.Hours;
-                                        int minutes = serverPlaytimeInSeconds.Minutes;
-                                        formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
-                                    }
-                                    else
-                                    {
-                                        int days = (int)serverPlaytimeInSeconds.TotalDays;
-                                        int minutes = serverPlaytimeInSeconds.Minutes;
-                                        formattedServerPlaytime = $"{days} days and {minutes} hours";
-                                    }
+                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    formattedServerPlaytime = $"{days} days and {hours} hours";
                                 }
                                 else if (serverPlaytimeInSeconds.TotalHours >= 1)
                                 {
-                                    if (serverPlaytimeInSeconds.Minutes == 0)
-                                    {
-                                        int hours = serverPlaytimeInSeconds.Hours;
-                                        formattedServerPlaytime = $"{hours} hours";
-                                    }
-                                    else
-                                    {
-                                        int hours = serverPlaytimeInSeconds.Hours;
-                                        int minutes = serverPlaytimeInSeconds.Minutes;
-                                        formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
-                                    }
+                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    int minutes = serverPlaytimeInSeconds.Minutes;
+                                    formattedServerPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
                                 }
                                 else
                                 {
+                                    int days = (int)serverPlaytimeInSeconds.TotalDays;
                                     int minutes = serverPlaytimeInSeconds.Minutes;
-                                    formattedServerPlaytime = $"{minutes} minutes";
+                                    formattedServerPlaytime = $"{days} days and {minutes} hours";
                                 }
-
-                                string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
-                                bServerHourCounter.Text = $"{formattedHour} hours played";
-                                bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
                             }
-
-                            // Check if the time is 0
-                            if (tarkovPlaytime == 0)
+                            else if (serverPlaytimeInSeconds.TotalHours >= 1)
                             {
-                                bTarkovTimeCounter.Text = "No playtime recorded";
-                                bTarkovHourCount.Text = "No playtime recorded";
+                                if (serverPlaytimeInSeconds.Minutes == 0)
+                                {
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    formattedServerPlaytime = $"{hours} hours";
+                                }
+                                else
+                                {
+                                    int hours = serverPlaytimeInSeconds.Hours;
+                                    int minutes = serverPlaytimeInSeconds.Minutes;
+                                    formattedServerPlaytime = $"{hours} hours and {minutes} minutes";
+                                }
                             }
                             else
                             {
-                                // Format time based on days, hours and minutes
-                                string formattedTarkovPlaytime = "";
+                                int minutes = serverPlaytimeInSeconds.Minutes;
+                                formattedServerPlaytime = $"{minutes} minutes";
+                            }
 
-                                if (tarkovPlaytimeInSeconds.TotalDays >= 1)
+                            string formattedHour = string.Format("{0:#,##0}", serverPlaytimeInSeconds.TotalHours);
+                            bServerHourCounter.Text = $"{formattedHour} hours played";
+                            bServerTimeCounter.Text = $"{formattedServerPlaytime} played";
+                        }
+
+                        // Check if the time is 0
+                        if (tarkovPlaytime == 0)
+                        {
+                            bTarkovTimeCounter.Text = "No playtime recorded";
+                            bTarkovHourCount.Text = "No playtime recorded";
+                        }
+                        else
+                        {
+                            // Format time based on days, hours and minutes
+                            string formattedTarkovPlaytime = "";
+
+                            if (tarkovPlaytimeInSeconds.TotalDays >= 1)
+                            {
+                                if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
                                 {
-                                    if (tarkovPlaytimeInSeconds.TotalHours >= 1 && tarkovPlaytimeInSeconds.Minutes == 0)
-                                    {
-                                        int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                        int hours = tarkovPlaytimeInSeconds.Hours;
-                                        formattedTarkovPlaytime = $"{days} days and {hours} hours";
-                                    }
-                                    else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
-                                    {
-                                        int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                        int hours = tarkovPlaytimeInSeconds.Hours;
-                                        int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                        formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
-                                    }
-                                    else
-                                    {
-                                        int days = (int)tarkovPlaytimeInSeconds.TotalDays;
-                                        int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                        formattedTarkovPlaytime = $"{days} days and {minutes} hours";
-                                    }
+                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    formattedTarkovPlaytime = $"{days} days and {hours} hours";
                                 }
                                 else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
                                 {
-                                    if (tarkovPlaytimeInSeconds.Minutes == 0)
-                                    {
-                                        int hours = tarkovPlaytimeInSeconds.Hours;
-                                        formattedTarkovPlaytime = $"{hours} hours";
-                                    }
-                                    else
-                                    {
-                                        int hours = tarkovPlaytimeInSeconds.Hours;
-                                        int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                        formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
-                                    }
+                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                    formattedTarkovPlaytime = $"{days} days, {hours} hours and {minutes} minutes";
                                 }
                                 else
                                 {
+                                    int days = (int)tarkovPlaytimeInSeconds.TotalDays;
                                     int minutes = tarkovPlaytimeInSeconds.Minutes;
-                                    formattedTarkovPlaytime = $"{minutes} minutes";
+                                    formattedTarkovPlaytime = $"{days} days and {minutes} hours";
                                 }
-
-                                string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
-                                bTarkovHourCount.Text = $"{formattedHour} hours played";
-                                bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
                             }
+                            else if (tarkovPlaytimeInSeconds.TotalHours >= 1)
+                            {
+                                if (tarkovPlaytimeInSeconds.Minutes == 0)
+                                {
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    formattedTarkovPlaytime = $"{hours} hours";
+                                }
+                                else
+                                {
+                                    int hours = tarkovPlaytimeInSeconds.Hours;
+                                    int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                    formattedTarkovPlaytime = $"{hours} hours and {minutes} minutes";
+                                }
+                            }
+                            else
+                            {
+                                int minutes = tarkovPlaytimeInSeconds.Minutes;
+                                formattedTarkovPlaytime = $"{minutes} minutes";
+                            }
+
+                            string formattedHour = string.Format("{0:#,##0}", tarkovPlaytimeInSeconds.TotalHours);
+                            bTarkovHourCount.Text = $"{formattedHour} hours played";
+                            bTarkovTimeCounter.Text = $"{formattedTarkovPlaytime} played";
                         }
                     }
                 }
@@ -475,17 +469,14 @@ namespace SPTMiniLauncher
             bool profilesFileExists = File.Exists(profileFile);
             if (profilesFileExists)
             {
-                using (StreamReader sr = new StreamReader(profileFile))
-                {
-                    string readProfile = sr.ReadToEnd();
-                    JObject jReadProfile = JObject.Parse(readProfile);
-                    string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
+                string readProfile = File.ReadAllText(profileFile);
+                JObject jReadProfile = JObject.Parse(readProfile);
+                string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
 
-                    string nameOutput = Path.GetFileName(profileFile);
-                    nameOutput = nameOutput.Replace(".json", "");
+                string nameOutput = Path.GetFileName(profileFile);
+                nameOutput = nameOutput.Replace(".json", "");
 
-                    result = $"{nameOutput} - [{_Nickname}]";
-                }
+                result = $"{nameOutput} - [{_Nickname}]";
             }
 
             return result;
@@ -1045,22 +1036,19 @@ namespace SPTMiniLauncher
                             string akiServerJson = Path.Combine(akiDatabase, "server.json");
                             if (File.Exists(akiServerJson))
                             {
-                                using (StreamReader sr = new StreamReader(akiServerJson))
+                                string readJson = File.ReadAllText(akiServerJson);
+                                dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
+                                jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
+                                string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
+                                try
                                 {
-                                    string readJson = sr.ReadToEnd();
-                                    dynamic jsonObject = JsonConvert.DeserializeObject(readJson);
-                                    jsonObject["port"] = Convert.ToInt32(txtPortCheckBar.Text);
-                                    string output = JsonConvert.SerializeObject(jsonObject, Formatting.Indented);
-                                    try
-                                    {
-                                        File.WriteAllText(akiServerJson, output);
-                                        Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
-                                    }
-                                    catch (Exception err)
-                                    {
-                                        Debug.WriteLine($"ERROR: {err.ToString()}");
-                                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                    }
+                                    File.WriteAllText(akiServerJson, output);
+                                    Properties.Settings.Default.usePort = Convert.ToInt32(txtPortCheckBar.Text);
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
                             }
                         }
@@ -1095,106 +1083,129 @@ namespace SPTMiniLauncher
 
         private void btnImportExistingConfig_Click(object sender, EventArgs e)
         {
-            string sptminiSuccess = "";
-            string tpaSuccess = "";
-            string gallerySuccess = "";
-
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dialog.IsFolderPicker = true;
-
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            if (btnImportExistingConfig.Text.ToLower() == "browse...")
             {
-                string fullPath = Path.GetFullPath(dialog.FileName);
+                string sptminiSuccess = "";
+                string tpaSuccess = "";
+                string gallerySuccess = "";
 
-                if (Directory.Exists(fullPath))
+                CommonOpenFileDialog dialog = new CommonOpenFileDialog();
+                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                dialog.IsFolderPicker = true;
+
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    if (File.Exists(Path.Combine(fullPath, "SPT Mini.json")) &&
-                        File.Exists(Path.Combine(fullPath, "Third Party Apps.json")) &&
-                        File.Exists(Path.Combine(fullPath, "Gallery.json")))
+                    string fullPath = Path.GetFullPath(dialog.FileName);
+
+                    if (Directory.Exists(fullPath))
                     {
-                        string[] configs = {
+                        if (File.Exists(Path.Combine(fullPath, "SPT Mini.json")) &&
+                            File.Exists(Path.Combine(fullPath, "Third Party Apps.json")) &&
+                            File.Exists(Path.Combine(fullPath, "Gallery.json")))
+                        {
+                            string[] configs = {
                             Path.Combine(fullPath, "SPT Mini.json"),
                             Path.Combine(fullPath, "Third Party Apps.json"),
                             Path.Combine(fullPath, "Gallery.json")
                         };
 
-                        string sptmini_config = configs[0];
-                        string tpa_config = configs[1];
-                        string galleryjson = configs[2];
+                            string sptmini_config = configs[0];
+                            string tpa_config = configs[1];
+                            string galleryjson = configs[2];
 
-                        bool sptminiExists = File.Exists(Path.Combine(currentDir, "SPT Mini.json"));
-                        bool tpaExists = File.Exists(Path.Combine(currentDir, "Third Party Apps.json"));
-                        bool galleryExists = File.Exists(Path.Combine(currentDir, "Gallery.json"));
+                            bool sptminiExists = File.Exists(Path.Combine(currentDir, "SPT Mini.json"));
+                            bool tpaExists = File.Exists(Path.Combine(currentDir, "Third Party Apps.json"));
+                            bool galleryExists = File.Exists(Path.Combine(currentDir, "Gallery.json"));
 
-                        try
-                        {
-                            if (sptminiExists)
+                            try
                             {
-                                File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])), true);
-                            }
-                            else
-                            {
-                                try
+                                if (sptminiExists)
                                 {
                                     File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])), true);
-                                    sptminiSuccess = "Imported successfully";
                                 }
-                                catch (Exception err)
+                                else
                                 {
-                                    sptminiSuccess = "Failed to import";
+                                    try
+                                    {
+                                        File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])), true);
+                                        sptminiSuccess = "Imported successfully";
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        sptminiSuccess = "Failed to import";
+                                    }
                                 }
-                            }
 
-                            if (tpaExists)
-                            {
-                                File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])), true);
-                            }
-                            else
-                            {
-                                try
+                                if (tpaExists)
                                 {
                                     File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])), true);
-                                    tpaSuccess = "Imported successfully";
                                 }
-                                catch (Exception err)
+                                else
                                 {
-                                    tpaSuccess = "Failed to import";
+                                    try
+                                    {
+                                        File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])), true);
+                                        tpaSuccess = "Imported successfully";
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        tpaSuccess = "Failed to import";
+                                    }
                                 }
-                            }
 
-                            if (galleryExists)
-                            {
-                                File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])), true);
-                            }
-                            else
-                            {
-                                try
+                                if (galleryExists)
                                 {
                                     File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])), true);
-                                    gallerySuccess = "Imported successfully";
                                 }
-                                catch (Exception err)
+                                else
                                 {
-                                    gallerySuccess = "Failed to import";
+                                    try
+                                    {
+                                        File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])), true);
+                                        gallerySuccess = "Imported successfully";
+                                    }
+                                    catch (Exception err)
+                                    {
+                                        gallerySuccess = "Failed to import";
+                                    }
                                 }
                             }
-                        }
-                        catch (Exception err)
-                        {
-                            Debug.WriteLine($"ERROR: {err.ToString()}");
-                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                        }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
 
-                        string content = $"Imported config files:{Environment.NewLine}{Environment.NewLine}" +
-                             $"{Environment.NewLine}" +
-                             $"Gallery.json: {gallerySuccess}{Environment.NewLine}" +
-                             $"SPT Mini.json: {sptminiSuccess}{Environment.NewLine}" +
-                             $"Third Party Apps.json: {tpaSuccess}{Environment.NewLine}{Environment.NewLine}" +
-                             $"{this.Text} will restart to apply the new settings.";
+                            string content = $"Imported config files:{Environment.NewLine}{Environment.NewLine}" +
+                                 $"{Environment.NewLine}" +
+                                 $"Gallery.json: {gallerySuccess}{Environment.NewLine}" +
+                                 $"SPT Mini.json: {sptminiSuccess}{Environment.NewLine}" +
+                                 $"Third Party Apps.json: {tpaSuccess}{Environment.NewLine}{Environment.NewLine}" +
+                                 $"{this.Text} will restart to apply the new settings.";
 
-                        mainForm.showError(content);
-                        Application.Restart();
+                            mainForm.showError(content);
+                            Application.Restart();
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (MessageBox.Show($"Would you like to open the Config Editor?{Environment.NewLine}{Environment.NewLine}" +
+                                    $"This will close SPT Launcher.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    string configPath = Path.Combine(currentDir, "Config Editor.exe");
+                    bool configPathExists = File.Exists(configPath);
+                    if (configPathExists)
+                    {
+                        ProcessStartInfo newApp = new ProcessStartInfo();
+                        newApp.WorkingDirectory = currentDir;
+                        newApp.FileName = Path.GetFileName(configPath);
+                        newApp.UseShellExecute = true;
+                        newApp.Verb = "open";
+
+                        Process.Start(newApp);
+                        Application.Exit();
                     }
                 }
             }

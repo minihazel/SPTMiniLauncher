@@ -164,15 +164,12 @@ namespace SPTMiniLauncher
 
                         if (thirdPartyFileExists)
                         {
-                            using (StreamReader sr = new StreamReader(thirdPartyFile))
-                            {
-                                string thirdPartycontent = sr.ReadToEnd();
-                                JObject obj = JObject.Parse(thirdPartycontent);
-                                JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
-                                thirdPartyApps.Add(newApp);
-                                string updatedJSON = obj.ToString();
-                                File.WriteAllText(thirdPartyFile, updatedJSON);
-                            }
+                            string thirdPartycontent = File.ReadAllText(thirdPartyFile);
+                            JObject obj = JObject.Parse(thirdPartycontent);
+                            JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
+                            thirdPartyApps.Add(newApp);
+                            string updatedJSON = obj.ToString();
+                            File.WriteAllText(thirdPartyFile, updatedJSON);
                         }
 
                         ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text, type);
@@ -194,15 +191,12 @@ namespace SPTMiniLauncher
 
                         if (thirdPartyFileExists)
                         {
-                            using (StreamReader sr = new StreamReader(thirdPartyFile))
-                            {
-                                string thirdPartycontent = sr.ReadToEnd();
-                                JObject obj = JObject.Parse(thirdPartycontent);
-                                JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
-                                thirdPartyApps.Add(newApp);
-                                string updatedJSON = obj.ToString();
-                                File.WriteAllText(thirdPartyFile, updatedJSON);
-                            }
+                            string thirdPartycontent = File.ReadAllText(thirdPartyFile);
+                            JObject obj = JObject.Parse(thirdPartycontent);
+                            JArray thirdPartyApps = (JArray)obj["ThirdPartyApps"];
+                            thirdPartyApps.Add(newApp);
+                            string updatedJSON = obj.ToString();
+                            File.WriteAllText(thirdPartyFile, updatedJSON);
                         }
 
                         ThirdPartyInfo newAppInfo = new ThirdPartyInfo(txtCustomName.Text, txtPathToApp.Text, type);
