@@ -1128,6 +1128,7 @@
             // 
             // optionsWindow
             // 
+            this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
@@ -1139,11 +1140,11 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
+            this.Controls.Add(this.panelLauncherSettings);
+            this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
             this.Controls.Add(this.panelPresets);
             this.Controls.Add(this.panelTimeDisplay);
-            this.Controls.Add(this.panelLauncherSettings);
-            this.Controls.Add(this.panelTarkovSettings);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -1156,6 +1157,8 @@
             this.Text = " Options";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.optionsWindow_FormClosing);
             this.Load += new System.EventHandler(this.optionsWindow_Load);
+            this.DragDrop += new System.Windows.Forms.DragEventHandler(this.optionsWindow_DragDrop);
+            this.DragEnter += new System.Windows.Forms.DragEventHandler(this.optionsWindow_DragEnter);
             this.panelMinimizeOnSPTLaunch.ResumeLayout(false);
             this.panelEnableTimedAkiLauncher.ResumeLayout(false);
             this.panelMisc.ResumeLayout(false);

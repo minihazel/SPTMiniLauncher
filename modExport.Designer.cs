@@ -44,6 +44,7 @@
             this.bCounterServerMods = new System.Windows.Forms.Label();
             this.statusExportingMods = new System.Windows.Forms.Label();
             this.chkOpenToggle = new System.Windows.Forms.CheckBox();
+            this.chkPackageToggle = new System.Windows.Forms.CheckBox();
             this.panelExportSelectedMods.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -247,12 +248,23 @@
             this.chkOpenToggle.Text = "Only open mod folder on double-click";
             this.chkOpenToggle.UseVisualStyleBackColor = true;
             // 
+            // chkPackageToggle
+            // 
+            this.chkPackageToggle.AutoSize = true;
+            this.chkPackageToggle.Location = new System.Drawing.Point(347, 10);
+            this.chkPackageToggle.Name = "chkPackageToggle";
+            this.chkPackageToggle.Size = new System.Drawing.Size(202, 21);
+            this.chkPackageToggle.TabIndex = 15;
+            this.chkPackageToggle.Text = "Open package.json on open";
+            this.chkPackageToggle.UseVisualStyleBackColor = true;
+            // 
             // modExport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 661);
+            this.Controls.Add(this.chkPackageToggle);
             this.Controls.Add(this.chkOpenToggle);
             this.Controls.Add(this.separatorExportMods);
             this.Controls.Add(this.bCounterServerMods);
@@ -298,5 +310,6 @@
         private System.Windows.Forms.Label bCounterServerMods;
         private System.Windows.Forms.Label statusExportingMods;
         private System.Windows.Forms.CheckBox chkOpenToggle;
+        private System.Windows.Forms.CheckBox chkPackageToggle;
     }
 }

@@ -728,13 +728,29 @@ namespace SPTMiniLauncher
                             bool modsFolderExists = Directory.Exists(modsFolder);
                             if (modsFolderExists)
                             {
-                                ProcessStartInfo newApp = new ProcessStartInfo();
-                                newApp.WorkingDirectory = modsFolder;
-                                newApp.FileName = Path.GetFileName(label.Text);
-                                newApp.UseShellExecute = true;
-                                newApp.Verb = "open";
+                                if (!chkPackageToggle.Checked)
+                                {
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = modsFolder;
+                                    newApp.FileName = Path.GetFileName(label.Text);
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
 
-                                Process.Start(newApp);
+                                    Process.Start(newApp);
+                                }
+                                else
+                                {
+                                    string modPath = Path.Combine(modsFolder, Path.GetFileName(label.Text));
+                                    string packageJson = Path.Combine(modPath, "package.json");
+
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = modPath;
+                                    newApp.FileName = Path.GetFileName(packageJson);
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
+
+                                    Process.Start(newApp);
+                                }
                             }
                         }
                     }

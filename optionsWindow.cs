@@ -1094,8 +1094,7 @@ namespace SPTMiniLauncher
 
                 if (Directory.Exists(fullPath))
                 {
-                    if (File.Exists(Path.Combine(fullPath, Path.GetFileName(Application.ExecutablePath))) &&
-                        File.Exists(Path.Combine(fullPath, "SPT Mini.json")) &&
+                    if (File.Exists(Path.Combine(fullPath, "SPT Mini.json")) &&
                         File.Exists(Path.Combine(fullPath, "Third Party Apps.json")) &&
                         File.Exists(Path.Combine(fullPath, "Gallery.json")))
                     {
@@ -1117,14 +1116,13 @@ namespace SPTMiniLauncher
                         {
                             if (sptminiExists)
                             {
-                                File.Delete(sptmini_config);
-                                File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])));
+                                File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])), true);
                             }
                             else
                             {
                                 try
                                 {
-                                    File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])));
+                                    File.Copy(configs[0], Path.Combine(currentDir, Path.GetFileName(configs[0])), true);
                                     sptminiSuccess = "Imported successfully";
                                 }
                                 catch (Exception err)
@@ -1135,14 +1133,13 @@ namespace SPTMiniLauncher
 
                             if (tpaExists)
                             {
-                                File.Delete(tpa_config);
-                                File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])));
+                                File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])), true);
                             }
                             else
                             {
                                 try
                                 {
-                                    File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])));
+                                    File.Copy(configs[1], Path.Combine(currentDir, Path.GetFileName(configs[1])), true);
                                     tpaSuccess = "Imported successfully";
                                 }
                                 catch (Exception err)
@@ -1153,14 +1150,13 @@ namespace SPTMiniLauncher
 
                             if (galleryExists)
                             {
-                                File.Delete(galleryjson);
-                                File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])));
+                                File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])), true);
                             }
                             else
                             {
                                 try
                                 {
-                                    File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])));
+                                    File.Copy(configs[2], Path.Combine(currentDir, Path.GetFileName(configs[2])), true);
                                     gallerySuccess = "Imported successfully";
                                 }
                                 catch (Exception err)
@@ -1175,16 +1171,28 @@ namespace SPTMiniLauncher
                             MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                         }
 
-                        string content = $"Import finished:{Environment.NewLine}{Environment.NewLine}" +
-                            $"{Environment.NewLine}" +
-                            $"SPT Mini.json: {sptminiSuccess}{Environment.NewLine}" +
-                            $"Third Party Apps.json: {tpaSuccess}{Environment.NewLine}" +
-                            $"Gallery.json: {gallerySuccess}";
+                        string content = $"Imported config files:{Environment.NewLine}{Environment.NewLine}" +
+                             $"{Environment.NewLine}" +
+                             $"Gallery.json: {gallerySuccess}{Environment.NewLine}" +
+                             $"SPT Mini.json: {sptminiSuccess}{Environment.NewLine}" +
+                             $"Third Party Apps.json: {tpaSuccess}{Environment.NewLine}{Environment.NewLine}" +
+                             $"{this.Text} will restart to apply the new settings.";
 
                         mainForm.showError(content);
+                        Application.Restart();
                     }
                 }
             }
+        }
+
+        private void optionsWindow_DragEnter(object sender, DragEventArgs e)
+        {
+            
+        }
+
+        private void optionsWindow_DragDrop(object sender, DragEventArgs e)
+        {
+            
         }
     }
 }
