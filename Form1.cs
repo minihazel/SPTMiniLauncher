@@ -2076,7 +2076,6 @@ namespace SPTMiniLauncher
                                 else if (serverOptionsStreets[i].ToLower() == "view installed mods")
                                 {
                                     lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
-
                                     lbl.Name = "launcherViewInstalledMods";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.LightGray;
@@ -2101,14 +2100,16 @@ namespace SPTMiniLauncher
                         else
                         {
                             string[] serverOptionsStreetsSimple = {
-                        "- ACTIONS -",
-                        "Clear cache",
-                        "Launch SPT-AKI",
-                        "Stop SPT-AKI",
-                        "- MODS -",
-                        "View installed mods",
-                        "- THIRDPARTY -"
-                    };
+                                "- ACTIONS -",
+                                "Clear cache",
+                                "Launch SPT-AKI",
+                                "Stop SPT-AKI",
+                                "- MODS -",
+                                "View installed mods",
+                                "Open server mods",
+                                "Open client mods",
+                                "- THIRDPARTY -"
+                            };
 
                             for (int i = 0; i < serverOptionsStreetsSimple.Length; i++)
                             {
@@ -2170,15 +2171,7 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptionsStreetsSimple[i].ToLower() == "view installed mods")
                                 {
-                                    int installedmods = fetchInstalledMods();
-
-                                    if (installedmods == 0)
-                                        lbl.Text = $"No mods to view";
-                                    else if (installedmods == 1)
-                                        lbl.Text = $"View installed mod - {fetchInstalledMods().ToString()} total";
-                                    else if (installedmods > 1)
-                                        lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
-
+                                    lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
                                     lbl.Name = "launcherViewInstalledMods";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.LightGray;
