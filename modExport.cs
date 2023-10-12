@@ -547,17 +547,19 @@ namespace SPTMiniLauncher
         private void refreshClientCounter()
         {
             int counter = countLabelsWithColor(panelClientMods, Color.DodgerBlue);
-            bCounterClientMods.Text = counter.ToString();
+            bCounterClientMods.Text = panelClientMods.Controls.Count.ToString();
         }
 
         private void refreshServerCounter()
         {
             int counter = countLabelsWithColor(panelServerMods, Color.DodgerBlue);
-            bCounterServerMods.Text = counter.ToString();
+            bCounterServerMods.Text = panelServerMods.Controls.Count.ToString();
         }
 
         private void loadClientMods()
         {
+            List<string> folderMods = new List<string>();
+
             string bepinFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx");
             bool bepinFolderExists = Directory.Exists(bepinFolder);
             if (bepinFolderExists)
@@ -571,16 +573,29 @@ namespace SPTMiniLauncher
                     string[] modsFolders = Directory.GetDirectories(pluginsFolder);
                     foreach (string mod in modsFolders)
                     {
-                        if (Path.GetFileName(mod) == "spt")
-                            continue;
-
-                        arrInsert(ref clientMods, Path.GetFileName(mod));
+                        string modName = Path.GetFileName(mod);
+                        if (modName != "spt")
+                        {
+                            arrInsert(ref clientMods, $"📂 {Path.GetFileName(mod)}");
+                        }
                     }
 
-                    string[] modsFiles = Directory.GetFiles(pluginsFolder, "*.dll");
+                    bool c = false;
+                    string[] modsFiles = Directory.GetFiles(pluginsFolder);
                     foreach (string mod in modsFiles)
                     {
-                        arrInsert(ref clientMods, Path.GetFileName(mod));
+                        foreach (string folderMod in modsFolders)
+                        {
+                            if (mod.Contains(folderMod))
+                            {
+                                c = true;
+                                break;
+                            }
+                        }
+                        if (!c)
+                        {
+                            arrInsert(ref clientMods, $"📄 {Path.GetFileName(mod)}"); ;
+                        }
                     }
                 }
             }
@@ -601,7 +616,7 @@ namespace SPTMiniLauncher
                     string[] mods = Directory.GetDirectories(modsFolder);
                     foreach (string mod in mods)
                     {
-                        arrInsert(ref serverMods, Path.GetFileName(mod));
+                        arrInsert(ref serverMods, $"📂 {Path.GetFileName(mod)}");
                     }
                 }
             }
@@ -622,7 +637,7 @@ namespace SPTMiniLauncher
                 lbl.Text = clientMods[i];
                 lbl.BackColor = listBackcolor;
                 lbl.ForeColor = Color.LightGray;
-                lbl.Font = new System.Drawing.Font("Bahnschrift Light", 9, System.Drawing.FontStyle.Regular);
+                lbl.Font = new System.Drawing.Font("Bahnschrift Light", 10, System.Drawing.FontStyle.Regular);
 
                 lbl.Margin = new Padding(1, 1, 1, 1);
                 lbl.MouseEnter += new EventHandler(mods_MouseEnter);
@@ -650,7 +665,7 @@ namespace SPTMiniLauncher
                 lbl.Text = serverMods[i];
                 lbl.BackColor = listBackcolor;
                 lbl.ForeColor = Color.LightGray;
-                lbl.Font = new System.Drawing.Font("Bahnschrift Light", 9, System.Drawing.FontStyle.Regular);
+                lbl.Font = new System.Drawing.Font("Bahnschrift Light", 10, System.Drawing.FontStyle.Regular);
 
                 lbl.Margin = new Padding(1, 1, 1, 1);
                 lbl.MouseEnter += new EventHandler(mods_MouseEnter);
@@ -709,9 +724,10 @@ namespace SPTMiniLauncher
                                 {
                                     ProcessStartInfo newApp = new ProcessStartInfo();
                                     newApp.WorkingDirectory = pluginsFolder;
-                                    newApp.FileName = Path.GetFileName(label.Text);
+                                    newApp.FileName = Path.GetFileName(label.Text.Substring(3));
                                     newApp.UseShellExecute = true;
                                     newApp.Verb = "open";
+                                    Console.WriteLine(label.Text.Substring(3));
 
                                     Process.Start(newApp);
                                 }
@@ -732,7 +748,7 @@ namespace SPTMiniLauncher
                                 {
                                     ProcessStartInfo newApp = new ProcessStartInfo();
                                     newApp.WorkingDirectory = modsFolder;
-                                    newApp.FileName = Path.GetFileName(label.Text);
+                                    newApp.FileName = Path.GetFileName(label.Text.Substring(3));
                                     newApp.UseShellExecute = true;
                                     newApp.Verb = "open";
 
@@ -740,7 +756,7 @@ namespace SPTMiniLauncher
                                 }
                                 else
                                 {
-                                    string modPath = Path.Combine(modsFolder, Path.GetFileName(label.Text));
+                                    string modPath = Path.Combine(modsFolder, Path.GetFileName(label.Text.Substring(3)));
                                     string packageJson = Path.Combine(modPath, "package.json");
 
                                     ProcessStartInfo newApp = new ProcessStartInfo();
@@ -755,7 +771,6 @@ namespace SPTMiniLauncher
                         }
                     }
                 }
-
                 /*
                 if (label.ForeColor == Color.DodgerBlue)
                 {
@@ -797,10 +812,9 @@ namespace SPTMiniLauncher
                             {
                                 ProcessStartInfo newApp = new ProcessStartInfo();
                                 newApp.WorkingDirectory = pluginsFolder;
-                                newApp.FileName = Path.GetFileName(label.Text);
+                                newApp.FileName = Path.GetFileName(label.Text.Substring(3));
                                 newApp.UseShellExecute = true;
                                 newApp.Verb = "open";
-
                                 Process.Start(newApp);
                             }
                         }
@@ -818,7 +832,7 @@ namespace SPTMiniLauncher
                         {
                             ProcessStartInfo newApp = new ProcessStartInfo();
                             newApp.WorkingDirectory = modsFolder;
-                            newApp.FileName = Path.GetFileName(label.Text);
+                            newApp.FileName = Path.GetFileName(label.Text.Substring(3));
                             newApp.UseShellExecute = true;
                             newApp.Verb = "open";
 

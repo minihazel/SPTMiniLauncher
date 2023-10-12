@@ -1316,10 +1316,11 @@ namespace SPTMiniLauncher
 
         public int fetchInstalledMods()
         {
-            int clientFolders = 0;
-            int clientFiles = 0;
-            int serverFolders = 0;
+            List<string> currentmods = new List<string>();
+            List<string> folderMods = new List<string>();
+            List<string> fileMods = new List<string>();
 
+            int serverFolders = 0;
             string clientModsBepinFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx");
             string clientModsPluginsFolder = Path.Combine(clientModsBepinFolder, "plugins");
 
@@ -1330,9 +1331,57 @@ namespace SPTMiniLauncher
             bool pluginsExists = Directory.Exists(clientModsPluginsFolder);
             if (bepinexExists && pluginsExists)
             {
-                clientFolders = Directory.GetDirectories(clientModsPluginsFolder).Length;
-                clientFiles = Directory.GetFiles(clientModsPluginsFolder, "*.dll").Length;
+                string[] modsFolders = Directory.GetDirectories(clientModsPluginsFolder);
+                string[] modsFiles = Directory.GetFiles(clientModsPluginsFolder);
+
+                foreach (string mod in modsFolders)
+                {
+                    string modName = Path.GetFileName(mod).Replace(".dll", "");
+                    string possiblePath = Path.Combine(mod, $"{modName}.dll");
+                    if (modName != "spt")
+                    {
+                        bool possibleFileExists = File.Exists(possiblePath);
+                        if (possibleFileExists)
+                        {
+                            currentmods.Add($"FolderWithFileInside: {modName}");
+                            folderMods.Add(modName);
+                        }
+                    }
+                }
+
+                foreach (string mod in modsFiles)
+                {
+                    string modName = Path.GetFileNameWithoutExtension(mod);
+                    currentmods.Add($"Folder: {modName}");
+                    fileMods.Add(modName);
+                }
             }
+
+            /*
+            foreach (string item in modsFolders)
+            {
+                if (modName.Contains(item))
+                {
+                    break;
+                }
+            }
+
+            string modName = Path.GetFileNameWithoutExtension(mod);
+            string filePath = Path.Combine(mod, $"{modName}.dll");
+            string folderPath = Path.Combine(mod, modName);
+
+            bool fileExists = File.Exists(filePath);
+            bool folderExists = Directory.Exists(folderPath);
+
+            if (fileExists && folderExists)
+            {
+                clientFolders++;
+            }
+            else if (fileExists && !folderExists)
+            {
+                clientFiles++;
+            }
+            */
 
             bool userExists = Directory.Exists(serverModsUserFolder);
             bool modsExists = Directory.Exists(serverModsModsFolder);
@@ -1341,8 +1390,11 @@ namespace SPTMiniLauncher
                 serverFolders = Directory.GetDirectories(serverModsModsFolder).Length;
             }
 
-            int total = clientFiles + clientFiles + serverFolders;
-            total = total - 1;
+            int clientMods = currentmods.Count;
+            int total = clientMods + serverFolders;
+
+            Console.WriteLine(clientMods);
+            Console.WriteLine(serverFolders);
 
             return total;
         }
@@ -2023,14 +2075,7 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptionsStreets[i].ToLower() == "view installed mods")
                                 {
-                                    int installedmods = fetchInstalledMods();
-
-                                    if (installedmods == 0)
-                                        lbl.Text = $"No mods to view";
-                                    else if (installedmods == 1)
-                                        lbl.Text = $"View installed mod - {fetchInstalledMods().ToString()} total";
-                                    else if (installedmods > 1)
-                                        lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+                                    lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
 
                                     lbl.Name = "launcherViewInstalledMods";
                                     lbl.BackColor = listBackcolor;

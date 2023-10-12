@@ -224,6 +224,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\folder.png" />
     <Content Include="rocket.ico" />
   </ItemGroup>
   <ItemGroup>

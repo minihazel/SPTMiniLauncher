@@ -194,6 +194,7 @@
             this.boxSelectedServerPlaceholder.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(35)))), ((int)(((byte)(35)))), ((int)(((byte)(35)))));
             this.boxSelectedServerPlaceholder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.boxSelectedServerPlaceholder.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.boxSelectedServerPlaceholder.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.boxSelectedServerPlaceholder.Location = new System.Drawing.Point(0, 34);
             this.boxSelectedServerPlaceholder.Name = "boxSelectedServerPlaceholder";
             this.boxSelectedServerPlaceholder.Size = new System.Drawing.Size(312, 30);
