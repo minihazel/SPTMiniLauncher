@@ -1191,16 +1191,18 @@ namespace SPTMiniLauncher
             }
             else
             {
-                if (MessageBox.Show($"Would you like to open the Config Editor?{Environment.NewLine}{Environment.NewLine}" +
-                                    $"This will close SPT Launcher.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                string configEditor = Path.Combine(currentDir, "Config Editor.exe");
+                bool configEditorExists = File.Exists(configEditor);
+                if (configEditorExists)
                 {
-                    string configPath = Path.Combine(currentDir, "Config Editor.exe");
-                    bool configPathExists = File.Exists(configPath);
-                    if (configPathExists)
+                    if (MessageBox.Show($"Would you like to open the Config Editor?" +
+                                        $"{Environment.NewLine}" +
+                                        $"{Environment.NewLine}" +
+                                    $"This will close SPT Launcher.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         ProcessStartInfo newApp = new ProcessStartInfo();
                         newApp.WorkingDirectory = currentDir;
-                        newApp.FileName = Path.GetFileName(configPath);
+                        newApp.FileName = Path.GetFileName(configEditor);
                         newApp.UseShellExecute = true;
                         newApp.Verb = "open";
 
@@ -1208,8 +1210,28 @@ namespace SPTMiniLauncher
                         Application.Exit();
                     }
                 }
+                else
+                {
+                    if (MessageBox.Show($"Config Editor does not appear to be installed." +
+                                    $"{Environment.NewLine}" +
+                                    $"{Environment.NewLine}" +
+                                    $"Would you like to open the workshop page to download it?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        try
+                        {
+                            Process.Start("https://hub.sp-tarkov.com/files/file/1525-config-editor-spt-launcher");
+                        }
+                        catch (Exception err)
+                        {
+                            Debug.WriteLine($"ERROR: {err.ToString()}");
+                            MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                        }
+                    }
+                }
             }
         }
+        
+        // https://hub.sp-tarkov.com/files/file/1525-config-editor-spt-launcher
 
         private void optionsWindow_DragEnter(object sender, DragEventArgs e)
         {
