@@ -45,13 +45,16 @@
             this.statusExportingMods = new System.Windows.Forms.Label();
             this.chkOpenToggle = new System.Windows.Forms.CheckBox();
             this.chkPackageToggle = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.chkDeleteOnRightClick = new System.Windows.Forms.CheckBox();
             this.panelExportSelectedMods.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // titleClientMods
             // 
             this.titleClientMods.BackColor = System.Drawing.Color.Transparent;
-            this.titleClientMods.Location = new System.Drawing.Point(12, 30);
+            this.titleClientMods.Location = new System.Drawing.Point(12, 100);
             this.titleClientMods.Name = "titleClientMods";
             this.titleClientMods.Padding = new System.Windows.Forms.Padding(3, 0, 0, 10);
             this.titleClientMods.Size = new System.Drawing.Size(275, 40);
@@ -63,7 +66,7 @@
             // 
             this.titleServerMods.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.titleServerMods.BackColor = System.Drawing.Color.Transparent;
-            this.titleServerMods.Location = new System.Drawing.Point(347, 30);
+            this.titleServerMods.Location = new System.Drawing.Point(347, 100);
             this.titleServerMods.Name = "titleServerMods";
             this.titleServerMods.Padding = new System.Windows.Forms.Padding(3, 0, 0, 10);
             this.titleServerMods.Size = new System.Drawing.Size(275, 40);
@@ -148,9 +151,9 @@
             this.separatorExportMods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.separatorExportMods.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.separatorExportMods.Location = new System.Drawing.Point(339, 15);
+            this.separatorExportMods.Location = new System.Drawing.Point(339, 114);
             this.separatorExportMods.Name = "separatorExportMods";
-            this.separatorExportMods.Size = new System.Drawing.Size(1, 630);
+            this.separatorExportMods.Size = new System.Drawing.Size(1, 531);
             this.separatorExportMods.TabIndex = 7;
             // 
             // panelExportSelectedMods
@@ -186,9 +189,9 @@
             this.panelClientMods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left)));
             this.panelClientMods.AutoScroll = true;
-            this.panelClientMods.Location = new System.Drawing.Point(12, 81);
+            this.panelClientMods.Location = new System.Drawing.Point(12, 141);
             this.panelClientMods.Name = "panelClientMods";
-            this.panelClientMods.Size = new System.Drawing.Size(320, 567);
+            this.panelClientMods.Size = new System.Drawing.Size(320, 504);
             this.panelClientMods.TabIndex = 9;
             // 
             // panelServerMods
@@ -196,16 +199,16 @@
             this.panelServerMods.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panelServerMods.AutoScroll = true;
-            this.panelServerMods.Location = new System.Drawing.Point(347, 81);
+            this.panelServerMods.Location = new System.Drawing.Point(347, 141);
             this.panelServerMods.Name = "panelServerMods";
-            this.panelServerMods.Size = new System.Drawing.Size(320, 567);
+            this.panelServerMods.Size = new System.Drawing.Size(320, 504);
             this.panelServerMods.TabIndex = 10;
             // 
             // bCounterClientMods
             // 
             this.bCounterClientMods.BackColor = System.Drawing.Color.Transparent;
             this.bCounterClientMods.Font = new System.Drawing.Font("Bahnschrift Light", 14F);
-            this.bCounterClientMods.Location = new System.Drawing.Point(287, 30);
+            this.bCounterClientMods.Location = new System.Drawing.Point(287, 100);
             this.bCounterClientMods.Name = "bCounterClientMods";
             this.bCounterClientMods.Padding = new System.Windows.Forms.Padding(2, 0, 0, 8);
             this.bCounterClientMods.Size = new System.Drawing.Size(45, 40);
@@ -217,7 +220,7 @@
             // 
             this.bCounterServerMods.BackColor = System.Drawing.Color.Transparent;
             this.bCounterServerMods.Font = new System.Drawing.Font("Bahnschrift Light", 14F);
-            this.bCounterServerMods.Location = new System.Drawing.Point(622, 30);
+            this.bCounterServerMods.Location = new System.Drawing.Point(622, 100);
             this.bCounterServerMods.Name = "bCounterServerMods";
             this.bCounterServerMods.Padding = new System.Windows.Forms.Padding(2, 0, 0, 8);
             this.bCounterServerMods.Size = new System.Drawing.Size(45, 40);
@@ -241,7 +244,7 @@
             // chkOpenToggle
             // 
             this.chkOpenToggle.AutoSize = true;
-            this.chkOpenToggle.Location = new System.Drawing.Point(15, 10);
+            this.chkOpenToggle.Location = new System.Drawing.Point(12, 23);
             this.chkOpenToggle.Name = "chkOpenToggle";
             this.chkOpenToggle.Size = new System.Drawing.Size(269, 21);
             this.chkOpenToggle.TabIndex = 14;
@@ -251,12 +254,35 @@
             // chkPackageToggle
             // 
             this.chkPackageToggle.AutoSize = true;
-            this.chkPackageToggle.Location = new System.Drawing.Point(347, 10);
+            this.chkPackageToggle.Location = new System.Drawing.Point(12, 50);
             this.chkPackageToggle.Name = "chkPackageToggle";
             this.chkPackageToggle.Size = new System.Drawing.Size(202, 21);
             this.chkPackageToggle.TabIndex = 15;
             this.chkPackageToggle.Text = "Open package.json on open";
             this.chkPackageToggle.UseVisualStyleBackColor = true;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.chkDeleteOnRightClick);
+            this.groupBox1.Controls.Add(this.chkPackageToggle);
+            this.groupBox1.Controls.Add(this.chkOpenToggle);
+            this.groupBox1.ForeColor = System.Drawing.Color.LightGray;
+            this.groupBox1.Location = new System.Drawing.Point(12, 12);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(655, 85);
+            this.groupBox1.TabIndex = 16;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = " Options ";
+            // 
+            // chkDeleteOnRightClick
+            // 
+            this.chkDeleteOnRightClick.AutoSize = true;
+            this.chkDeleteOnRightClick.Location = new System.Drawing.Point(287, 23);
+            this.chkDeleteOnRightClick.Name = "chkDeleteOnRightClick";
+            this.chkDeleteOnRightClick.Size = new System.Drawing.Size(192, 21);
+            this.chkDeleteOnRightClick.TabIndex = 17;
+            this.chkDeleteOnRightClick.Text = "Delete mod on right-click";
+            this.chkDeleteOnRightClick.UseVisualStyleBackColor = true;
             // 
             // modExport
             // 
@@ -264,8 +290,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 661);
-            this.Controls.Add(this.chkPackageToggle);
-            this.Controls.Add(this.chkOpenToggle);
+            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.separatorExportMods);
             this.Controls.Add(this.bCounterServerMods);
             this.Controls.Add(this.bCounterClientMods);
@@ -289,8 +314,9 @@
             this.Text = "Mod Viewer";
             this.Load += new System.EventHandler(this.modExport_Load);
             this.panelExportSelectedMods.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -311,5 +337,7 @@
         private System.Windows.Forms.Label statusExportingMods;
         private System.Windows.Forms.CheckBox chkOpenToggle;
         private System.Windows.Forms.CheckBox chkPackageToggle;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.CheckBox chkDeleteOnRightClick;
     }
 }
