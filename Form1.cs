@@ -2250,7 +2250,7 @@ namespace SPTMiniLauncher
 
                 if (label.Text.ToLower().Contains("open a profile -"))
                 {
-                    profileSelector frm = new profileSelector();
+                    profileSelector frm = new profileSelector(this, bProfilePlaceholder);
 
                     frm.boxSelectedServerTitle = boxSelectedServerTitle.Text;
                     frm.selector = "profile_open";
@@ -4219,7 +4219,14 @@ namespace SPTMiniLauncher
         {
             if (Properties.Settings.Default.server_path != null)
             {
-                profile_ids.DroppedDown = true;
+                profileSelector frm = new profileSelector(this, bProfilePlaceholder);
+
+                frm.boxSelectedServerTitle = boxSelectedServerTitle.Text;
+                frm.selector = "profile_select";
+
+                frm.ShowDialog();
+
+                // profile_ids.DroppedDown = true;
 
                 /*
                 if (boxSelectedServerTitle.Text != "SPT Placeholder")
@@ -4254,6 +4261,11 @@ namespace SPTMiniLauncher
         private void bProfilePlaceholder_MouseLeave(object sender, EventArgs e)
         {
             bProfilePlaceholder.ForeColor = Color.LightGray;
+        }
+
+        private void boxServers_Paint(object sender, PaintEventArgs e)
+        {
+
         }
     }
 

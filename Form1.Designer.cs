@@ -134,8 +134,9 @@
             this.boxServers.Controls.Add(this.boxServersSeparator);
             this.boxServers.Location = new System.Drawing.Point(17, 87);
             this.boxServers.Name = "boxServers";
-            this.boxServers.Size = new System.Drawing.Size(314, 470);
+            this.boxServers.Size = new System.Drawing.Size(314, 532);
             this.boxServers.TabIndex = 1;
+            this.boxServers.Paint += new System.Windows.Forms.PaintEventHandler(this.boxServers_Paint);
             // 
             // boxServerPlaceholder
             // 
@@ -252,9 +253,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.bProfilePlaceholder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bProfilePlaceholder.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
-            this.bProfilePlaceholder.Location = new System.Drawing.Point(14, 560);
+            this.bProfilePlaceholder.Location = new System.Drawing.Point(14, 622);
             this.bProfilePlaceholder.Name = "bProfilePlaceholder";
-            this.bProfilePlaceholder.Size = new System.Drawing.Size(317, 30);
+            this.bProfilePlaceholder.Size = new System.Drawing.Size(313, 30);
             this.bProfilePlaceholder.TabIndex = 9;
             this.bProfilePlaceholder.Text = "Profile: N/A";
             this.bProfilePlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
@@ -273,10 +274,11 @@
             this.profile_ids.Font = new System.Drawing.Font("Bahnschrift Light", 11F);
             this.profile_ids.ForeColor = System.Drawing.Color.LightGray;
             this.profile_ids.FormattingEnabled = true;
-            this.profile_ids.Location = new System.Drawing.Point(17, 593);
+            this.profile_ids.Location = new System.Drawing.Point(17, 624);
             this.profile_ids.Name = "profile_ids";
             this.profile_ids.Size = new System.Drawing.Size(314, 26);
             this.profile_ids.TabIndex = 10;
+            this.profile_ids.Visible = false;
             this.profile_ids.SelectionChangeCommitted += new System.EventHandler(this.profile_ids_SelectionChangeCommitted);
             // 
             // bServerStatus
@@ -299,9 +301,9 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 661);
+            this.Controls.Add(this.bProfilePlaceholder);
             this.Controls.Add(this.bServerStatus);
             this.Controls.Add(this.profile_ids);
-            this.Controls.Add(this.bProfilePlaceholder);
             this.Controls.Add(this.bOpenOptions);
             this.Controls.Add(this.boxSelectedServer);
             this.Controls.Add(this.boxServers);

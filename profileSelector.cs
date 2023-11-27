@@ -27,11 +27,14 @@ namespace SPTMiniLauncher
         public Color listSelectedcolor = Color.FromArgb(255, 50, 50, 50);
         public Color listHovercolor = Color.FromArgb(255, 45, 45, 45);
 
-        Form1 mForm;
+        private Form1 mainForm;
+        private Label bProfilePlaceholder;
 
-        public profileSelector()
+        public profileSelector(Form1 mainForm, Label bProfilePlaceholder)
         {
             InitializeComponent();
+            this.mainForm = mainForm;
+            this.bProfilePlaceholder = bProfilePlaceholder;
         }
 
         protected override void WndProc(ref Message m)
@@ -70,7 +73,7 @@ namespace SPTMiniLauncher
 
         private void profileSelector_Load(object sender, EventArgs e)
         {
-            mForm = new Form1();
+            Form1 mainForm = new Form1();
 
             string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
             bool userFolderExists = Directory.Exists(userFolder);
@@ -86,6 +89,7 @@ namespace SPTMiniLauncher
             }
 
             bSelection.Text = selector;
+            panelProfiles.Text = $"Select a profile to use";
         }
 
         public void listProfiles(string path)
@@ -119,7 +123,7 @@ namespace SPTMiniLauncher
                     string readProfile = File.ReadAllText(_countProfiles[i]);
                     JObject jReadProfile = JObject.Parse(readProfile);
                     string _Nickname = jReadProfile["characters"]["pmc"]["Info"]["Nickname"].ToString();
-                    lbl.Text = $"{Path.GetFileName(_countProfiles[i])}  -  {_Nickname}";
+                    lbl.Text = $"{Path.GetFileName(_countProfiles[i])} - {_Nickname}";
                 }
 
                 panelProfiles.Controls.Add(lbl);
@@ -157,20 +161,31 @@ namespace SPTMiniLauncher
                 bool profileExists = File.Exists(Path.Combine(fullProfilesPath, output));
                 if (profileExists)
                 {
+                    /*
                     if (this.Text.ToLower() == "launch tarkov")
                     {
-                        mForm.selectedAID = cleanOutput;
-                        mForm.isLoneServer = true;
-                        mForm.runServer();
+                        mainForm.selectedAID = cleanOutput;
+                        mainForm.isLoneServer = true;
+                        mainForm.runServer();
                     }
                     else if (this.Text.ToLower() == "select profile")
                     {
                         Process.Start(Path.Combine(fullProfilesPath, output));
                     }
+                    */
+
+                    if (selector == "profile_select")
+                    {
+                        string profileId = lbl.Text.Split('.')[0];
+                        string fullProfile = lbl.Text.Substring(lbl.Text.LastIndexOf(" - ") + 3);
+
+                        bProfilePlaceholder.Text = $"Profile: {fullProfile}";
+                        Properties.Settings.Default.currentProfileAID = profileId;
+                        Properties.Settings.Default.Save();
+                    }
                 }
             }
 
-            isSPTActive = true;
             this.Close();
         }
 
