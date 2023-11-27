@@ -209,27 +209,6 @@ namespace SPTMiniLauncher
                         saveDimensions();
                     }
 
-                    if (!settingsObject.ContainsKey("timeOptions"))
-                    {
-                        settingsObject["timeOptions"] = new JObject();
-                        settingsObject["timeOptions"]["serverTime"] = 0;
-                        settingsObject["timeOptions"]["tarkovTime"] = 0;
-
-                        string updatedJSON = settingsObject.ToString();
-                        File.WriteAllText(settingsFile, updatedJSON);
-                    }
-                    else
-                    {
-                        JObject timeOptions = (JObject)settingsObject["timeOptions"];
-                        if (!timeOptions.ContainsKey("serverTime"))
-                            settingsObject["timeOptions"]["serverTime"] = 0;
-                        if (!timeOptions.ContainsKey("tarkovTime"))
-                            settingsObject["timeOptions"]["tarkovTime"] = 0;
-
-                        string updatedJSON = settingsObject.ToString();
-                        File.WriteAllText(settingsFile, updatedJSON);
-                    }
-
                     if (!settingsObject.ContainsKey("showFirstTimeMessage"))
                     {
                         settingsObject["showFirstTimeMessage"] = true;
@@ -1733,19 +1712,6 @@ namespace SPTMiniLauncher
                         TarkovEndDetector.RunWorkerAsync();
                     }
 
-                    bool settingsFileExists = File.Exists(settingsFile);
-                    if (settingsFileExists)
-                    {
-                        string settingsContent = File.ReadAllText(settingsFile);
-                        JObject settingsObj = JObject.Parse(settingsContent);
-
-                        JObject timeOptions = (JObject)settingsObj["timeOptions"];
-                        int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
-
-                        TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
-                        startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
-                    }
-
                     if (TarkovProcessDetector != null)
                         TarkovProcessDetector.Dispose();
 
@@ -2926,19 +2892,6 @@ namespace SPTMiniLauncher
                 }
                 Directory.SetCurrentDirectory(currentDir);
             }
-
-            bool settingsFileExists = File.Exists(settingsFile);
-            if (settingsFileExists)
-            {
-                string settingsContent = File.ReadAllText(settingsFile);
-                JObject settingsObj = JObject.Parse(settingsContent);
-
-                JObject timeOptions = (JObject)settingsObj["timeOptions"];
-                int previousServerSeconds = (int)timeOptions["serverTime"];
-
-                TimeSpan elapsedServerDuration = TimeSpan.FromSeconds(previousServerSeconds);
-                startTimeServer = DateTime.Now - elapsedServerDuration;
-            }
         }
 
         public void runLauncher()
@@ -3044,19 +2997,6 @@ namespace SPTMiniLauncher
                 Process tarkovGame = new Process();
                 tarkovGame.StartInfo = _tarkov;
                 tarkovGame.Start();
-
-                bool settingsFileExists = File.Exists(settingsFile);
-                if (settingsFileExists)
-                {
-                    string settingsContent = File.ReadAllText(settingsFile);
-                    JObject settingsObj = JObject.Parse(settingsContent);
-
-                    JObject timeOptions = (JObject)settingsObj["timeOptions"];
-                    int previousTarkovSeconds = (int)timeOptions["tarkovTime"];
-
-                    TimeSpan elapsedTarkovDuration = TimeSpan.FromSeconds(previousTarkovSeconds);
-                    startTimeTarkov = DateTime.Now - elapsedTarkovDuration;
-                }
 
                 TarkovEndDetector = new BackgroundWorker();
                 TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
@@ -3417,7 +3357,17 @@ namespace SPTMiniLauncher
                             {
                                 if (!aki.CloseMainWindow())
                                 {
-                                    aki.Kill();
+                                    try
+                                    {
+                                        aki.Kill();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                        {
+                                            Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                        }
+                                    }
                                     aki.WaitForExit();
                                 }
                                 else
@@ -3446,7 +3396,17 @@ namespace SPTMiniLauncher
                             {
                                 if (!aki.CloseMainWindow())
                                 {
-                                    aki.Kill();
+                                    try
+                                    {
+                                        aki.Kill();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                        {
+                                            Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                        }
+                                    }
                                     aki.WaitForExit();
                                 }
                                 else
@@ -3533,44 +3493,20 @@ namespace SPTMiniLauncher
                     if (globalProcessDetector != null)
                         globalProcessDetector.Dispose();
 
-                    if (CheckServerWorker != null)
-                        CheckServerWorker.Dispose();
-
                     if (TarkovEndDetector != null)
                         TarkovEndDetector.Dispose();
 
                     if (TarkovProcessDetector != null)
                         TarkovProcessDetector.Dispose();
 
-                    /*
-                    bool settingsFileExists = File.Exists(settingsFile);
-                    if (settingsFileExists)
-                    {
-                        string settingsContent = File.ReadAllText(settingsFile);
-                        JObject settingsObj = JObject.Parse(settingsContent);
-
-                        if (settingsObj["timeOptions"] != null)
-                        {
-                            JObject timeOptions = (JObject)settingsObj["timeOptions"];
-
-                            DateTime endTime = DateTime.Now;
-                            TimeSpan playtimeServer = endTime - startTimeServer;
-                            TimeSpan playtimeTarkov = endTime - startTimeTarkov;
-
-                            int serverPlaytimeSeconds = (int)playtimeServer.TotalSeconds;
-                            int tarkovPlaytimeSeconds = (int)playtimeTarkov.TotalSeconds;
-                            timeOptions["serverTime"] = (int)serverPlaytimeSeconds;
-                            timeOptions["tarkovTime"] = (int)serverPlaytimeSeconds;
-
-                            string updatedJSON = settingsObj.ToString();
-                            File.WriteAllText(settingsFile, updatedJSON);
-                        }
-                    }
-                    */
-
                     generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
                     resetRunButton();
                     clearOutput();
+
+                    if (CheckServerWorker != null)
+                        CheckServerWorker.Dispose();
+
+                    displayServerStatus("idle");
 
                     if (Properties.Settings.Default.closeOnQuit)
                         Application.Exit();

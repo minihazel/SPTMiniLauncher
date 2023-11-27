@@ -281,8 +281,7 @@
             // 
             // bServerStatus
             // 
-            this.bServerStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.bServerStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.bServerStatus.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.bServerStatus.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.bServerStatus.ForeColor = System.Drawing.Color.IndianRed;
