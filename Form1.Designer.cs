@@ -44,6 +44,8 @@
             this.boxSelectedServerSeparator = new System.Windows.Forms.Panel();
             this.bOpenOptions = new System.Windows.Forms.Label();
             this.bProfilePlaceholder = new System.Windows.Forms.Label();
+            this.profile_ids = new System.Windows.Forms.ComboBox();
+            this.bServerStatus = new System.Windows.Forms.Label();
             this.boxPathBox.SuspendLayout();
             this.boxServers.SuspendLayout();
             this.boxSelectedServer.SuspendLayout();
@@ -132,7 +134,7 @@
             this.boxServers.Controls.Add(this.boxServersSeparator);
             this.boxServers.Location = new System.Drawing.Point(17, 87);
             this.boxServers.Name = "boxServers";
-            this.boxServers.Size = new System.Drawing.Size(314, 532);
+            this.boxServers.Size = new System.Drawing.Size(314, 470);
             this.boxServers.TabIndex = 1;
             // 
             // boxServerPlaceholder
@@ -246,19 +248,50 @@
             // 
             // bProfilePlaceholder
             // 
-            this.bProfilePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.bProfilePlaceholder.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.bProfilePlaceholder.Cursor = System.Windows.Forms.Cursors.Hand;
             this.bProfilePlaceholder.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
-            this.bProfilePlaceholder.Location = new System.Drawing.Point(14, 622);
+            this.bProfilePlaceholder.Location = new System.Drawing.Point(14, 560);
             this.bProfilePlaceholder.Name = "bProfilePlaceholder";
             this.bProfilePlaceholder.Size = new System.Drawing.Size(317, 30);
             this.bProfilePlaceholder.TabIndex = 9;
-            this.bProfilePlaceholder.Text = "Click here to select a profile";
+            this.bProfilePlaceholder.Text = "Profile: N/A";
             this.bProfilePlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bProfilePlaceholder.Click += new System.EventHandler(this.bProfilePlaceholder_Click);
             this.bProfilePlaceholder.MouseDown += new System.Windows.Forms.MouseEventHandler(this.bProfilePlaceholder_MouseDown);
             this.bProfilePlaceholder.MouseEnter += new System.EventHandler(this.bProfilePlaceholder_MouseEnter);
             this.bProfilePlaceholder.MouseLeave += new System.EventHandler(this.bProfilePlaceholder_MouseLeave);
+            // 
+            // profile_ids
+            // 
+            this.profile_ids.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.profile_ids.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
+            this.profile_ids.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.profile_ids.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.profile_ids.Font = new System.Drawing.Font("Bahnschrift Light", 11F);
+            this.profile_ids.ForeColor = System.Drawing.Color.LightGray;
+            this.profile_ids.FormattingEnabled = true;
+            this.profile_ids.Location = new System.Drawing.Point(17, 593);
+            this.profile_ids.Name = "profile_ids";
+            this.profile_ids.Size = new System.Drawing.Size(314, 26);
+            this.profile_ids.TabIndex = 10;
+            this.profile_ids.SelectionChangeCommitted += new System.EventHandler(this.profile_ids_SelectionChangeCommitted);
+            // 
+            // bServerStatus
+            // 
+            this.bServerStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.bServerStatus.Cursor = System.Windows.Forms.Cursors.Arrow;
+            this.bServerStatus.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
+            this.bServerStatus.ForeColor = System.Drawing.Color.IndianRed;
+            this.bServerStatus.Location = new System.Drawing.Point(347, 622);
+            this.bServerStatus.Name = "bServerStatus";
+            this.bServerStatus.Size = new System.Drawing.Size(189, 30);
+            this.bServerStatus.TabIndex = 11;
+            this.bServerStatus.Text = "Server: Idle";
+            this.bServerStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
             // Form1
             // 
@@ -267,6 +300,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(28)))), ((int)(((byte)(28)))), ((int)(((byte)(28)))));
             this.ClientSize = new System.Drawing.Size(679, 661);
+            this.Controls.Add(this.bServerStatus);
+            this.Controls.Add(this.profile_ids);
             this.Controls.Add(this.bProfilePlaceholder);
             this.Controls.Add(this.bOpenOptions);
             this.Controls.Add(this.boxSelectedServer);
@@ -312,6 +347,8 @@
         private System.Windows.Forms.Panel boxSelectedServerSeparator;
         private System.Windows.Forms.Label bOpenOptions;
         public System.Windows.Forms.Label bProfilePlaceholder;
+        private System.Windows.Forms.ComboBox profile_ids;
+        public System.Windows.Forms.Label bServerStatus;
     }
 }
 

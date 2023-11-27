@@ -79,6 +79,7 @@ namespace SPTMiniLauncher
             "View installed mods",
             "Open server mods",
             "Open client mods",
+            "Open profiles folder",
             "Open modloader JSON",
             "- MISCELLANEOUS -",
             "Open profile -",
@@ -296,7 +297,7 @@ namespace SPTMiniLauncher
                         {
                             if (convertedProfile != null)
                             {
-                                bProfilePlaceholder.Text = $"Profile \'{convertedProfile}' selected";
+                                bProfilePlaceholder.Text = $"Profile: {convertedProfile}";
                             }
                         }
                     }
@@ -1393,9 +1394,6 @@ namespace SPTMiniLauncher
             int clientMods = currentmods.Count;
             int total = clientMods + serverFolders;
 
-            Console.WriteLine(clientMods);
-            Console.WriteLine(serverFolders);
-
             return total;
         }
 
@@ -1692,6 +1690,33 @@ namespace SPTMiniLauncher
             }
         }
 
+        private void displayServerStatus(string status)
+        {
+            switch (status.ToLower())
+            {
+                case "idle":
+                    bServerStatus.Invoke((MethodInvoker)(() => {
+                        bServerStatus.Text = $"Server: Idle";
+                        bServerStatus.ForeColor = Color.IndianRed;
+                    }));
+                    break;
+
+                case "inactive":
+                    bServerStatus.Invoke((MethodInvoker)(() => {
+                        bServerStatus.Text = $"Server: Inactive, loading...";
+                        bServerStatus.ForeColor = Color.IndianRed;
+                    }));
+                    break;
+
+                case "active":
+                    bServerStatus.Invoke((MethodInvoker)(() => {
+                        bServerStatus.Text = $"Server: active";
+                        bServerStatus.ForeColor = Color.DodgerBlue;
+                    }));
+                    break;
+            }
+        }
+
         public void TarkovProcessDetector_DoWork(object sender, DoWorkEventArgs e)
         {
             string processName = "EscapeFromTarkov";
@@ -1876,6 +1901,7 @@ namespace SPTMiniLauncher
                         }
 
                         killProcesses();
+                        displayServerStatus("idle");
 
                         if (TarkovEndDetector != null)
                             TarkovEndDetector.Dispose();
@@ -2075,7 +2101,7 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptionsStreets[i].ToLower() == "view installed mods")
                                 {
-                                    lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+                                    lbl.Text = $"View installed mods";
                                     lbl.Name = "launcherViewInstalledMods";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.LightGray;
@@ -2108,6 +2134,7 @@ namespace SPTMiniLauncher
                                 "View installed mods",
                                 "Open server mods",
                                 "Open client mods",
+                                "Open profiles folder",
                                 "- THIRDPARTY -"
                             };
 
@@ -2171,7 +2198,7 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptionsStreetsSimple[i].ToLower() == "view installed mods")
                                 {
-                                    lbl.Text = $"View installed mods - {fetchInstalledMods().ToString()} total";
+                                    lbl.Text = $"View installed mods";
                                     lbl.Name = "launcherViewInstalledMods";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.LightGray;
@@ -2204,7 +2231,10 @@ namespace SPTMiniLauncher
                     listServerOptions(true);
                 }
 
+                loadProfiles();
                 checkThirdPartyApps(Properties.Settings.Default.server_path);
+
+                selectFirstProfile();
             }
             catch (Exception err)
             {
@@ -2485,6 +2515,37 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
+                        "open profiles folder")
+                    {
+                        string fullPath = Properties.Settings.Default.server_path;
+                        string userFolder = Path.Combine(fullPath, "user");
+                        bool userFolderExists = Directory.Exists(userFolder);
+                        if (userFolderExists)
+                        {
+                            string profilesFolder = Path.Combine(userFolder, "profiles");
+                            bool profilesFolderExists = Directory.Exists(profilesFolder);
+                            if (profilesFolderExists)
+                            {
+                                try
+                                {
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = profilesFolder;
+                                    newApp.FileName = profilesFolder;
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
+
+                                    Process.Start(newApp);
+                                }
+                                catch (Exception err)
+                                {
+                                    Debug.WriteLine($"ERROR: {err.ToString()}");
+                                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                                }
+                            }
+                        }
+                    }
+
+                    else if (label.Text.ToLower() ==
                         "open modloader json")
                     {
                         string orderFile = Path.Combine(Properties.Settings.Default.server_path, "user\\mods\\order.json");
@@ -2619,6 +2680,73 @@ namespace SPTMiniLauncher
             }
 
             boxPathBox.Select();
+        }
+
+        private void selectFirstProfile()
+        {
+            string fullPath = Properties.Settings.Default.server_path;
+            string userFolder = Path.Combine(fullPath, "user");
+            bool userFolderExists = Directory.Exists(userFolder);
+            if (userFolderExists)
+            {
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesFolderExists = Directory.Exists(profilesFolder);
+                if (profilesFolderExists)
+                {
+                    string[] profiles = Directory.GetFiles(profilesFolder, "*.json");
+                    string profileId = Path.GetFileNameWithoutExtension(profiles[0]);
+                    string fullProfile = fetchProfileFromAID(profileId);
+
+                    saveProfile(profileId, fullProfile);
+                }
+            }
+        }
+
+        private void loadProfiles()
+        {
+            profile_ids.Items.Clear();
+
+            string fullPath = Properties.Settings.Default.server_path;
+            string userFolder = Path.Combine(fullPath, "user");
+            bool userFolderExists = Directory.Exists(userFolder);
+            if (userFolderExists)
+            {
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesFolderExists = Directory.Exists(profilesFolder);
+                if (profilesFolderExists)
+                {
+                    string[] profiles = Directory.GetFiles(profilesFolder, "*.json");
+                    foreach (string profile in profiles)
+                    {
+                        string profileId = Path.GetFileNameWithoutExtension(profile);
+                        string fullProfile = fetchProfileFromAID(profileId);
+
+                        profile_ids.Items.Add($"{fullProfile} [{profileId}]");
+                    }
+                }
+            }
+        }
+
+        private void profile_ids_SelectionChangeCommitted(object sender, EventArgs e)
+        {
+            if (profile_ids.SelectedItem != null)
+            {
+                string item = profile_ids.SelectedItem.ToString();
+
+                string idProfile = Regex.Match(item, @"\[(.*?)\]").Groups[1].Value;
+                string nameProfile = Regex.Replace(item, @"\[(.*?)\]", "").Trim();
+
+                saveProfile(idProfile, nameProfile);
+                profile_ids.SelectedIndex = -1;
+                bProfilePlaceholder.Select();
+            }
+        }
+
+        private void saveProfile(string id, string name)
+        {
+            bProfilePlaceholder.Text = $"Profile: {name}";
+            Properties.Settings.Default.currentProfileAID = id;
+            Properties.Settings.Default.Save();
         }
 
         public void startLaunch()
@@ -2884,7 +3012,6 @@ namespace SPTMiniLauncher
             {
                 ProcessStartInfo _tarkov = new ProcessStartInfo();
                 string aid = Properties.Settings.Default.currentProfileAID;
-                Console.WriteLine(aid);
                 int index = aid.IndexOf("-");
                 if (index != -1)
                 {
@@ -3251,7 +3378,17 @@ namespace SPTMiniLauncher
                             {
                                 if (!aki.CloseMainWindow())
                                 {
-                                    aki.Kill();
+                                    try
+                                    {
+                                        aki.Kill();
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                        {
+                                            Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                        }
+                                    }
                                     aki.WaitForExit();
                                 }
                                 else
@@ -3405,6 +3542,7 @@ namespace SPTMiniLauncher
                     if (TarkovProcessDetector != null)
                         TarkovProcessDetector.Dispose();
 
+                    /*
                     bool settingsFileExists = File.Exists(settingsFile);
                     if (settingsFileExists)
                     {
@@ -3428,6 +3566,7 @@ namespace SPTMiniLauncher
                             File.WriteAllText(settingsFile, updatedJSON);
                         }
                     }
+                    */
 
                     generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
                     resetRunButton();
@@ -3544,7 +3683,8 @@ namespace SPTMiniLauncher
             }
             catch (System.Net.Sockets.SocketException ex)
             {
-                Console.WriteLine($"IGNORE: {ex.Message.ToString()}");
+                displayServerStatus("inactive");
+                Console.WriteLine($"Server is not running... waiting!");
                 return false;
             }
         }
@@ -3569,6 +3709,7 @@ namespace SPTMiniLauncher
         {
             if (akiServerOutputter != null)
             {
+                /*
                 string logDir = Path.Combine(Environment.CurrentDirectory, "logs");
                 if (!Directory.Exists(logDir))
                     Directory.CreateDirectory(logDir);
@@ -3578,6 +3719,7 @@ namespace SPTMiniLauncher
 
                 if (Properties.Settings.Default.openLogOnQuit)
                     Process.Start(Path.Combine(path, logFileName));
+                */
             }
         }
 
@@ -3593,6 +3735,8 @@ namespace SPTMiniLauncher
             globalProcessDetector.DoWork += globalProcessDetector_DoWork;
             globalProcessDetector.RunWorkerCompleted += globalProcessDetector_RunWorkerCompleted;
             globalProcessDetector.RunWorkerAsync();
+
+            displayServerStatus("active");
         }
 
         public void resetRunButton()
@@ -4139,6 +4283,9 @@ namespace SPTMiniLauncher
         {
             if (Properties.Settings.Default.server_path != null)
             {
+                profile_ids.DroppedDown = true;
+
+                /*
                 if (boxSelectedServerTitle.Text != "SPT Placeholder")
                 {
                     optionsWindow frm = new optionsWindow(bProfilePlaceholder, this, true);
@@ -4150,6 +4297,7 @@ namespace SPTMiniLauncher
                 {
                     MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
                 }
+                */
             }
             else
             {

@@ -974,7 +974,7 @@ namespace SPTMiniLauncher
 
                 if (bProfilePlaceholder != null)
                 {
-                    bProfilePlaceholder.Text = $"Profile \'{result}\' selected";
+                    bProfilePlaceholder.Text = $"Profile: {result}";
                 }
             }
         }
