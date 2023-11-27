@@ -2775,7 +2775,12 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    showError("You don\'t have a profile selected. Please head into Options -> SPT-AKI Settings and select a profile, then try again!");
+                    showError("You don\'t have a profile selected. Please hit the text bottom-left and select a profile to be used.");
+                    Control startButton = findRun(true, "launcherRunButton");
+                    if (startButton != null && startButton.IsHandleCreated)
+                    {
+                        startButton.Enabled = true;
+                    }
                 }
             }
         }
