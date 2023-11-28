@@ -1840,7 +1840,6 @@ namespace SPTMiniLauncher
 
         private void OnAllProcessesTerminated()
         {
-            generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
             clearOutput();
 
             if (TarkovProcessDetector != null && TarkovProcessDetector.IsBusy)
@@ -3542,7 +3541,6 @@ namespace SPTMiniLauncher
 
                 try
                 {
-                    generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
                     resetRunButton();
                     clearOutput();
 
@@ -3721,24 +3719,6 @@ namespace SPTMiniLauncher
             }
 
             return fileName;
-        }
-
-        public void generateLogFile(string path)
-        {
-            if (akiServerOutputter != null)
-            {
-                /*
-                string logDir = Path.Combine(Environment.CurrentDirectory, "logs");
-                if (!Directory.Exists(logDir))
-                    Directory.CreateDirectory(logDir);
-
-                string logFileName = GenerateLogName();
-                File.WriteAllText(Path.Combine(path, logFileName), akiServerOutputter.ToString());
-
-                if (Properties.Settings.Default.openLogOnQuit)
-                    Process.Start(Path.Combine(path, logFileName));
-                */
-            }
         }
 
         public void confirmLaunched()
