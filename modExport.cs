@@ -640,6 +640,7 @@ namespace SPTMiniLauncher
                 lbl.Font = new System.Drawing.Font("Bahnschrift Light", 10, System.Drawing.FontStyle.Regular);
 
                 lbl.Margin = new Padding(1, 1, 1, 1);
+                lbl.AutoEllipsis = true;
                 lbl.MouseEnter += new EventHandler(mods_MouseEnter);
                 lbl.MouseLeave += new EventHandler(mods_MouseLeave);
                 lbl.MouseDown += new MouseEventHandler(mods_MouseDown);
@@ -668,6 +669,7 @@ namespace SPTMiniLauncher
                 lbl.Font = new System.Drawing.Font("Bahnschrift Light", 10, System.Drawing.FontStyle.Regular);
 
                 lbl.Margin = new Padding(1, 1, 1, 1);
+                lbl.AutoEllipsis = true;
                 lbl.MouseEnter += new EventHandler(mods_MouseEnter);
                 lbl.MouseLeave += new EventHandler(mods_MouseLeave);
                 lbl.MouseDown += new MouseEventHandler(mods_MouseDown);
