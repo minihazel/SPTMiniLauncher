@@ -38,6 +38,7 @@ namespace SPTMiniLauncher
         public string currentDir = Environment.CurrentDirectory;
         public bool isLoneServer = false;
         public bool hasStopped = false;
+        public bool isServerOnly = false;
         public string selectedServer;
         public string settingsFile;
         public string thirdPartyFile;
@@ -261,10 +262,6 @@ namespace SPTMiniLauncher
                     form.Size = new Size(623, 200);
                     form.ShowDialog();
                 }
-
-                string logFolder = Path.Combine(Environment.CurrentDirectory, "logs");
-                if (!Directory.Exists(logFolder))
-                    Directory.CreateDirectory(logFolder);
 
                 readGallery();
                 if (Properties.Settings.Default.currentProfileAID != null)
@@ -1412,109 +1409,6 @@ namespace SPTMiniLauncher
             return total;
         }
 
-        /*
-        public void listAllServers(string path)
-        {
-            clearUI(true);
-
-            if (isLoneServer)
-            {
-                checkForSingularProfile(path);
-
-                Label lbl = new Label();
-                lbl.Text = Path.GetFileName(path);
-                lbl.AutoSize = false;
-                lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                lbl.TextAlign = ContentAlignment.MiddleLeft;
-                lbl.Size = new Size(boxServerPlaceholder.Size.Width, boxServerPlaceholder.Size.Height);
-                lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y);
-                lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                lbl.BackColor = listBackcolor;
-                lbl.ForeColor = Color.LightGray;
-                lbl.Margin = new Padding(1, 1, 1, 1);
-                lbl.Cursor = Cursors.Hand;
-                lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
-                lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
-                lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
-                boxServers.Controls.Add(lbl);
-
-                boxServersTitle.Text = "Listed server";
-                boxSelectedServerTitle.Text = lbl.Text;
-
-                core = Path.Combine(path, "Aki_Data\\Server\\configs\\core.json");
-
-                if (File.Exists(core))
-                {
-                    string cacheFolder = Path.Combine(path, "user\\cache");
-                    string serverModsFolder = Path.Combine(path, "user\\mods");
-                    checkVersion(core);
-
-                    if (Directory.Exists(serverModsFolder))
-                    {
-                        updateOrderJSON(serverModsFolder);
-                    }
-                }
-                else
-                {
-                    showError($"SPT metadata could not be found for single installation. UI will be cleared, please search for another installation.\n\nExpected path: {core}");
-                    clearUI(true);
-                }
-            }
-            else
-            {
-                List<string> directories = new List<string>();
-                string[] dirs = Directory.GetDirectories(path);
-
-                if (dirs.Length > 0)
-                {
-                    foreach (string dir in dirs)
-                    {
-                        selectedServer = dir;
-                        string akiFile = Path.Combine(selectedServer, "Aki.Server.exe");
-                        string launcherFile = Path.Combine(selectedServer, "Aki.Launcher.exe");
-                        string akiData = Path.Combine(selectedServer, "Aki_Data");
-
-                        if (Directory.Exists(akiData) && File.Exists(akiFile) && File.Exists(launcherFile))
-                        {
-                            directories.Add(Path.GetFileName(dir));
-                        }
-                    }
-
-                    for (int i = 0; i < directories.Count; i++)
-                    {
-                        selectedServer = Path.Combine(path, Path.GetFileName(directories[i]));
-                        string serverModsFolder = Path.Combine(selectedServer, "user\\mods");
-                        Label lbl = new Label();
-                        lbl.Text = Path.GetFileName(selectedServer);
-                        lbl.AutoSize = false;
-                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                        lbl.TextAlign = ContentAlignment.MiddleLeft;
-                        lbl.Size = new Size(boxServerPlaceholder.Size.Width, boxServerPlaceholder.Size.Height);
-                        lbl.Location = new Point(boxServerPlaceholder.Location.X, boxServerPlaceholder.Location.Y + (i * 30));
-                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
-                        lbl.BackColor = listBackcolor;
-                        lbl.ForeColor = Color.LightGray;
-                        lbl.Margin = new Padding(1, 1, 1, 1);
-                        lbl.Cursor = Cursors.Hand;
-                        lbl.MouseEnter += new EventHandler(lbl_MouseEnter);
-                        lbl.MouseLeave += new EventHandler(lbl_MouseLeave);
-                        lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
-                        lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
-                        boxServers.Controls.Add(lbl);
-
-                        if (Directory.Exists(serverModsFolder))
-                        {
-                            updateOrderJSON(serverModsFolder);
-                        }
-                    }
-
-                    boxServersTitle.Text = "Listed servers";
-                }
-            }
-        }
-        */
-
         private void lbl_MouseEnter(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
@@ -1710,6 +1604,13 @@ namespace SPTMiniLauncher
         {
             switch (status.ToLower())
             {
+                case "active":
+                    bServerStatus.Invoke((MethodInvoker)(() => {
+                        bServerStatus.Text = $"Server: active";
+                        bServerStatus.ForeColor = Color.DodgerBlue;
+                    }));
+                    break;
+
                 case "idle":
                     bServerStatus.Invoke((MethodInvoker)(() => {
                         bServerStatus.Text = $"Server: Idle";
@@ -1717,24 +1618,26 @@ namespace SPTMiniLauncher
                     }));
                     break;
 
-                case "inactive":
+                case "loading":
                     bServerStatus.Invoke((MethodInvoker)(() => {
-                        bServerStatus.Text = $"Server: Inactive, loading...";
+                        bServerStatus.Text = $"Server: Loading";
                         bServerStatus.ForeColor = Color.IndianRed;
                     }));
                     break;
 
                 case "stopping":
+                    hasStopped = true;
                     bServerStatus.Invoke((MethodInvoker)(() => {
-                        bServerStatus.Text = $"Server: Stopping, please wait...";
+                        bServerStatus.Text = $"Server: Stopping, please wait";
                         bServerStatus.ForeColor = Color.IndianRed;
                     }));
                     break;
 
-                case "active":
+                case "stopped":
+                    hasStopped = true;
                     bServerStatus.Invoke((MethodInvoker)(() => {
-                        bServerStatus.Text = $"Server: active";
-                        bServerStatus.ForeColor = Color.DodgerBlue;
+                        bServerStatus.Text = $"Server: Stopped, awaiting idle";
+                        bServerStatus.ForeColor = Color.IndianRed;
                     }));
                     break;
             }
@@ -1791,7 +1694,7 @@ namespace SPTMiniLauncher
                 return;
             }
 
-            while (!globalProcessDetector.CancellationPending)
+            if (globalProcessDetector != null)
             {
                 string aki_server = globalProcesses[0];
                 // string aki_launcher = globalProcesses[1];
@@ -2355,49 +2258,113 @@ namespace SPTMiniLauncher
                     else if (label.Text.ToLower() ==
                         "launch spt-aki")
                     {
-                        label.Text = "Loading SPT, this may take a few";
-                        label.Enabled = false;
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
+                        {
+                            // label.Text = "Launch Aki Server";
+                        }
+                        else
+                        {
+                            label.Text = "Loading SPT, this may take a few";
+                            label.Enabled = false;
+                            startLaunch(false);
+                            isServerOnly = false;
+                        }
+                    }
 
-                        startLaunch();
+                    else if (label.Text.ToLower() ==
+                        "launch aki server")
+                    {
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
+                        {
+                            label.Text = "Launch SPT-AKI";
+                        }
+                        else
+                        {
+                            showError("This feature is currently W.I.P, we apologize for the inconvenience");
+                            /*
+                            startLaunch(true);
+                            isServerOnly = true;
+                            */
+                        }
+                    }
+
+                    else if (label.Text.ToLower() ==
+                        "spt-aki is running, waiting for escape from tarkov")
+                    {
+                        showError("This feature is currently W.I.P, we apologize for the inconvenience");
+                        /*
+                        runLauncher();
+
+                        Control startButton = findRun(true, "launcherRunButton");
+                        if (startButton != null)
+                            startButton.Invoke((MethodInvoker)(() =>
+                            {
+                                startButton.Enabled = false;
+                                startButton.Text = $"SPT-AKI is running!";
+                            }));
+                        */
                     }
 
                     else if (label.Text.ToLower() ==
                         "stop spt-aki")
                     {
-                        bool akiRunning = isAKIRunning();
-                        if (!akiRunning)
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
-                            Control stopButton = findRun(false, "stop spt-aki");
-                            if (stopButton != null)
-                            {
-                                stopButton.Invoke((MethodInvoker)(() => {
-                                    stopButton.Text = "SPT-AKI is not running!";
-                                    stopButton.ForeColor = Color.IndianRed;
-                                }));
-                                await Task.Delay(750);
-                                stopButton.Invoke((MethodInvoker)(() => {
-                                    stopButton.Text = "Stop SPT-AKI";
-                                    stopButton.ForeColor = Color.LightGray;
-                                }));
-                            }
+                            // label.Text = "Stop Aki Server";
                         }
                         else
                         {
-                            if (Properties.Settings.Default.displayConfirmationMessage)
+                            bool akiRunning = isAKIRunning();
+                            if (!akiRunning)
                             {
-                                if (MessageBox.Show("Quit SPT?\n\n\nThis will close all SPT-AKI related processes.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                Control stopButton = findRun(false, "stop spt-aki");
+                                if (stopButton != null)
+                                {
+                                    stopButton.Invoke((MethodInvoker)(() =>
+                                    {
+                                        stopButton.Text = "SPT-AKI is not running!";
+                                        stopButton.ForeColor = Color.IndianRed;
+                                    }));
+                                    await Task.Delay(750);
+                                    stopButton.Invoke((MethodInvoker)(() =>
+                                    {
+                                        stopButton.Text = "Stop SPT-AKI";
+                                        stopButton.ForeColor = Color.LightGray;
+                                    }));
+                                }
+                            }
+                            else
+                            {
+                                if (Properties.Settings.Default.displayConfirmationMessage)
+                                {
+                                    if (MessageBox.Show("Quit SPT?\n\n\nThis will close all SPT-AKI related processes.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                    {
+                                        displayServerStatus("stopping");
+                                        hasStopped = true;
+                                        killProcesses();
+                                    }
+                                }
+                                else
                                 {
                                     displayServerStatus("stopping");
                                     hasStopped = true;
                                     killProcesses();
                                 }
                             }
-                            else
-                            {
-                                displayServerStatus("stopping");
-                                hasStopped = true;
-                                killProcesses();
-                            }
+                        }
+                    }
+
+                    else if (label.Text.ToLower() ==
+                        "stop aki server")
+                    {
+                        if ((Control.MouseButtons & MouseButtons.Right) != 0)
+                        {
+                            label.Text = "Stop SPT-AKI";
+                        }
+                        else
+                        {
+                            showError("This feature is currently W.I.P, we apologize for the inconvenience");
+                            // killServer();
                         }
                     }
 
@@ -2770,72 +2737,138 @@ namespace SPTMiniLauncher
             Properties.Settings.Default.Save();
         }
 
-        public void startLaunch()
+        public void startLaunch(bool isServerOnly)
         {
-            bool profileMatchesServerAccount = false;
-
-            if (Properties.Settings.Default.server_path != null)
+            if (!isServerOnly)
             {
-                if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
-                {
-                    string fullPath = Properties.Settings.Default.server_path;
+                bool profileMatchesServerAccount = false;
 
-                    string userFolder = Path.Combine(fullPath, "user");
-                    bool userFolderExists = Directory.Exists(userFolder);
-                    if (userFolderExists)
+                if (Properties.Settings.Default.server_path != null)
+                {
+                    if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
                     {
-                        string profilesFolder = Path.Combine(userFolder, "profiles");
-                        bool profilesFolderExists = Directory.Exists(profilesFolder);
-                        if (profilesFolderExists)
+                        string fullPath = Properties.Settings.Default.server_path;
+
+                        string userFolder = Path.Combine(fullPath, "user");
+                        bool userFolderExists = Directory.Exists(userFolder);
+                        if (userFolderExists)
                         {
-                            string[] profiles = Directory.GetFiles(profilesFolder, "*.json");
-                            foreach (string profile in profiles)
+                            string profilesFolder = Path.Combine(userFolder, "profiles");
+                            bool profilesFolderExists = Directory.Exists(profilesFolder);
+                            if (profilesFolderExists)
                             {
-                                string profileId = Path.GetFileNameWithoutExtension(profile);
-                                if (profileId == Properties.Settings.Default.currentProfileAID)
+                                string[] profiles = Directory.GetFiles(profilesFolder, "*.json");
+                                foreach (string profile in profiles)
                                 {
-                                    profileMatchesServerAccount = true;
-                                    break;
+                                    string profileId = Path.GetFileNameWithoutExtension(profile);
+                                    if (profileId == Properties.Settings.Default.currentProfileAID)
+                                    {
+                                        profileMatchesServerAccount = true;
+                                        break;
+                                    }
                                 }
+                            }
+
+                            if (Properties.Settings.Default.clearCache == 1)
+                            {
+                                string cacheFolder = Path.Combine(userFolder, "cache");
+                                bool cacheFolderExists = Directory.Exists(cacheFolder);
+                                if (cacheFolderExists)
+                                    clearServerCache(cacheFolder);
                             }
                         }
 
-                        if (Properties.Settings.Default.clearCache == 1)
+                        if (profileMatchesServerAccount)
                         {
-                            string cacheFolder = Path.Combine(userFolder, "cache");
-                            bool cacheFolderExists = Directory.Exists(cacheFolder);
-                            if (cacheFolderExists)
-                                clearServerCache(cacheFolder);
-                        }
-                    }
+                            switch (Properties.Settings.Default.hideOptions)
+                            {
+                                case 1:
+                                    minimizeLauncherWindow();
+                                    break;
+                            }
 
-                    if (profileMatchesServerAccount)
-                    {
-                        switch (Properties.Settings.Default.hideOptions)
+                            hasStopped = false;
+                            runServer();
+                        }
+                        else
                         {
-                            case 1:
-                                minimizeLauncherWindow();
-                                break;
-                        }
+                            string fullProfile = fetchProfileFromAID(Properties.Settings.Default.currentProfileAID);
+                            string serverName = boxSelectedServerTitle.Text;
 
-                        hasStopped = false;
-                        runServer();
+                            showError($"It seems that {fullProfile} does not exist in {serverName}");
+                        }
                     }
                     else
                     {
-                        string fullProfile = fetchProfileFromAID(Properties.Settings.Default.currentProfileAID);
-                        string serverName = boxSelectedServerTitle.Text;
-
-                        showError($"It seems that {fullProfile} does not exist in {serverName}");
+                        showError("You don\'t have a profile selected. Please hit the text bottom-left and select a profile to be used.");
+                        Control startButton = findRun(true, "launcherRunButton");
+                        if (startButton != null && startButton.IsHandleCreated)
+                        {
+                            startButton.Enabled = true;
+                        }
                     }
                 }
-                else
+            }
+            else
+            {
+                bool profileMatchesServerAccount = false;
+
+                if (Properties.Settings.Default.server_path != null)
                 {
-                    showError("You don\'t have a profile selected. Please hit the text bottom-left and select a profile to be used.");
-                    Control startButton = findRun(true, "launcherRunButton");
-                    if (startButton != null && startButton.IsHandleCreated)
+                    if (Properties.Settings.Default.currentProfileAID != null && Properties.Settings.Default.currentProfileAID != "")
                     {
-                        startButton.Enabled = true;
+                        string fullPath = Properties.Settings.Default.server_path;
+
+                        string userFolder = Path.Combine(fullPath, "user");
+                        bool userFolderExists = Directory.Exists(userFolder);
+                        if (userFolderExists)
+                        {
+                            string profilesFolder = Path.Combine(userFolder, "profiles");
+                            bool profilesFolderExists = Directory.Exists(profilesFolder);
+                            if (profilesFolderExists)
+                            {
+                                string[] profiles = Directory.GetFiles(profilesFolder, "*.json");
+                                foreach (string profile in profiles)
+                                {
+                                    string profileId = Path.GetFileNameWithoutExtension(profile);
+                                    if (profileId == Properties.Settings.Default.currentProfileAID)
+                                    {
+                                        profileMatchesServerAccount = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (Properties.Settings.Default.clearCache == 1)
+                            {
+                                string cacheFolder = Path.Combine(userFolder, "cache");
+                                bool cacheFolderExists = Directory.Exists(cacheFolder);
+                                if (cacheFolderExists)
+                                    clearServerCache(cacheFolder);
+                            }
+                        }
+
+                        if (profileMatchesServerAccount)
+                        {
+                            hasStopped = false;
+                            runServer();
+                        }
+                        else
+                        {
+                            string fullProfile = fetchProfileFromAID(Properties.Settings.Default.currentProfileAID);
+                            string serverName = boxSelectedServerTitle.Text;
+
+                            showError($"It seems that {fullProfile} does not exist in {serverName}");
+                        }
+                    }
+                    else
+                    {
+                        showError("You don\'t have a profile selected. Please hit the text bottom-left and select a profile to be used.");
+                        Control startButton = findRun(true, "launcherRunButton");
+                        if (startButton != null && startButton.IsHandleCreated)
+                        {
+                            startButton.Enabled = true;
+                        }
                     }
                 }
             }
@@ -3177,6 +3210,65 @@ namespace SPTMiniLauncher
             return true;
         }
 
+        public async void killServer()
+        {
+            Control stopButton = findRun(false, "stop aki server");
+
+            if (stopButton != null)
+            {
+                stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
+            }
+
+            string akiServerProcess = "Aki.Server";
+
+            try
+            {
+                Process[] procs = Process.GetProcessesByName(akiServerProcess);
+                if (procs != null && procs.Length > 0)
+                {
+                    foreach (Process aki in procs)
+                    {
+                        if (!aki.HasExited)
+                        {
+                            if (!aki.CloseMainWindow())
+                            {
+                                try
+                                {
+                                    aki.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                    {
+                                        Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                    }
+                                }
+                                aki.WaitForExit();
+                            }
+                            else
+                            {
+                                aki.WaitForExit();
+                            }
+                        }
+                    }
+
+                    await Task.Delay(500);
+
+                    if (stopButton != null)
+                    {
+                        stopButton.Invoke((MethodInvoker)(() => {
+                            stopButton.Enabled = true;
+                            stopButton.Text = $"Stop SPT-AKI";
+                        }));
+                    }
+                }
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"TERMINATION FAILURE OF AKI SERVER (IGNORE): {err.ToString()}");
+            }
+        }
+
         public void killAKIProcesses()
         {
             Control stopButton = findRun(false, "stop spt-aki");
@@ -3185,6 +3277,7 @@ namespace SPTMiniLauncher
             {
                 stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
             }
+
             string akiServerProcess = "Aki.Server";
             string akiLauncherProcess = "Aki.Launcher";
             string eftProcess = "EscapeFromTarkov";
@@ -3200,7 +3293,17 @@ namespace SPTMiniLauncher
                         {
                             if (!aki.CloseMainWindow())
                             {
-                                aki.Kill();
+                                try
+                                {
+                                    aki.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                    {
+                                        Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                    }
+                                }
                                 aki.WaitForExit();
                             }
                             else
@@ -3229,7 +3332,17 @@ namespace SPTMiniLauncher
                         {
                             if (!aki.CloseMainWindow())
                             {
-                                aki.Kill();
+                                try
+                                {
+                                    aki.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                    {
+                                        Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                    }
+                                }
                                 aki.WaitForExit();
                             }
                             else
@@ -3258,7 +3371,17 @@ namespace SPTMiniLauncher
                         {
                             if (!aki.CloseMainWindow())
                             {
-                                aki.Kill();
+                                try
+                                {
+                                    aki.Kill();
+                                }
+                                catch (Exception ex)
+                                {
+                                    if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
+                                    {
+                                        Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
+                                    }
+                                }
                                 aki.WaitForExit();
                             }
                             else
@@ -3579,7 +3702,14 @@ namespace SPTMiniLauncher
                     resetRunButton();
                     clearOutput();
 
+                    displayServerStatus("stopping");
+                    await Task.Delay(500);
+                    displayServerStatus("stopped");
+                    await Task.Delay(1000);
                     displayServerStatus("idle");
+
+                    Console.WriteLine("All processes successfully killed");
+                    isServerOnly = false;
 
                     if (Properties.Settings.Default.closeOnQuit)
                         Application.Exit();
@@ -3722,7 +3852,9 @@ namespace SPTMiniLauncher
 
                         client.Connect("127.0.0.1" /* GetLocalIPAddress() */, Properties.Settings.Default.usePort);
 
-                        runLauncher();
+                        if (!isServerOnly)
+                            runLauncher();
+
                         confirmLaunched();
                         return true;
                     }
@@ -3731,29 +3863,15 @@ namespace SPTMiniLauncher
                 {
                     if (ex is System.Net.Sockets.SocketException)
                     {
-                        displayServerStatus("inactive");
+                        if (!hasStopped)
+                            displayServerStatus("loading");
+
                         Console.WriteLine($"Server is not running... waiting!");
                         return false;
                     }
                 }
             }
             return false;
-        }
-
-        public string GenerateLogName()
-        {
-            string baseFileName = "logfile_server_";
-            string currentDate = DateTime.Now.ToString("yyyy-MM-dd-HH-mm-ss");
-            int counter = 0;
-
-            string fileName = $"{baseFileName}{currentDate}.log";
-            while (File.Exists(fileName))
-            {
-                counter++;
-                fileName = $"{baseFileName}{currentDate}_{counter}.log";
-            }
-
-            return fileName;
         }
 
         public void confirmLaunched()

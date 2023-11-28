@@ -183,6 +183,11 @@ namespace SPTMiniLauncher
                         Properties.Settings.Default.currentProfileAID = profileId;
                         Properties.Settings.Default.Save();
                     }
+
+                    if (selector == "profile_open")
+                    {
+                        Process.Start(Path.Combine(fullProfilesPath, output));
+                    }
                 }
             }
 
