@@ -39,15 +39,19 @@ namespace SPTMiniLauncher
         public bool isLoneServer = false;
         public bool hasStopped = false;
         public bool isServerOnly = false;
+
         public string selectedServer;
         public string settingsFile;
         public string thirdPartyFile;
         public string galleryFile;
+        public string optionsFile;
         public string firstTime;
         public string core;
         public string selectedAID;
+
         public string[] thirdPartyContent = { };
         public string[] sptGallery = { };
+
         public DateTime startTimeTarkov;
         public DateTime startTimeServer;
 
@@ -70,6 +74,8 @@ namespace SPTMiniLauncher
         public BackgroundWorker TarkovEndDetector;
         public BackgroundWorker globalProcessDetector;
         public StringBuilder akiServerOutputter;
+
+        string[] serverOptions = { };
 
         // Lists
         string[] serverOptionsStreets = {
@@ -108,12 +114,54 @@ namespace SPTMiniLauncher
                 settingsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
                 thirdPartyFile = System.IO.Path.Combine(Environment.CurrentDirectory, "Third Party Apps.json");
                 galleryFile = System.IO.Path.Combine(Environment.CurrentDirectory, "Gallery.json");
-                // firstTime = System.IO.Path.Combine(Environment.CurrentDirectory, "firsttime");
+                optionsFile = System.IO.Path.Combine(Environment.CurrentDirectory, "options.json");
 
                 messageBoard form = new messageBoard();
                 RichTextBox messageBox = (RichTextBox)form.Controls["messageBox"];
                 Label messageTitle = (Label)form.Controls["messageTitle"];
                 messageTitle.ForeColor = Color.LightGray;
+
+                if (File.Exists(optionsFile))
+                {
+                    compileOptions();
+                }
+                else
+                {
+                    var thirdpartyData = new JObject
+                    {
+                        ["Actions"] = new JArray
+                        {
+                            "Clear cache",
+                            "Launch SPT-AKI",
+                            "Stop SPT-AKI"
+                        },
+                        ["Mods"] = new JArray
+                        {
+                            "View installed mods",
+                            "Open server mods",
+                            "Open client mods",
+                            "Open profiles folder",
+                            "Open modloader"
+                        },
+                        ["Miscellaneous"] = new JArray
+                        {
+                            "Open a profile",
+                            "Open control panel"
+                        }
+                    };
+                    string json = thirdpartyData.ToString();
+
+                    try
+                    {
+                        File.WriteAllText(optionsFile, json);
+                        Task.Delay(150);
+                        compileOptions();
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"An error occurred: {ex.Message}");
+                    }
+                }
 
                 if (File.Exists(thirdPartyFile))
                 {
@@ -307,6 +355,51 @@ namespace SPTMiniLauncher
                     Application.Restart();
                 }
             }
+        }
+
+        private void compileOptions()
+        {
+            Array.Clear(serverOptions, 0, serverOptions.Length);
+            serverOptions = new string[] { };
+
+            string readOptions = File.ReadAllText(optionsFile);
+            JObject readObject = JObject.Parse(readOptions);
+
+            JArray Actions = (JArray)readObject["Actions"];
+            JArray Mods = (JArray)readObject["Mods"];
+            JArray Miscellaneous = (JArray)readObject["Miscellaneous"];
+
+            bool allActionsStruck = Actions.All(item => item.ToString().StartsWith("-"));
+            if (!allActionsStruck)
+                arrInsert(ref serverOptions, "Actions");
+
+            foreach (string item in Actions)
+            {
+                if (!item.StartsWith("-"))
+                    arrInsert(ref serverOptions, item);
+            }
+
+            bool allModsStruck = Mods.All(item => item.ToString().StartsWith("-"));
+            if (!allModsStruck)
+                arrInsert(ref serverOptions, "Mods");
+
+            foreach (string item in Mods)
+            {
+                if (!item.StartsWith("-"))
+                    arrInsert(ref serverOptions, item);
+            }
+
+            bool allMiscStruck = Miscellaneous.All(item => item.ToString().StartsWith("-"));
+            if (!allMiscStruck)
+                arrInsert(ref serverOptions, "Miscellaneous");
+
+            foreach (string item in Miscellaneous)
+            {
+                if (!item.StartsWith("-"))
+                    arrInsert(ref serverOptions, item);
+            }
+
+            arrInsert(ref serverOptions, "ThirdPartyApps");
         }
 
         public void readGallery()
@@ -1926,6 +2019,129 @@ namespace SPTMiniLauncher
                     {
                         if (!simpleMode)
                         {
+                            compileOptions();
+
+                            for (int i = 0; i < serverOptions.Length; i++)
+                            {
+                                Label lbl = new Label();
+                                lbl.AutoSize = false;
+                                lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                                lbl.TextAlign = ContentAlignment.MiddleLeft;
+                                lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
+                                lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
+                                lbl.Cursor = Cursors.Hand;
+
+                                if (serverOptions[i].ToLower() == "launch spt-aki")
+                                {
+                                    lbl.Name = "launcherRunButton";
+                                    lbl.Text = "Launch SPT-AKI";
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.DodgerBlue;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower() == "clear cache")
+                                {
+                                    lbl.Name = "launcherClearCacheButton";
+                                    lbl.Text = "Clear cache";
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.LightGray;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower() == "stop spt-aki")
+                                {
+                                    lbl.Name = "launcherStopSPTIfRunning";
+                                    lbl.Text = "Stop SPT-AKI";
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.IndianRed;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower() == "actions")
+                                {
+                                    lbl.Text = "Actions";
+                                    lbl.Cursor = Cursors.Arrow;
+                                    lbl.BackColor = this.BackColor;
+                                    lbl.ForeColor = Color.IndianRed;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
+                                    lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower() == "mods")
+                                {
+                                    lbl.Text = "Mods";
+                                    lbl.Cursor = Cursors.Arrow;
+                                    lbl.BackColor = this.BackColor;
+                                    lbl.ForeColor = Color.DodgerBlue;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
+                                    lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower() == "miscellaneous")
+                                {
+                                    lbl.Text = "Miscellaneous";
+                                    lbl.Cursor = Cursors.Arrow;
+                                    lbl.BackColor = this.BackColor;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
+                                    lbl.ForeColor = Color.FromArgb(255, 180, 46, 107);
+                                    lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower() == "thirdpartyapps")
+                                {
+                                    lbl.Text = "Third Party Apps";
+                                    lbl.Cursor = Cursors.Arrow;
+                                    lbl.BackColor = this.BackColor;
+                                    lbl.ForeColor = Color.DarkSeaGreen;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
+                                    lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower().Contains("not detected"))
+                                {
+                                    lbl.Text = serverOptions[i];
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.IndianRed;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                                else if (serverOptions[i].ToLower().Contains("open a profile"))
+                                {
+                                    string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
+                                    bool profilesFolderExists = Directory.Exists(profilesFolder);
+                                    if (profilesFolderExists)
+                                    {
+                                        int _countProfiles = Directory.GetFiles(profilesFolder).Length;
+                                        lbl.Text = $"Open a profile - {_countProfiles.ToString()} available";
+                                        lbl.BackColor = listBackcolor;
+                                        lbl.ForeColor = Color.LightGray;
+                                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                    }
+                                    else
+                                    {
+                                        lbl.Text = $"Profiles folder unavailable";
+                                        lbl.BackColor = listBackcolor;
+                                        lbl.ForeColor = Color.IndianRed;
+                                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                    }
+                                }
+                                else if (serverOptions[i].ToLower() == "view installed mods")
+                                {
+                                    lbl.Text = $"View installed mods";
+                                    lbl.Name = "launcherViewInstalledMods";
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.LightGray;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+                                else
+                                {
+                                    lbl.Text = serverOptions[i];
+                                    lbl.BackColor = listBackcolor;
+                                    lbl.ForeColor = Color.LightGray;
+                                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                                }
+
+                                lbl.Margin = new Padding(1, 1, 1, 1);
+                                lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
+                                lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
+                                lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
+                                lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
+                                boxSelectedServer.Controls.Add(lbl);
+                            }
+                            /*
                             for (int i = 0; i < serverOptionsStreets.Length; i++)
                             {
                                 Label lbl = new Label();
@@ -2042,6 +2258,7 @@ namespace SPTMiniLauncher
                                 lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
                                 boxSelectedServer.Controls.Add(lbl);
                             }
+                            */
                         }
                         else
                         {
@@ -2166,7 +2383,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseEnter(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text.Trim() != "Mods" && label.Text.Trim() != "Miscellaneous" && label.Text.Trim() != "Actions" && label.Text != "Third Party Apps")
             {
                 label.BackColor = listHovercolor;
             }
@@ -2175,7 +2392,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseLeave(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text.Trim() != "Mods" && label.Text.Trim() != "Miscellaneous" && label.Text.Trim() != "Actions" && label.Text != "Third Party Apps")
             {
                 label.BackColor = listBackcolor;
             }
@@ -2184,7 +2401,7 @@ namespace SPTMiniLauncher
         private void lbl2_MouseUp(object sender, EventArgs e)
         {
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text.Trim() != "Mods" && label.Text.Trim() != "Miscellaneous" && label.Text.Trim() != "Actions" && label.Text != "Third Party Apps")
             {
                 label.BackColor = label.BackColor = listHovercolor;
             }
@@ -2197,7 +2414,7 @@ namespace SPTMiniLauncher
             // Includes right-click and left-click systems
 
             System.Windows.Forms.Label label = (System.Windows.Forms.Label)sender;
-            if (label.Text != "" && label.Text != "  Mods" && label.Text != "  Miscellaneous" && label.Text != "  Actions" && label.Text != "  Third Party Apps")
+            if (label.Text != "" && label.Text.Trim() != "Mods" && label.Text.Trim() != "Miscellaneous" && label.Text.Trim() != "Actions" && label.Text != "Third Party Apps")
             {
                 string currentDir = Directory.GetCurrentDirectory();
                 label.BackColor = listSelectedcolor;
