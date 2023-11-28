@@ -3675,6 +3675,7 @@ namespace SPTMiniLauncher
             if (hasStopped)
             {
                 Console.WriteLine("Aki.Server was stopped. This is timeout code running, ignore");
+                displayServerStatus("idle");
                 return false;
             }
             else
