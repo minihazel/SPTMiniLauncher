@@ -106,6 +106,8 @@
             this.bServerHourCounter = new System.Windows.Forms.Button();
             this.panelServerTimeCounter = new System.Windows.Forms.GroupBox();
             this.bServerTimeCounter = new System.Windows.Forms.Button();
+            this.panelEnterSimpleMode = new System.Windows.Forms.GroupBox();
+            this.bEnterSimpleMode = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -134,6 +136,7 @@
             this.panelTarkovTimeCounter.SuspendLayout();
             this.panelServerHourCount.SuspendLayout();
             this.panelServerTimeCounter.SuspendLayout();
+            this.panelEnterSimpleMode.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -553,6 +556,7 @@
             // 
             // panelLauncherSettings
             // 
+            this.panelLauncherSettings.Controls.Add(this.panelEnterSimpleMode);
             this.panelLauncherSettings.Controls.Add(this.panelImportExistingConfig);
             this.panelLauncherSettings.Controls.Add(this.panelDeleteCurrentServer);
             this.panelLauncherSettings.Controls.Add(this.panelCloseControl);
@@ -1126,6 +1130,34 @@
             this.bServerTimeCounter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bServerTimeCounter.UseVisualStyleBackColor = true;
             // 
+            // panelEnterSimpleMode
+            // 
+            this.panelEnterSimpleMode.Controls.Add(this.bEnterSimpleMode);
+            this.panelEnterSimpleMode.ForeColor = System.Drawing.Color.LightGray;
+            this.panelEnterSimpleMode.Location = new System.Drawing.Point(497, 3);
+            this.panelEnterSimpleMode.Name = "panelEnterSimpleMode";
+            this.panelEnterSimpleMode.Size = new System.Drawing.Size(220, 65);
+            this.panelEnterSimpleMode.TabIndex = 23;
+            this.panelEnterSimpleMode.TabStop = false;
+            this.panelEnterSimpleMode.Text = "Enter Simple Mode";
+            this.optionsToolTip.SetToolTip(this.panelEnterSimpleMode, "If enabled, SPT Launcher will close when the Aki Server & Launcher close.");
+            // 
+            // bEnterSimpleMode
+            // 
+            this.bEnterSimpleMode.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bEnterSimpleMode.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bEnterSimpleMode.FlatAppearance.BorderSize = 0;
+            this.bEnterSimpleMode.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bEnterSimpleMode.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bEnterSimpleMode.Location = new System.Drawing.Point(15, 23);
+            this.bEnterSimpleMode.Name = "bEnterSimpleMode";
+            this.bEnterSimpleMode.Size = new System.Drawing.Size(180, 30);
+            this.bEnterSimpleMode.TabIndex = 4;
+            this.bEnterSimpleMode.Text = "Confirm";
+            this.bEnterSimpleMode.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.bEnterSimpleMode.UseVisualStyleBackColor = true;
+            this.bEnterSimpleMode.Click += new System.EventHandler(this.bEnterSimpleMode_Click);
+            // 
             // optionsWindow
             // 
             this.AllowDrop = true;
@@ -1140,11 +1172,11 @@
             this.Controls.Add(this.tabTarkov);
             this.Controls.Add(this.tabSPTAKI);
             this.Controls.Add(this.tabLauncher);
+            this.Controls.Add(this.panelLauncherSettings);
+            this.Controls.Add(this.panelTarkovSettings);
             this.Controls.Add(this.panelSPTAKISettings);
             this.Controls.Add(this.panelPresets);
             this.Controls.Add(this.panelTimeDisplay);
-            this.Controls.Add(this.panelLauncherSettings);
-            this.Controls.Add(this.panelTarkovSettings);
             this.Font = new System.Drawing.Font("Bahnschrift Light", 10F);
             this.ForeColor = System.Drawing.Color.LightGray;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -1188,6 +1220,7 @@
             this.panelTarkovTimeCounter.ResumeLayout(false);
             this.panelServerHourCount.ResumeLayout(false);
             this.panelServerTimeCounter.ResumeLayout(false);
+            this.panelEnterSimpleMode.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -1270,5 +1303,7 @@
         private System.Windows.Forms.Button bTarkovHourCount;
         private System.Windows.Forms.GroupBox panelImportExistingConfig;
         private System.Windows.Forms.Button btnImportExistingConfig;
+        private System.Windows.Forms.GroupBox panelEnterSimpleMode;
+        private System.Windows.Forms.Button bEnterSimpleMode;
     }
 }

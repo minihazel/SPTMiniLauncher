@@ -58,6 +58,21 @@ namespace SPTMiniLauncher
                 panelImportExistingConfig.Text = "SPT Launcher Config Editor";
                 btnImportExistingConfig.Text = "Open Editor";
 
+                // Checking Developer Mode
+                if (File.Exists(settingsFile))
+                {
+                    string readSettings = File.ReadAllText(settingsFile);
+                    JObject settingsObject = JObject.Parse(readSettings);
+
+                    JObject Developer_Options = (JObject)settingsObject["Developer_Options"];
+                    bool Simple_Mode = (bool)Developer_Options["Simple_Mode"];
+
+                    if (Simple_Mode)
+                        panelEnterSimpleMode.Text = "Exit Simple Mode";
+                    else
+                        panelEnterSimpleMode.Text = "Enter Simple Mode";
+                }
+
                 if (profilesExists)
                 {
                     string[] profiles = Directory.GetFiles(profilesFolder);
@@ -1219,6 +1234,39 @@ namespace SPTMiniLauncher
         private void optionsWindow_DragDrop(object sender, DragEventArgs e)
         {
             
+        }
+
+        private void bEnterSimpleMode_Click(object sender, EventArgs e)
+        {
+            if (File.Exists(settingsFile))
+            {
+                string readSettings = File.ReadAllText(settingsFile);
+                JObject settingsObject = JObject.Parse(readSettings);
+
+                JObject Developer_Options = (JObject)settingsObject["Developer_Options"];
+                bool Simple_Mode = (bool)Developer_Options["Simple_Mode"];
+
+                if (Simple_Mode)
+                {
+                    if (MessageBox.Show("Would you like to exit Developer mode?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        Developer_Options["Simple_Mode"] = false;
+                        string newJSON = settingsObject.ToString(Formatting.Indented);
+                        File.WriteAllText(settingsFile, newJSON);
+                    }
+                }
+                else
+                {
+                    if (MessageBox.Show("Would you like to enter Developer mode?", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        Developer_Options["Simple_Mode"] = true;
+                        string newJSON = settingsObject.ToString(Formatting.Indented);
+                        File.WriteAllText(settingsFile, newJSON);
+                    }
+                }
+
+                Application.Restart();
+            }
         }
     }
 }

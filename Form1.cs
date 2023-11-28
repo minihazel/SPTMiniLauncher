@@ -2311,26 +2311,29 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptionsStreetsSimple[i].ToLower() == "- mods -")
                                 {
-                                    lbl.Text = "  Mods";
+                                    lbl.Text = "Mods";
                                     lbl.Cursor = Cursors.Arrow;
                                     lbl.BackColor = this.BackColor;
                                     lbl.ForeColor = Color.DodgerBlue;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
                                     lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                                 }
                                 else if (serverOptionsStreetsSimple[i].ToLower() == "- actions -")
                                 {
-                                    lbl.Text = "  Actions";
+                                    lbl.Text = "Actions";
                                     lbl.Cursor = Cursors.Arrow;
                                     lbl.BackColor = this.BackColor;
                                     lbl.ForeColor = Color.IndianRed;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
                                     lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                                 }
                                 else if (serverOptionsStreetsSimple[i].ToLower() == "- thirdparty -")
                                 {
-                                    lbl.Text = "  Third Party Apps";
+                                    lbl.Text = "Third Party Apps";
                                     lbl.Cursor = Cursors.Arrow;
                                     lbl.BackColor = this.BackColor;
                                     lbl.ForeColor = Color.DarkSeaGreen;
+                                    lbl.Padding = new Padding(5, 0, 0, 0);
                                     lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                                 }
                                 else if (serverOptionsStreetsSimple[i].ToLower() == "view installed mods")
