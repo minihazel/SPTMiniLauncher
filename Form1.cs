@@ -37,6 +37,7 @@ namespace SPTMiniLauncher
 
         public string currentDir = Environment.CurrentDirectory;
         public bool isLoneServer = false;
+        public bool hasStopped = false;
         public string selectedServer;
         public string settingsFile;
         public string thirdPartyFile;
@@ -1508,6 +1509,7 @@ namespace SPTMiniLauncher
             TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
             TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
             TarkovProcessDetector.RunWorkerAsync();
+            TarkovProcessDetector.WorkerSupportsCancellation = true;
 
             for (int i = boxSelectedServer.Controls.Count - 1; i >= 0; i--)
             {
@@ -1687,6 +1689,13 @@ namespace SPTMiniLauncher
                     }));
                     break;
 
+                case "stopping":
+                    bServerStatus.Invoke((MethodInvoker)(() => {
+                        bServerStatus.Text = $"Server: Stopping, please wait...";
+                        bServerStatus.ForeColor = Color.IndianRed;
+                    }));
+                    break;
+
                 case "active":
                     bServerStatus.Invoke((MethodInvoker)(() => {
                         bServerStatus.Text = $"Server: active";
@@ -1709,6 +1718,7 @@ namespace SPTMiniLauncher
                         TarkovEndDetector = new BackgroundWorker();
                         TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
                         TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
+                        TarkovEndDetector.WorkerSupportsCancellation = true;
                         TarkovEndDetector.RunWorkerAsync();
                     }
 
@@ -1725,8 +1735,11 @@ namespace SPTMiniLauncher
 
         public void TarkovProcessDetector_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if (TarkovProcessDetector != null)
+            if (TarkovProcessDetector != null && TarkovProcessDetector.IsBusy)
+            {
+                TarkovProcessDetector.CancelAsync();
                 TarkovProcessDetector.Dispose();
+            }
         }
 
         public void globalProcessDetector_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
@@ -1830,11 +1843,15 @@ namespace SPTMiniLauncher
             generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
             clearOutput();
 
-            if (TarkovProcessDetector != null)
-                TarkovProcessDetector.Dispose();
-
-            if (globalProcessDetector != null)
+            if (TarkovProcessDetector != null && TarkovProcessDetector.IsBusy)
             {
+                TarkovProcessDetector.CancelAsync();
+                TarkovProcessDetector.Dispose();
+            }
+
+            if (globalProcessDetector != null && globalProcessDetector.IsBusy)
+            {
+                globalProcessDetector.CancelAsync();
                 globalProcessDetector.Dispose();
             }
 
@@ -2336,11 +2353,15 @@ namespace SPTMiniLauncher
                             {
                                 if (MessageBox.Show("Quit SPT?\n\n\nThis will close all SPT-AKI related processes.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                                 {
+                                    displayServerStatus("stopping");
+                                    hasStopped = true;
                                     killProcesses();
                                 }
                             }
                             else
                             {
+                                displayServerStatus("stopping");
+                                hasStopped = true;
                                 killProcesses();
                             }
                         }
@@ -2763,6 +2784,7 @@ namespace SPTMiniLauncher
                                 break;
                         }
 
+                        hasStopped = false;
                         runServer();
                     }
                     else
@@ -2862,6 +2884,7 @@ namespace SPTMiniLauncher
                     akiServerOutputter = new StringBuilder();
                     akiServer.Start();
                     akiServer.BeginOutputReadLine();
+
                     checkWorker();
 
                     if (Properties.Settings.Default.serverOutputting)
@@ -3006,6 +3029,7 @@ namespace SPTMiniLauncher
                 TarkovEndDetector = new BackgroundWorker();
                 TarkovEndDetector.DoWork += TarkovEndDetector_DoWork;
                 TarkovEndDetector.RunWorkerCompleted += TarkovEndDetector_RunWorkerCompleted;
+                TarkovEndDetector.WorkerSupportsCancellation = true;
                 TarkovEndDetector.RunWorkerAsync();
             }
             else
@@ -3030,6 +3054,7 @@ namespace SPTMiniLauncher
                 TarkovProcessDetector = new BackgroundWorker();
                 TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
                 TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
+                TarkovEndDetector.WorkerSupportsCancellation = true;
                 TarkovProcessDetector.RunWorkerAsync();
             }
 
@@ -3267,6 +3292,28 @@ namespace SPTMiniLauncher
                 {
                     globalProcessDetector.CancelAsync();
                     globalProcessDetector.Dispose();
+                    globalProcessDetector = null;
+                }
+
+                if (TarkovEndDetector != null)
+                {
+                    TarkovEndDetector.CancelAsync();
+                    TarkovEndDetector.Dispose();
+                    TarkovEndDetector = null;
+                }
+
+                if (TarkovProcessDetector != null)
+                {
+                    TarkovProcessDetector.CancelAsync();
+                    TarkovProcessDetector.Dispose();
+                    TarkovProcessDetector = null;
+                }
+
+                if (CheckServerWorker != null)
+                {
+                    CheckServerWorker.CancelAsync();
+                    CheckServerWorker.Dispose();
+                    CheckServerWorker = null;
                 }
 
                 string akiServerProcess = "Aki.Server";
@@ -3495,21 +3542,9 @@ namespace SPTMiniLauncher
 
                 try
                 {
-                    if (globalProcessDetector != null)
-                        globalProcessDetector.Dispose();
-
-                    if (TarkovEndDetector != null)
-                        TarkovEndDetector.Dispose();
-
-                    if (TarkovProcessDetector != null)
-                        TarkovProcessDetector.Dispose();
-
                     generateLogFile(Path.Combine(Environment.CurrentDirectory, "logs"));
                     resetRunButton();
                     clearOutput();
-
-                    if (CheckServerWorker != null)
-                        CheckServerWorker.Dispose();
 
                     displayServerStatus("idle");
 
@@ -3528,9 +3563,14 @@ namespace SPTMiniLauncher
 
         public void checkWorker()
         {
-            CheckServerWorker = new BackgroundWorker();
             if (CheckServerWorker != null)
+            {
+                CheckServerWorker.CancelAsync();
                 CheckServerWorker.Dispose();
+                CheckServerWorker = null;
+            }
+
+            CheckServerWorker = new BackgroundWorker();
 
             CheckServerWorker.WorkerSupportsCancellation = true;
             CheckServerWorker.WorkerReportsProgress = false;
@@ -3560,35 +3600,47 @@ namespace SPTMiniLauncher
                 akiPort = (int)portObject["port"];
             }
             else
-            {
                 akiPort = 6969;
-            }
 
             int port = akiPort; // the port to check
             int timeout = 300000; // the maximum time to wait for the port to open in milliseconds
-            int delay = 1000; // the delay between port checks in milliseconds
+            int delay;
+
             int elapsed = 0; // the time elapsed since starting to check the port
 
             while (!CheckPort(port))
             {
                 if (elapsed >= timeout)
                 {
-                    // port was not opened within the timeout period, so cancel the operation
                     e.Cancel = true;
+
                     if (CheckServerWorker != null)
+                    {
+                        CheckServerWorker.CancelAsync();
                         CheckServerWorker.Dispose();
+                        CheckServerWorker = null;
+                    }
 
                     showError("We could not detect the Aki Launcher after 5 minutes.\n" +
-                              "\n" +
-                              "Max duration reached, launching SPT-AKI.");
+                                "\n" +
+                                "Max duration reached, launching SPT-AKI.");
 
                     runLauncher();
                     return;
                 }
 
-                Thread.Sleep(delay); // wait before checking again
-                elapsed += delay;
-
+                if (hasStopped)
+                {
+                    delay = 60000;
+                    Thread.Sleep(delay); // wait before checking again
+                    elapsed += delay;
+                }
+                else
+                {
+                    delay = 1000;
+                    Thread.Sleep(delay); // wait before checking again
+                    elapsed += delay;
+                }
             }
         }
 
@@ -3596,38 +3648,62 @@ namespace SPTMiniLauncher
         {
             if (e.Cancelled)
             {
-                // port was not opened within the timeout period
-                Debug.WriteLine("Port could not be opened within the specified time period.");
+                if (CheckServerWorker != null)
+                {
+                    CheckServerWorker.CancelAsync();
+                    CheckServerWorker.Dispose();
+                    CheckServerWorker = null;
+                }
             }
             else if (e.Error != null)
             {
-                // an error occurred while checking the port
-                Debug.WriteLine("An error occurred while checking the port: " + e.Error.Message);
+                showError("An error occurred: " + e.Error.Message);
+            }
+            else
+            {
+                if (CheckServerWorker != null)
+                {
+                    CheckServerWorker.CancelAsync();
+                    CheckServerWorker.Dispose();
+                    CheckServerWorker = null;
+                }
             }
         }
 
         private bool CheckPort(int port)
         {
-            try
+            if (hasStopped)
             {
-                using (var client = new TcpClient())
-                {
-                    if (CheckServerWorker != null)
-                        CheckServerWorker.Dispose();
-
-                    client.Connect("127.0.0.1" /* GetLocalIPAddress() */, Properties.Settings.Default.usePort);
-
-                    runLauncher();
-                    confirmLaunched();
-                    return true;
-                }
-            }
-            catch (System.Net.Sockets.SocketException ex)
-            {
-                displayServerStatus("inactive");
-                Console.WriteLine($"Server is not running... waiting!");
+                Console.WriteLine("Stop function was called");
                 return false;
             }
+            else
+            {
+                try
+                {
+                    using (var client = new TcpClient())
+                    {
+                        if (CheckServerWorker != null)
+                            CheckServerWorker.Dispose();
+
+                        client.Connect("127.0.0.1" /* GetLocalIPAddress() */, Properties.Settings.Default.usePort);
+
+                        runLauncher();
+                        confirmLaunched();
+                        return true;
+                    }
+                }
+                catch (System.Net.Sockets.SocketException ex)
+                {
+                    if (ex is System.Net.Sockets.SocketException)
+                    {
+                        displayServerStatus("inactive");
+                        Console.WriteLine($"Server is not running... waiting!");
+                        return false;
+                    }
+                }
+            }
+            return false;
         }
 
         public string GenerateLogName()

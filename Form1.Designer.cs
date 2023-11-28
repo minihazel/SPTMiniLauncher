@@ -289,7 +289,7 @@
             this.bServerStatus.ForeColor = System.Drawing.Color.IndianRed;
             this.bServerStatus.Location = new System.Drawing.Point(347, 622);
             this.bServerStatus.Name = "bServerStatus";
-            this.bServerStatus.Size = new System.Drawing.Size(189, 30);
+            this.bServerStatus.Size = new System.Drawing.Size(215, 30);
             this.bServerStatus.TabIndex = 11;
             this.bServerStatus.Text = "Server: Idle";
             this.bServerStatus.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
