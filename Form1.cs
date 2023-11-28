@@ -489,6 +489,41 @@ namespace SPTMiniLauncher
             return null;
         }
 
+        public JObject fetchFullProfileFromAID(string profileAID)
+        {
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            bool userFolderExists = Directory.Exists(userFolder);
+            if (userFolderExists)
+            {
+                string profilesFolder = Path.Combine(userFolder, "profiles");
+                bool profilesFolderExists = Directory.Exists(profilesFolder);
+                if (profilesFolderExists)
+                {
+                    string fullAID = Path.Combine(profilesFolder, $"{profileAID}.json");
+                    bool fullAIDExists = File.Exists(fullAID);
+                    if (fullAIDExists)
+                    {
+                        string fileContent = File.ReadAllText(fullAID);
+                        JObject parsedFile = JObject.Parse(fileContent);
+                        JObject info = (JObject)parsedFile["info"];
+                        string infoAID = (string)info["id"];
+
+                        JObject characters = (JObject)parsedFile["characters"];
+                        JObject pmc = (JObject)characters["pmc"];
+                        JObject Info = (JObject)pmc["Info"];
+
+                        string Nickname = (string)Info["Nickname"];
+
+                        if (infoAID == profileAID)
+                        {
+                            return Info;
+                        }
+                    }
+                }
+            }
+            return null;
+        }
+
         public bool isLauncherRunning()
         {
             string sptLauncherProcess = "SPT Launcher";
