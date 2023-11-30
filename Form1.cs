@@ -366,37 +366,66 @@ namespace SPTMiniLauncher
             JObject readObject = JObject.Parse(readOptions);
 
             JArray Actions = (JArray)readObject["Actions"];
-            JArray Mods = (JArray)readObject["Mods"];
-            JArray Miscellaneous = (JArray)readObject["Miscellaneous"];
-
-            bool allActionsStruck = Actions.All(item => item.ToString().StartsWith("-"));
-            if (!allActionsStruck)
+            bool allActionsDisabled = Actions.All(relevantItem =>
+            {
+                foreach (var item in ((JObject)relevantItem))
+                {
+                    if ((bool)item.Value)
+                        return false;
+                }
+                return true;
+            });
+            if (!allActionsDisabled)
                 arrInsert(ref serverOptions, "Actions");
-
-            foreach (string item in Actions)
+            foreach (var relevantItem in (JArray)Actions)
             {
-                if (!item.StartsWith("-"))
-                    arrInsert(ref serverOptions, item);
+                foreach (var item in ((JObject)relevantItem))
+                {
+                    if ((bool)item.Value)
+                        arrInsert(ref serverOptions, item.Key);
+                }
             }
 
-            bool allModsStruck = Mods.All(item => item.ToString().StartsWith("-"));
-            if (!allModsStruck)
+            JArray Mods = (JArray)readObject["Mods"];
+            bool allModsDisabled = Mods.All(relevantItem =>
+            {
+                foreach (var item in ((JObject)relevantItem))
+                {
+                    if ((bool)item.Value)
+                        return false;
+                }
+                return true;
+            });
+            if (!allModsDisabled)
                 arrInsert(ref serverOptions, "Mods");
-
-            foreach (string item in Mods)
+            foreach (var relevantItem in (JArray)Mods)
             {
-                if (!item.StartsWith("-"))
-                    arrInsert(ref serverOptions, item);
+                foreach (var item in ((JObject)relevantItem))
+                {
+                    if ((bool)item.Value)
+                        arrInsert(ref serverOptions, item.Key);
+                }
             }
 
-            bool allMiscStruck = Miscellaneous.All(item => item.ToString().StartsWith("-"));
-            if (!allMiscStruck)
-                arrInsert(ref serverOptions, "Miscellaneous");
-
-            foreach (string item in Miscellaneous)
+            JArray Miscellaneous = (JArray)readObject["Miscellaneous"];
+            bool allMiscellaneousDisabled = Miscellaneous.All(relevantItem =>
             {
-                if (!item.StartsWith("-"))
-                    arrInsert(ref serverOptions, item);
+                foreach (var item in ((JObject)relevantItem))
+                {
+                    if ((bool)item.Value)
+                        return false;
+                }
+                return true;
+            });
+            if (!allMiscellaneousDisabled)
+                arrInsert(ref serverOptions, "Miscellaneous");
+            foreach (var relevantItem in (JArray)Miscellaneous)
+            {
+                foreach (var item in ((JObject)relevantItem))
+                {
+                    if ((bool)item.Value)
+                        arrInsert(ref serverOptions, item.Key);
+                }
             }
 
             arrInsert(ref serverOptions, "ThirdPartyApps");
@@ -4137,20 +4166,6 @@ namespace SPTMiniLauncher
             }
             return null;
         }
-
-        /*
-        public Control findDelete()
-        {
-            // search by name
-            Control[] deleteButton = this.Controls.Find("launcherDeleteServerButton", true);
-            if (deleteButton != null)
-            {
-                Label deleteBtn = (Label)deleteButton[0];
-                return deleteBtn;
-            }
-            return null;
-        }
-        */
 
         public Control findRun(bool isName, string searchText)
         {
