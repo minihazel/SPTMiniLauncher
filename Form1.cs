@@ -79,20 +79,20 @@ namespace SPTMiniLauncher
 
         // Lists
         string[] serverOptionsStreets = {
-            "- ACTIONS -",
+            "Actions",
             "Clear cache",
             "Launch SPT-AKI",
             "Stop SPT-AKI",
-            "- MODS -",
+            "Mods",
             "View installed mods",
             "Open server mods",
             "Open client mods",
             "Open profiles folder",
             "Open modloader JSON",
-            "- MISCELLANEOUS -",
+            "Miscellaneous",
             "Open profile -",
             "Open control panel",
-            "- THIRDPARTY -"
+            "ThirdPartyApps"
         };
 
         public Form1()
@@ -428,7 +428,9 @@ namespace SPTMiniLauncher
                 }
             }
 
-            arrInsert(ref serverOptions, "ThirdPartyApps");
+            bool DisableTPA = (bool)readObject["DisableTPA"];
+            if (!DisableTPA)
+                arrInsert(ref serverOptions, "ThirdPartyApps");
         }
 
         public void readGallery()
@@ -2024,6 +2026,8 @@ namespace SPTMiniLauncher
                 List<string> tempList = new List<string>();
 
                 JObject devOptions = loadDevOptions();
+                string readOptions = File.ReadAllText(optionsFile);
+                JObject readObject = JObject.Parse(readOptions);
 
                 if (devOptions == null)
                 {
@@ -2113,6 +2117,7 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptions[i].ToLower() == "thirdpartyapps")
                                 {
+                                    
                                     lbl.Text = "Third Party Apps";
                                     lbl.Cursor = Cursors.Arrow;
                                     lbl.BackColor = this.BackColor;
@@ -2292,16 +2297,16 @@ namespace SPTMiniLauncher
                         else
                         {
                             string[] serverOptionsStreetsSimple = {
-                                "- ACTIONS -",
+                                "Actions",
                                 "Clear cache",
                                 "Launch SPT-AKI",
                                 "Stop SPT-AKI",
-                                "- MODS -",
+                                "Mods",
                                 "View installed mods",
                                 "Open server mods",
                                 "Open client mods",
                                 "Open profiles folder",
-                                "- THIRDPARTY -"
+                                "ThirdPartyApps"
                             };
 
                             for (int i = 0; i < serverOptionsStreetsSimple.Length; i++)
@@ -2338,7 +2343,7 @@ namespace SPTMiniLauncher
                                     lbl.ForeColor = Color.IndianRed;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                                 }
-                                else if (serverOptionsStreetsSimple[i].ToLower() == "- mods -")
+                                else if (serverOptionsStreetsSimple[i].ToLower() == "mods")
                                 {
                                     lbl.Text = "Mods";
                                     lbl.Cursor = Cursors.Arrow;
@@ -2347,7 +2352,7 @@ namespace SPTMiniLauncher
                                     lbl.Padding = new Padding(5, 0, 0, 0);
                                     lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                                 }
-                                else if (serverOptionsStreetsSimple[i].ToLower() == "- actions -")
+                                else if (serverOptionsStreetsSimple[i].ToLower() == "Actions")
                                 {
                                     lbl.Text = "Actions";
                                     lbl.Cursor = Cursors.Arrow;
@@ -2356,7 +2361,7 @@ namespace SPTMiniLauncher
                                     lbl.Padding = new Padding(5, 0, 0, 0);
                                     lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                                 }
-                                else if (serverOptionsStreetsSimple[i].ToLower() == "- thirdparty -")
+                                else if (serverOptionsStreetsSimple[i].ToLower() == "thirdpartyapps")
                                 {
                                     lbl.Text = "Third Party Apps";
                                     lbl.Cursor = Cursors.Arrow;

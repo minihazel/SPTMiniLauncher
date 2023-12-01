@@ -22,11 +22,17 @@ namespace SPTMiniLauncher
     {
         public string currentDir = Environment.CurrentDirectory;
         public List<string> currentProfiles = new List<string>();
+
         public Color selectedColor = Color.FromArgb(255, 38, 38, 38);
         public Color idleColor = Color.FromArgb(255, 28, 28, 28);
+        public string[] configs = { "SPT Mini.json", "Third Party Apps.json", "Gallery.json", "options.json" };
+
         private int curIndex;
         public string selectedServer;
-        public string settingsFile = Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
+        public string settingsFile;
+        public string thirdPartyFile;
+        public string galleryFile;
+        public string optionsFile;
 
         private bool isProfileSelect = false;
         private Form1 mainForm;
@@ -42,6 +48,11 @@ namespace SPTMiniLauncher
 
         private void optionsWindow_Load(object sender, EventArgs e)
         {
+            settingsFile = Path.Combine(Environment.CurrentDirectory, "SPT Mini.json");
+            thirdPartyFile = Path.Combine(Environment.CurrentDirectory, "Third Party Apps.json");
+            galleryFile = Path.Combine(Environment.CurrentDirectory, "Gallery.json");
+            optionsFile = Path.Combine(Environment.CurrentDirectory, "options.json");
+
             Form1 mainForm = new Form1();
 
             if (Properties.Settings.Default.server_path != null)
@@ -1267,6 +1278,46 @@ namespace SPTMiniLauncher
 
                 Application.Restart();
             }
+        }
+
+        private void bSPTMini_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo newApp = new ProcessStartInfo();
+            newApp.WorkingDirectory = currentDir;
+            newApp.FileName = configs[0];
+            newApp.UseShellExecute = true;
+            newApp.Verb = "open";
+            Process.Start(newApp);
+        }
+
+        private void bTPA_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo newApp = new ProcessStartInfo();
+            newApp.WorkingDirectory = currentDir;
+            newApp.FileName = configs[1];
+            newApp.UseShellExecute = true;
+            newApp.Verb = "open";
+            Process.Start(newApp);
+        }
+
+        private void bGallery_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo newApp = new ProcessStartInfo();
+            newApp.WorkingDirectory = currentDir;
+            newApp.FileName = configs[2];
+            newApp.UseShellExecute = true;
+            newApp.Verb = "open";
+            Process.Start(newApp);
+        }
+
+        private void bOptions_Click(object sender, EventArgs e)
+        {
+            ProcessStartInfo newApp = new ProcessStartInfo();
+            newApp.WorkingDirectory = currentDir;
+            newApp.FileName = configs[3];
+            newApp.UseShellExecute = true;
+            newApp.Verb = "open";
+            Process.Start(newApp);
         }
     }
 }
