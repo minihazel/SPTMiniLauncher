@@ -127,33 +127,38 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    var thirdpartyData = new JObject
-                    {
-                        ["Actions"] = new JArray
-                        {
-                            "Clear cache",
-                            "Launch SPT-AKI",
-                            "Stop SPT-AKI"
-                        },
-                        ["Mods"] = new JArray
-                        {
-                            "View installed mods",
-                            "Open server mods",
-                            "Open client mods",
-                            "Open profiles folder",
-                            "Open modloader"
-                        },
-                        ["Miscellaneous"] = new JArray
-                        {
-                            "Open a profile",
-                            "Open control panel"
-                        }
-                    };
-                    string json = thirdpartyData.ToString();
+
+                    JObject thirdPartyData = new JObject(
+                        new JProperty("Actions",
+                            new JArray(
+                                new JObject(new JProperty("Clear cache", true)),
+                                new JObject(new JProperty("Launch SPT-AKI", true)),
+                                new JObject(new JProperty("Stop SPT-AKI", true))
+                            )
+                        ),
+                        new JProperty("Mods",
+                            new JArray(
+                                new JObject(new JProperty("View installed mods", true)),
+                                new JObject(new JProperty("Open server mods", true)),
+                                new JObject(new JProperty("Open client mods", true)),
+                                new JObject(new JProperty("Open profiles folder", true)),
+                                new JObject(new JProperty("Open modloader", true))
+                            )
+                        ),
+                        new JProperty("Miscellaneous",
+                            new JArray(
+                                new JObject(new JProperty("Open a profile", true)),
+                                new JObject(new JProperty("Open control panel", true))
+                            )
+                        ),
+                        new JProperty("DisableTPA",
+                            new bool()
+                        )
+                    );
 
                     try
                     {
-                        File.WriteAllText(optionsFile, json);
+                        File.WriteAllText(optionsFile, thirdPartyData.ToString());
                         Task.Delay(150);
                         compileOptions();
                     }
@@ -2352,7 +2357,7 @@ namespace SPTMiniLauncher
                                     lbl.Padding = new Padding(5, 0, 0, 0);
                                     lbl.Font = new Font("Bahnschrift Light", 10, FontStyle.Regular);
                                 }
-                                else if (serverOptionsStreetsSimple[i].ToLower() == "Actions")
+                                else if (serverOptionsStreetsSimple[i].ToLower() == "actions")
                                 {
                                     lbl.Text = "Actions";
                                     lbl.Cursor = Cursors.Arrow;
