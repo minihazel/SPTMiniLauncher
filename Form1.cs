@@ -137,21 +137,21 @@ namespace SPTMiniLauncher
 
                     foreach (var item in Actions)
                     {
-                        if (((JValue)item).Type != JTokenType.Boolean)
+                        if (((JObject)item).Type != JTokenType.Boolean)
                         {
                             actionsConfirmed = true;
                         }
                     }
                     foreach (var item in Mods)
                     {
-                        if (((JValue)item).Type != JTokenType.Boolean)
+                        if (((JObject)item).Type != JTokenType.Boolean)
                         {
                             ModsConfirmed = true;
                         }
                     }
                     foreach (var item in Miscellaneous)
                     {
-                        if (((JValue)item).Type != JTokenType.Boolean)
+                        if (((JObject)item).Type != JTokenType.Boolean)
                         {
                             MiscellaneousConfirmed = true;
                         }
@@ -2234,6 +2234,7 @@ namespace SPTMiniLauncher
                                 }
 
                                 lbl.Margin = new Padding(1, 1, 1, 1);
+                                lbl.Padding = new Padding(5, 0, 0, 0);
                                 lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
                                 lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
                                 lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
