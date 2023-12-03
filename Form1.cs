@@ -25,6 +25,7 @@ using System.Security.Policy;
 using System.Security.Permissions;
 using System.Runtime.InteropServices.ComTypes;
 using System.Configuration;
+using System.Windows.Media.Imaging;
 
 namespace SPTMiniLauncher
 {
@@ -123,49 +124,62 @@ namespace SPTMiniLauncher
 
                 if (File.Exists(optionsFile))
                 {
-                    compileOptions();
+                    bool actionsConfirmed = false;
+                    bool ModsConfirmed = false;
+                    bool MiscellaneousConfirmed = false;
+
+                    string readOptions = File.ReadAllText(optionsFile);
+                    JObject readObject = JObject.Parse(readOptions);
+
+                    JArray Actions = (JArray)readObject["Actions"];
+                    JArray Mods = (JArray)readObject["Mods"];
+                    JArray Miscellaneous = (JArray)readObject["Miscellaneous"];
+
+                    foreach (var item in Actions)
+                    {
+                        if (((JValue)item).Type != JTokenType.Boolean)
+                        {
+                            actionsConfirmed = true;
+                        }
+                    }
+                    foreach (var item in Mods)
+                    {
+                        if (((JValue)item).Type != JTokenType.Boolean)
+                        {
+                            ModsConfirmed = true;
+                        }
+                    }
+                    foreach (var item in Miscellaneous)
+                    {
+                        if (((JValue)item).Type != JTokenType.Boolean)
+                        {
+                            MiscellaneousConfirmed = true;
+                        }
+                    }
+
+                    if (actionsConfirmed && ModsConfirmed && MiscellaneousConfirmed)
+                    {
+                        try
+                        {
+                            File.Delete(optionsFile);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"An error occurred: {ex.Message}");
+                        }
+
+                        createOptions();
+                        compileOptions();
+                    }
+                    else
+                    {
+                        compileOptions();
+                    }
                 }
                 else
                 {
-
-                    JObject thirdPartyData = new JObject(
-                        new JProperty("Actions",
-                            new JArray(
-                                new JObject(new JProperty("Clear cache", true)),
-                                new JObject(new JProperty("Launch SPT-AKI", true)),
-                                new JObject(new JProperty("Stop SPT-AKI", true))
-                            )
-                        ),
-                        new JProperty("Mods",
-                            new JArray(
-                                new JObject(new JProperty("View installed mods", true)),
-                                new JObject(new JProperty("Open server mods", true)),
-                                new JObject(new JProperty("Open client mods", true)),
-                                new JObject(new JProperty("Open profiles folder", true)),
-                                new JObject(new JProperty("Open modloader", true))
-                            )
-                        ),
-                        new JProperty("Miscellaneous",
-                            new JArray(
-                                new JObject(new JProperty("Open a profile", true)),
-                                new JObject(new JProperty("Open control panel", true))
-                            )
-                        ),
-                        new JProperty("DisableTPA",
-                            new bool()
-                        )
-                    );
-
-                    try
-                    {
-                        File.WriteAllText(optionsFile, thirdPartyData.ToString());
-                        Task.Delay(150);
-                        compileOptions();
-                    }
-                    catch (Exception ex)
-                    {
-                        Console.WriteLine($"An error occurred: {ex.Message}");
-                    }
+                    createOptions();
+                    compileOptions();
                 }
 
                 if (File.Exists(thirdPartyFile))
@@ -359,6 +373,46 @@ namespace SPTMiniLauncher
 
                     Application.Restart();
                 }
+            }
+        }
+
+        private void createOptions()
+        {
+            JObject thirdPartyData = new JObject(
+                new JProperty("Actions",
+                    new JArray(
+                        new JObject(new JProperty("Clear cache", true)),
+                        new JObject(new JProperty("Launch SPT-AKI", true)),
+                        new JObject(new JProperty("Stop SPT-AKI", true))
+                    )
+                ),
+                new JProperty("Mods",
+                    new JArray(
+                        new JObject(new JProperty("View installed mods", true)),
+                        new JObject(new JProperty("Open server mods", true)),
+                        new JObject(new JProperty("Open client mods", true)),
+                        new JObject(new JProperty("Open profiles folder", true)),
+                        new JObject(new JProperty("Open modloader", true))
+                    )
+                ),
+                new JProperty("Miscellaneous",
+                    new JArray(
+                        new JObject(new JProperty("Open a profile", true)),
+                        new JObject(new JProperty("Open control panel", true))
+                    )
+                ),
+                new JProperty("DisableTPA",
+                    new bool()
+                )
+            );
+
+            try
+            {
+                File.WriteAllText(optionsFile, thirdPartyData.ToString());
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
             }
         }
 
@@ -860,83 +914,89 @@ namespace SPTMiniLauncher
         {
             if (appDict.Count > 0)
             {
-                try
+                string readOptions = File.ReadAllText(optionsFile);
+                JObject readObject = JObject.Parse(readOptions);
+                bool DisableTPA = (bool)readObject["DisableTPA"];
+                if (!DisableTPA)
                 {
-                    thirdPartyContent = new string[] { };
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"ERROR: {err}");
-                    MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                }
-
-                Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
-
-                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                string modsFolder = Path.Combine(userFolder, "mods");
-
-                foreach (var app in appDict)
-                {
-                    string appName = app.Key;
-                    ThirdPartyInfo appInfo = app.Value;
-
-                    string _name = appInfo.Name;
-                    string _path = appInfo.Path;
-
-                    if (_path.ToLower().StartsWith("mods"))
+                    try
                     {
-                        string newPath = _path.ToLower().Replace("mods", modsFolder);
-                        Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                        thirdPartyContent[thirdPartyContent.Length - 1] = _name;
+                        thirdPartyContent = new string[] { };
                     }
-                    else
+                    catch (Exception err)
                     {
-                        Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
-                        thirdPartyContent[thirdPartyContent.Length - 1] = _name;
-                    }
-                }
-
-                Label lastItem = null;
-                foreach (Control ctrl in boxSelectedServer.Controls)
-                {
-                    if (ctrl is Label lbl)
-                    {
-                        lastItem = lbl;
-                    }
-                }
-
-                for (int i = 0; i < thirdPartyContent.Length; i++)
-                {
-                    Label lbl = new Label();
-                    lbl.AutoSize = false;
-                    lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
-                    lbl.TextAlign = ContentAlignment.MiddleLeft;
-                    lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
-                    lbl.Location = new Point(lastItem.Location.X, lastItem.Location.Y + 30 + (i * 30));
-                    lbl.Cursor = Cursors.Hand;
-                    lbl.Margin = new Padding(1, 1, 1, 1);
-                    lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
-                    lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
-                    lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
-                    lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
-
-                    lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
-
-                    if (thirdPartyContent[i].ToLower() == "add new tool")
-                    {
-                        lbl.Text = thirdPartyContent[i];
-                    }
-                    else
-                    {
-                        lbl.Text = $"Open {thirdPartyContent[i]}";
+                        Debug.WriteLine($"ERROR: {err}");
+                        MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                     }
 
-                    lbl.BackColor = listBackcolor;
-                    lbl.ForeColor = Color.LightGray;
-                    lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+                    Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                    thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
 
-                    boxSelectedServer.Controls.Add(lbl);
+                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                    string modsFolder = Path.Combine(userFolder, "mods");
+
+                    foreach (var app in appDict)
+                    {
+                        string appName = app.Key;
+                        ThirdPartyInfo appInfo = app.Value;
+
+                        string _name = appInfo.Name;
+                        string _path = appInfo.Path;
+
+                        if (_path.ToLower().StartsWith("mods"))
+                        {
+                            string newPath = _path.ToLower().Replace("mods", modsFolder);
+                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
+                        }
+                        else
+                        {
+                            Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
+                            thirdPartyContent[thirdPartyContent.Length - 1] = _name;
+                        }
+                    }
+
+                    Label lastItem = null;
+                    foreach (Control ctrl in boxSelectedServer.Controls)
+                    {
+                        if (ctrl is Label lbl)
+                        {
+                            lastItem = lbl;
+                        }
+                    }
+
+                    for (int i = 0; i < thirdPartyContent.Length; i++)
+                    {
+                        Label lbl = new Label();
+                        lbl.AutoSize = false;
+                        lbl.Anchor = (AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right);
+                        lbl.TextAlign = ContentAlignment.MiddleLeft;
+                        lbl.Size = new Size(boxSelectedServer.Size.Width, boxSelectedServerPlaceholder.Size.Height);
+                        lbl.Location = new Point(lastItem.Location.X, lastItem.Location.Y + 30 + (i * 30));
+                        lbl.Cursor = Cursors.Hand;
+                        lbl.Margin = new Padding(1, 1, 1, 1);
+                        lbl.MouseEnter += new EventHandler(lbl2_MouseEnter);
+                        lbl.MouseLeave += new EventHandler(lbl2_MouseLeave);
+                        lbl.MouseDown += new MouseEventHandler(lbl2_MouseDown);
+                        lbl.MouseUp += new MouseEventHandler(lbl2_MouseUp);
+
+                        lbl.Name = $"thirdparty_{thirdPartyContent[i].ToLower()}";
+
+                        if (thirdPartyContent[i].ToLower() == "add new tool")
+                        {
+                            lbl.Text = thirdPartyContent[i];
+                        }
+                        else
+                        {
+                            lbl.Text = $"Open {thirdPartyContent[i]}";
+                        }
+
+                        lbl.BackColor = listBackcolor;
+                        lbl.ForeColor = Color.LightGray;
+                        lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
+
+                        boxSelectedServer.Controls.Add(lbl);
+                    }
                 }
             }
 
