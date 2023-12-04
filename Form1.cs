@@ -3441,7 +3441,7 @@ namespace SPTMiniLauncher
                 TarkovProcessDetector = new BackgroundWorker();
                 TarkovProcessDetector.DoWork += TarkovProcessDetector_DoWork;
                 TarkovProcessDetector.RunWorkerCompleted += TarkovProcessDetector_RunWorkerCompleted;
-                TarkovEndDetector.WorkerSupportsCancellation = true;
+                TarkovProcessDetector.WorkerSupportsCancellation = true;
                 TarkovProcessDetector.RunWorkerAsync();
             }
 
