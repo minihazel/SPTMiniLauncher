@@ -124,56 +124,28 @@ namespace SPTMiniLauncher
 
                 if (File.Exists(optionsFile))
                 {
-                    bool actionsConfirmed = false;
-                    bool ModsConfirmed = false;
-                    bool MiscellaneousConfirmed = false;
-
-                    string readOptions = File.ReadAllText(optionsFile);
-                    JObject readObject = JObject.Parse(readOptions);
-
-                    JArray Actions = (JArray)readObject["Actions"];
-                    JArray Mods = (JArray)readObject["Mods"];
-                    JArray Miscellaneous = (JArray)readObject["Miscellaneous"];
-
-                    foreach (var item in Actions)
-                    {
-                        if (((JObject)item).Type != JTokenType.Boolean)
-                        {
-                            actionsConfirmed = true;
-                        }
-                    }
-                    foreach (var item in Mods)
-                    {
-                        if (((JObject)item).Type != JTokenType.Boolean)
-                        {
-                            ModsConfirmed = true;
-                        }
-                    }
-                    foreach (var item in Miscellaneous)
-                    {
-                        if (((JObject)item).Type != JTokenType.Boolean)
-                        {
-                            MiscellaneousConfirmed = true;
-                        }
-                    }
-
-                    if (actionsConfirmed && ModsConfirmed && MiscellaneousConfirmed)
-                    {
-                        try
-                        {
-                            File.Delete(optionsFile);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"An error occurred: {ex.Message}");
-                        }
-
-                        createOptions();
-                        compileOptions();
-                    }
-                    else
+                    try
                     {
                         compileOptions();
+                    }
+                    catch (Exception ex)
+                    {
+                        if (MessageBox.Show("It looks like your 'options.json' has an invalid structure. Click Yes to let the Launcher restart and re-generate the file for you.",
+                            this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        {
+                            try
+                            {
+                                File.Delete(optionsFile);
+
+                                createOptions();
+                                compileOptions();
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
+                        }
                     }
                 }
                 else
@@ -370,9 +342,8 @@ namespace SPTMiniLauncher
                             }
                         }
                     }
-
-                    Application.Restart();
                 }
+                Application.Restart();
             }
         }
 
