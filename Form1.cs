@@ -1319,7 +1319,7 @@ namespace SPTMiniLauncher
                 {
                     if (File.Exists(Path.Combine(fullPath, "SPT.Server.exe")) &&
                         File.Exists(Path.Combine(fullPath, "SPT.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(fullPath, "Aki_Data")))
+                        Directory.Exists(Path.Combine(fullPath, "SPT_Data")))
                     {
                         boxPath.Text = fullPath;
                         Properties.Settings.Default.server_path = boxPath.Text;
@@ -1627,7 +1627,7 @@ namespace SPTMiniLauncher
                     string installName = foundInstall.Name;
                     string installPath = foundInstall.Path;
 
-                    string akiData = Path.Combine(installPath, "Aki_Data");
+                    string akiData = Path.Combine(installPath, "SPT_Data");
                     bool akiDataExists = Directory.Exists(akiData);
                     if (akiDataExists)
                     {
@@ -3289,7 +3289,7 @@ namespace SPTMiniLauncher
             string ip_address = "";
 
             string akiPath = Properties.Settings.Default.server_path;
-            string akiData = Path.Combine(akiPath, "Aki_Data");
+            string akiData = Path.Combine(akiPath, "SPT_Data");
             if (Directory.Exists(akiData))
             {
                 string akiDataServer = Path.Combine(akiData, "Server");
@@ -4045,7 +4045,7 @@ namespace SPTMiniLauncher
         private void CheckServerWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             int akiPort;
-            string portPath = Path.Combine(Properties.Settings.Default.server_path, "Aki_Data\\Server\\database\\server.json");
+            string portPath = Path.Combine(Properties.Settings.Default.server_path, "SPT_Data\\Server\\database\\server.json");
             bool portExists = File.Exists(portPath);
             if (portExists)
             {
@@ -4464,7 +4464,7 @@ namespace SPTMiniLauncher
                 {
                     if (File.Exists(Path.Combine(Path.GetFullPath(item), "SPT.Server.exe")) &&
                             File.Exists(Path.Combine(Path.GetFullPath(item), "SPT.Launcher.exe")) &&
-                            Directory.Exists(Path.Combine(Path.GetFullPath(item), "Aki_Data")))
+                            Directory.Exists(Path.Combine(Path.GetFullPath(item), "SPT_Data")))
                     {
                         try
                         {
@@ -4515,7 +4515,7 @@ namespace SPTMiniLauncher
                     {
                         if (File.Exists(Path.Combine(boxPath.Text, "SPT.Server.exe")) &&
                         File.Exists(Path.Combine(boxPath.Text, "SPT.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
+                        Directory.Exists(Path.Combine(boxPath.Text, "SPT_Data")))
                         {
                             try
                             {
