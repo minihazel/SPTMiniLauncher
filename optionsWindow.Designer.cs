@@ -59,6 +59,12 @@
             this.tabSPTAKI = new System.Windows.Forms.Button();
             this.tabTarkov = new System.Windows.Forms.Button();
             this.panelLauncherSettings = new System.Windows.Forms.Panel();
+            this.panelOpenConfigs = new System.Windows.Forms.GroupBox();
+            this.bOptions = new System.Windows.Forms.Button();
+            this.bGallery = new System.Windows.Forms.Button();
+            this.bTPA = new System.Windows.Forms.Button();
+            this.bSPTMini = new System.Windows.Forms.Button();
+            this.panel6 = new System.Windows.Forms.Panel();
             this.panelEnterSimpleMode = new System.Windows.Forms.GroupBox();
             this.bEnterSimpleMode = new System.Windows.Forms.Button();
             this.panelImportExistingConfig = new System.Windows.Forms.GroupBox();
@@ -108,12 +114,6 @@
             this.bServerHourCounter = new System.Windows.Forms.Button();
             this.panelServerTimeCounter = new System.Windows.Forms.GroupBox();
             this.bServerTimeCounter = new System.Windows.Forms.Button();
-            this.panel6 = new System.Windows.Forms.Panel();
-            this.panelOpenConfigs = new System.Windows.Forms.GroupBox();
-            this.bGallery = new System.Windows.Forms.Button();
-            this.bTPA = new System.Windows.Forms.Button();
-            this.bSPTMini = new System.Windows.Forms.Button();
-            this.bOptions = new System.Windows.Forms.Button();
             this.panelMinimizeOnSPTLaunch.SuspendLayout();
             this.panelEnableTimedAkiLauncher.SuspendLayout();
             this.panelMisc.SuspendLayout();
@@ -125,6 +125,7 @@
             this.panelServerError.SuspendLayout();
             this.panelCloseOnExit.SuspendLayout();
             this.panelLauncherSettings.SuspendLayout();
+            this.panelOpenConfigs.SuspendLayout();
             this.panelEnterSimpleMode.SuspendLayout();
             this.panelImportExistingConfig.SuspendLayout();
             this.panelDeleteCurrentServer.SuspendLayout();
@@ -143,7 +144,6 @@
             this.panelTarkovTimeCounter.SuspendLayout();
             this.panelServerHourCount.SuspendLayout();
             this.panelServerTimeCounter.SuspendLayout();
-            this.panelOpenConfigs.SuspendLayout();
             this.SuspendLayout();
             // 
             // panelMinimizeOnSPTLaunch
@@ -184,7 +184,7 @@
             this.panelEnableTimedAkiLauncher.Size = new System.Drawing.Size(220, 65);
             this.panelEnableTimedAkiLauncher.TabIndex = 1;
             this.panelEnableTimedAkiLauncher.TabStop = false;
-            this.panelEnableTimedAkiLauncher.Text = "Internal Aki Server";
+            this.panelEnableTimedAkiLauncher.Text = "Internal SPT Server";
             this.optionsToolTip.SetToolTip(this.panelEnableTimedAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
         "p SPT to be used in order to exit properly.");
             // 
@@ -585,6 +585,88 @@
             this.panelLauncherSettings.Size = new System.Drawing.Size(798, 530);
             this.panelLauncherSettings.TabIndex = 14;
             // 
+            // panelOpenConfigs
+            // 
+            this.panelOpenConfigs.Controls.Add(this.bOptions);
+            this.panelOpenConfigs.Controls.Add(this.bGallery);
+            this.panelOpenConfigs.Controls.Add(this.bTPA);
+            this.panelOpenConfigs.Controls.Add(this.bSPTMini);
+            this.panelOpenConfigs.ForeColor = System.Drawing.Color.LightGray;
+            this.panelOpenConfigs.Location = new System.Drawing.Point(3, 361);
+            this.panelOpenConfigs.Name = "panelOpenConfigs";
+            this.panelOpenConfigs.Size = new System.Drawing.Size(714, 65);
+            this.panelOpenConfigs.TabIndex = 25;
+            this.panelOpenConfigs.TabStop = false;
+            this.panelOpenConfigs.Text = "Open configs";
+            // 
+            // bOptions
+            // 
+            this.bOptions.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bOptions.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bOptions.FlatAppearance.BorderSize = 0;
+            this.bOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bOptions.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bOptions.Location = new System.Drawing.Point(503, 23);
+            this.bOptions.Name = "bOptions";
+            this.bOptions.Size = new System.Drawing.Size(160, 30);
+            this.bOptions.TabIndex = 6;
+            this.bOptions.Text = "Options.json";
+            this.bOptions.UseVisualStyleBackColor = true;
+            this.bOptions.Click += new System.EventHandler(this.bOptions_Click);
+            // 
+            // bGallery
+            // 
+            this.bGallery.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bGallery.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bGallery.FlatAppearance.BorderSize = 0;
+            this.bGallery.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bGallery.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bGallery.Location = new System.Drawing.Point(337, 23);
+            this.bGallery.Name = "bGallery";
+            this.bGallery.Size = new System.Drawing.Size(160, 30);
+            this.bGallery.TabIndex = 5;
+            this.bGallery.Text = "Gallery.json";
+            this.bGallery.UseVisualStyleBackColor = true;
+            this.bGallery.Click += new System.EventHandler(this.bGallery_Click);
+            // 
+            // bTPA
+            // 
+            this.bTPA.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bTPA.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bTPA.FlatAppearance.BorderSize = 0;
+            this.bTPA.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bTPA.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bTPA.Location = new System.Drawing.Point(171, 23);
+            this.bTPA.Name = "bTPA";
+            this.bTPA.Size = new System.Drawing.Size(160, 30);
+            this.bTPA.TabIndex = 4;
+            this.bTPA.Text = "Third Party Apps.json";
+            this.bTPA.UseVisualStyleBackColor = true;
+            this.bTPA.Click += new System.EventHandler(this.bTPA_Click);
+            // 
+            // bSPTMini
+            // 
+            this.bSPTMini.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.bSPTMini.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
+            this.bSPTMini.FlatAppearance.BorderSize = 0;
+            this.bSPTMini.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.bSPTMini.ForeColor = System.Drawing.Color.DodgerBlue;
+            this.bSPTMini.Location = new System.Drawing.Point(15, 23);
+            this.bSPTMini.Name = "bSPTMini";
+            this.bSPTMini.Size = new System.Drawing.Size(150, 30);
+            this.bSPTMini.TabIndex = 3;
+            this.bSPTMini.Text = "SPT mini.json";
+            this.bSPTMini.UseVisualStyleBackColor = true;
+            this.bSPTMini.Click += new System.EventHandler(this.bSPTMini_Click);
+            // 
+            // panel6
+            // 
+            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel6.Location = new System.Drawing.Point(3, 351);
+            this.panel6.Name = "panel6";
+            this.panel6.Size = new System.Drawing.Size(714, 1);
+            this.panel6.TabIndex = 24;
+            // 
             // panelEnterSimpleMode
             // 
             this.panelEnterSimpleMode.Controls.Add(this.bEnterSimpleMode);
@@ -796,7 +878,7 @@
             this.panelBypassAkiLauncher.Size = new System.Drawing.Size(220, 65);
             this.panelBypassAkiLauncher.TabIndex = 19;
             this.panelBypassAkiLauncher.TabStop = false;
-            this.panelBypassAkiLauncher.Text = "Bypass Aki Launcher";
+            this.panelBypassAkiLauncher.Text = "Bypass SPT Launcher";
             this.optionsToolTip.SetToolTip(this.panelBypassAkiLauncher, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
         "p SPT to be used in order to exit properly.");
             // 
@@ -825,7 +907,7 @@
             this.panelSPTProfile.Size = new System.Drawing.Size(440, 65);
             this.panelSPTProfile.TabIndex = 18;
             this.panelSPTProfile.TabStop = false;
-            this.panelSPTProfile.Text = "Profile to start SPT-AKI with (click to cycle)";
+            this.panelSPTProfile.Text = "Profile to start SPT with (click to cycle)";
             this.optionsToolTip.SetToolTip(this.panelSPTProfile, "If enabled, Aki Server will run interally via SPT Launcher. This will require Sto" +
         "p SPT to be used in order to exit properly.");
             // 
@@ -1167,88 +1249,6 @@
             this.bServerTimeCounter.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.bServerTimeCounter.UseVisualStyleBackColor = true;
             // 
-            // panel6
-            // 
-            this.panel6.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panel6.Location = new System.Drawing.Point(3, 351);
-            this.panel6.Name = "panel6";
-            this.panel6.Size = new System.Drawing.Size(714, 1);
-            this.panel6.TabIndex = 24;
-            // 
-            // panelOpenConfigs
-            // 
-            this.panelOpenConfigs.Controls.Add(this.bOptions);
-            this.panelOpenConfigs.Controls.Add(this.bGallery);
-            this.panelOpenConfigs.Controls.Add(this.bTPA);
-            this.panelOpenConfigs.Controls.Add(this.bSPTMini);
-            this.panelOpenConfigs.ForeColor = System.Drawing.Color.LightGray;
-            this.panelOpenConfigs.Location = new System.Drawing.Point(3, 361);
-            this.panelOpenConfigs.Name = "panelOpenConfigs";
-            this.panelOpenConfigs.Size = new System.Drawing.Size(714, 65);
-            this.panelOpenConfigs.TabIndex = 25;
-            this.panelOpenConfigs.TabStop = false;
-            this.panelOpenConfigs.Text = "Open configs";
-            // 
-            // bGallery
-            // 
-            this.bGallery.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bGallery.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bGallery.FlatAppearance.BorderSize = 0;
-            this.bGallery.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bGallery.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bGallery.Location = new System.Drawing.Point(337, 23);
-            this.bGallery.Name = "bGallery";
-            this.bGallery.Size = new System.Drawing.Size(160, 30);
-            this.bGallery.TabIndex = 5;
-            this.bGallery.Text = "Gallery.json";
-            this.bGallery.UseVisualStyleBackColor = true;
-            this.bGallery.Click += new System.EventHandler(this.bGallery_Click);
-            // 
-            // bTPA
-            // 
-            this.bTPA.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bTPA.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bTPA.FlatAppearance.BorderSize = 0;
-            this.bTPA.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bTPA.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bTPA.Location = new System.Drawing.Point(171, 23);
-            this.bTPA.Name = "bTPA";
-            this.bTPA.Size = new System.Drawing.Size(160, 30);
-            this.bTPA.TabIndex = 4;
-            this.bTPA.Text = "Third Party Apps.json";
-            this.bTPA.UseVisualStyleBackColor = true;
-            this.bTPA.Click += new System.EventHandler(this.bTPA_Click);
-            // 
-            // bSPTMini
-            // 
-            this.bSPTMini.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bSPTMini.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bSPTMini.FlatAppearance.BorderSize = 0;
-            this.bSPTMini.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bSPTMini.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bSPTMini.Location = new System.Drawing.Point(15, 23);
-            this.bSPTMini.Name = "bSPTMini";
-            this.bSPTMini.Size = new System.Drawing.Size(150, 30);
-            this.bSPTMini.TabIndex = 3;
-            this.bSPTMini.Text = "SPT mini.json";
-            this.bSPTMini.UseVisualStyleBackColor = true;
-            this.bSPTMini.Click += new System.EventHandler(this.bSPTMini_Click);
-            // 
-            // bOptions
-            // 
-            this.bOptions.Cursor = System.Windows.Forms.Cursors.Hand;
-            this.bOptions.FlatAppearance.BorderColor = System.Drawing.Color.Silver;
-            this.bOptions.FlatAppearance.BorderSize = 0;
-            this.bOptions.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.bOptions.ForeColor = System.Drawing.Color.DodgerBlue;
-            this.bOptions.Location = new System.Drawing.Point(503, 23);
-            this.bOptions.Name = "bOptions";
-            this.bOptions.Size = new System.Drawing.Size(160, 30);
-            this.bOptions.TabIndex = 6;
-            this.bOptions.Text = "Options.json";
-            this.bOptions.UseVisualStyleBackColor = true;
-            this.bOptions.Click += new System.EventHandler(this.bOptions_Click);
-            // 
             // optionsWindow
             // 
             this.AllowDrop = true;
@@ -1293,6 +1293,7 @@
             this.panelServerError.ResumeLayout(false);
             this.panelCloseOnExit.ResumeLayout(false);
             this.panelLauncherSettings.ResumeLayout(false);
+            this.panelOpenConfigs.ResumeLayout(false);
             this.panelEnterSimpleMode.ResumeLayout(false);
             this.panelImportExistingConfig.ResumeLayout(false);
             this.panelDeleteCurrentServer.ResumeLayout(false);
@@ -1312,7 +1313,6 @@
             this.panelTarkovTimeCounter.ResumeLayout(false);
             this.panelServerHourCount.ResumeLayout(false);
             this.panelServerTimeCounter.ResumeLayout(false);
-            this.panelOpenConfigs.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }

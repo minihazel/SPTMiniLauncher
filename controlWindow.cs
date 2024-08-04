@@ -73,7 +73,7 @@ namespace SPTMiniLauncher
 
         private void bConfigs_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\configs");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "configs");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -81,7 +81,7 @@ namespace SPTMiniLauncher
 
         private void bDatabase_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -89,7 +89,7 @@ namespace SPTMiniLauncher
 
         private void bBots_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\bots");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "bots");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -97,7 +97,7 @@ namespace SPTMiniLauncher
 
         private void bHideout_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\hideout");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "hideout");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -105,7 +105,7 @@ namespace SPTMiniLauncher
 
         private void bLocales_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\locales");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "locales");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -113,7 +113,7 @@ namespace SPTMiniLauncher
 
         private void bMaps_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\locations");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "locations");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -121,7 +121,7 @@ namespace SPTMiniLauncher
 
         private void bLoot_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\loot");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "loot");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -129,7 +129,7 @@ namespace SPTMiniLauncher
 
         private void bMatch_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\match");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "match");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -137,7 +137,7 @@ namespace SPTMiniLauncher
 
         private void bTemplates_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\templates");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "templates");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -145,7 +145,7 @@ namespace SPTMiniLauncher
 
         private void bTraders_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\traders");
+            string relevantFolder = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "traders");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -153,7 +153,7 @@ namespace SPTMiniLauncher
 
         private void bBepCache_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "BepInEx\\config");
+            string relevantFolder = Path.Combine(fullServerPath, "BepInEx", "config");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -161,7 +161,7 @@ namespace SPTMiniLauncher
 
         private void bBepPlugins_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "BepInEx\\plugins");
+            string relevantFolder = Path.Combine(fullServerPath, "BepInEx", "plugins");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -169,7 +169,7 @@ namespace SPTMiniLauncher
 
         private void bLauncherConfig_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "user\\launcher\\config.json");
+            string relevantFile = Path.Combine(fullServerPath, "user", "launcher", "config.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);
@@ -177,7 +177,7 @@ namespace SPTMiniLauncher
 
         private void bLogs_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "user\\logs");
+            string relevantFolder = Path.Combine(fullServerPath, "user", "logs");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -185,7 +185,7 @@ namespace SPTMiniLauncher
 
         private void bMods_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "user\\mods");
+            string relevantFolder = Path.Combine(fullServerPath, "user", "mods");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -193,7 +193,7 @@ namespace SPTMiniLauncher
 
         private void bProfiles_Click(object sender, EventArgs e)
         {
-            string relevantFolder = Path.Combine(fullServerPath, "user\\profiles");
+            string relevantFolder = Path.Combine(fullServerPath, "user", "profiles");
             bool exists = Directory.Exists(relevantFolder);
             if (exists)
                 Process.Start(relevantFolder);
@@ -201,7 +201,7 @@ namespace SPTMiniLauncher
 
         private void bFilesGlobals_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\globals.json");
+            string relevantFile = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "globals.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);
@@ -209,7 +209,7 @@ namespace SPTMiniLauncher
 
         private void bFilesServer_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\server.json");
+            string relevantFile = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "server.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);
@@ -217,7 +217,7 @@ namespace SPTMiniLauncher
 
         private void bFilesSettings_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\settings.json");
+            string relevantFile = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "settings.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);
@@ -225,7 +225,7 @@ namespace SPTMiniLauncher
 
         private void bFilesItems_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\templates\\items.json");
+            string relevantFile = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "templates", "items.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);
@@ -233,7 +233,7 @@ namespace SPTMiniLauncher
 
         private void bFilesQuests_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\templates\\quests.json");
+            string relevantFile = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "templates", "quests.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);
@@ -241,7 +241,7 @@ namespace SPTMiniLauncher
 
         private void bFilesProfiles_Click(object sender, EventArgs e)
         {
-            string relevantFile = Path.Combine(fullServerPath, "Aki_Data\\Server\\database\\templates\\character.json");
+            string relevantFile = Path.Combine(fullServerPath, "SPT_Data", "Server", "database", "templates", "character.json");
             bool exists = File.Exists(relevantFile);
             if (exists)
                 Process.Start(relevantFile);

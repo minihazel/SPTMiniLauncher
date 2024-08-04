@@ -106,7 +106,7 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT-AKI installation and try again.") == DialogResult.OK)
+                    if (MessageBox.Show("We couldn\'t detect a profiles folder, auto-closing the Options window for you.\n\n\nPlease select another SPT installation and try again.") == DialogResult.OK)
                     {
                         this.Close();
                     }
@@ -155,7 +155,7 @@ namespace SPTMiniLauncher
 
                 // Setting server port
                 string akiPath = Properties.Settings.Default.server_path;
-                string akiData = Path.Combine(akiPath, "Aki_Data");
+                string akiData = Path.Combine(akiPath, "SPT_Data");
                 if (Directory.Exists(akiData))
                 {
                     string akiDataServer = Path.Combine(akiData, "Server");
@@ -1050,7 +1050,7 @@ namespace SPTMiniLauncher
                 bool TarkovExists = File.Exists(TarkovPath);
 
                 string akiPath = Properties.Settings.Default.server_path;
-                string akiData = Path.Combine(akiPath, "Aki_Data");
+                string akiData = Path.Combine(akiPath, "SPT_Data");
                 if (Directory.Exists(akiData))
                 {
                     string akiDataServer = Path.Combine(akiData, "Server");

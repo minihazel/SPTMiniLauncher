@@ -82,8 +82,8 @@ namespace SPTMiniLauncher
         string[] serverOptionsStreets = {
             "Actions",
             "Clear cache",
-            "Launch SPT-AKI",
-            "Stop SPT-AKI",
+            "Launch SPT",
+            "Stop SPT",
             "Mods",
             "View installed mods",
             "Open server mods",
@@ -236,7 +236,7 @@ namespace SPTMiniLauncher
 
                 if (File.Exists(settingsFile))
                 {
-                    globalProcesses = new List<string> { "Aki.Server", "Aki.Launcher", "EscapeFromTarkov" };
+                    globalProcesses = new List<string> { "SPT.Server", "SPT.Launcher", "EscapeFromTarkov" };
                     string readSettings = File.ReadAllText(settingsFile);
                     JObject settingsObject = JObject.Parse(readSettings);
 
@@ -353,8 +353,8 @@ namespace SPTMiniLauncher
                 new JProperty("Actions",
                     new JArray(
                         new JObject(new JProperty("Clear cache", true)),
-                        new JObject(new JProperty("Launch SPT-AKI", true)),
-                        new JObject(new JProperty("Stop SPT-AKI", true))
+                        new JObject(new JProperty("Launch SPT", true)),
+                        new JObject(new JProperty("Stop SPT", true))
                     )
                 ),
                 new JProperty("Mods",
@@ -470,7 +470,7 @@ namespace SPTMiniLauncher
             {
                 // instantiate internal array for storing installs and the "add new" button
                 sptGallery = new string[] { };
-                arrInsert(ref sptGallery, "Add new SPT-AKI install");
+                arrInsert(ref sptGallery, "Add new SPT install");
             }
             catch (Exception err)
             {
@@ -571,7 +571,7 @@ namespace SPTMiniLauncher
                 lbl.MouseDown += new MouseEventHandler(lbl_MouseDown);
                 lbl.MouseUp += new MouseEventHandler(lbl_MouseUp);
 
-                if (sptGallery[i].ToLower() == "add new spt-aki install")
+                if (sptGallery[i].ToLower() == "add new spt install")
                 {
                     lbl.Name = $"gallery_addBtn";
                 }
@@ -1317,8 +1317,8 @@ namespace SPTMiniLauncher
 
                 if (Directory.Exists(fullPath))
                 {
-                    if (File.Exists(Path.Combine(fullPath, "Aki.Server.exe")) &&
-                        File.Exists(Path.Combine(fullPath, "Aki.Launcher.exe")) &&
+                    if (File.Exists(Path.Combine(fullPath, "SPT.Server.exe")) &&
+                        File.Exists(Path.Combine(fullPath, "SPT.Launcher.exe")) &&
                         Directory.Exists(Path.Combine(fullPath, "Aki_Data")))
                     {
                         boxPath.Text = fullPath;
@@ -1698,7 +1698,7 @@ namespace SPTMiniLauncher
 
                 if ((Control.MouseButtons & MouseButtons.Right) != 0)
                 {
-                    if (lbl.Text.ToLower() != "add new spt-aki install")
+                    if (lbl.Text.ToLower() != "add new spt install")
                     {
                         if (MessageBox.Show($"Do you wish to remove {fullName} from your Gallery?{Environment.NewLine}{Environment.NewLine}" +
                                         $"This will not delete your install from your computer.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -1718,7 +1718,7 @@ namespace SPTMiniLauncher
                 {
                     lbl.BackColor = listSelectedcolor;
 
-                    if (lbl.Text.ToLower() == "add new spt-aki install")
+                    if (lbl.Text.ToLower() == "add new spt install")
                         browseInstallation();
                     else
                         useInstall(lbl.Text);
@@ -1870,10 +1870,10 @@ namespace SPTMiniLauncher
                     {
                         if (TarkovEndDetector == null && !isEFTRunning)
                         {
-                            Control statusButton = findRun(true, "spt-aki is running");
+                            Control statusButton = findRun(true, "spt is running");
                             if (statusButton != null)
                             {
-                                statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI is running, waiting for Escape From Tarkov"; }));
+                                statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT is running, waiting for Escape From Tarkov"; }));
                             }
 
                             Control cacheBtn = findCache();
@@ -1989,10 +1989,10 @@ namespace SPTMiniLauncher
                         break;
                     }
 
-                    Control statusButton = findRun(true, "spt-aki is running");
+                    Control statusButton = findRun(true, "spt is running");
                     if (statusButton != null)
                     {
-                        statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT-AKI is running!"; }));
+                        statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "SPT is running!"; }));
                     }
 
                     int interval = Convert.ToInt32(Properties.Settings.Default.endDetector);
@@ -2100,10 +2100,10 @@ namespace SPTMiniLauncher
                                 lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
                                 lbl.Cursor = Cursors.Hand;
 
-                                if (serverOptions[i].ToLower() == "launch spt-aki")
+                                if (serverOptions[i].ToLower() == "launch spt")
                                 {
                                     lbl.Name = "launcherRunButton";
-                                    lbl.Text = "Launch SPT-AKI";
+                                    lbl.Text = "Launch SPT";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.DodgerBlue;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -2116,10 +2116,10 @@ namespace SPTMiniLauncher
                                     lbl.ForeColor = Color.LightGray;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                                 }
-                                else if (serverOptions[i].ToLower() == "stop spt-aki")
+                                else if (serverOptions[i].ToLower() == "stop spt")
                                 {
                                     lbl.Name = "launcherStopSPTIfRunning";
-                                    lbl.Text = "Stop SPT-AKI";
+                                    lbl.Text = "Stop SPT";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.IndianRed;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -2336,8 +2336,8 @@ namespace SPTMiniLauncher
                             string[] serverOptionsStreetsSimple = {
                                 "Actions",
                                 "Clear cache",
-                                "Launch SPT-AKI",
-                                "Stop SPT-AKI",
+                                "Launch SPT",
+                                "Stop SPT",
                                 "Mods",
                                 "View installed mods",
                                 "Open server mods",
@@ -2356,10 +2356,10 @@ namespace SPTMiniLauncher
                                 lbl.Location = new Point(boxSelectedServerPlaceholder.Location.X, boxSelectedServerPlaceholder.Location.Y + (i * 30));
                                 lbl.Cursor = Cursors.Hand;
 
-                                if (serverOptionsStreetsSimple[i].ToLower() == "launch spt-aki")
+                                if (serverOptionsStreetsSimple[i].ToLower() == "launch spt")
                                 {
                                     lbl.Name = "launcherRunButton";
-                                    lbl.Text = "Launch SPT-AKI";
+                                    lbl.Text = "Launch SPT";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.DodgerBlue;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -2372,10 +2372,10 @@ namespace SPTMiniLauncher
                                     lbl.ForeColor = Color.LightGray;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
                                 }
-                                else if (serverOptionsStreetsSimple[i].ToLower() == "stop spt-aki")
+                                else if (serverOptionsStreetsSimple[i].ToLower() == "stop spt")
                                 {
                                     lbl.Name = "launcherStopSPTIfRunning";
-                                    lbl.Text = "Stop SPT-AKI";
+                                    lbl.Text = "Stop SPT";
                                     lbl.BackColor = listBackcolor;
                                     lbl.ForeColor = Color.IndianRed;
                                     lbl.Font = new Font("Bahnschrift Light", 9, FontStyle.Regular);
@@ -2547,7 +2547,7 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
-                        "launch spt-aki")
+                        "launch spt")
                     {
                         if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
@@ -2567,7 +2567,7 @@ namespace SPTMiniLauncher
                     {
                         if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
-                            label.Text = "Launch SPT-AKI";
+                            label.Text = "Launch SPT";
                         }
                         else
                         {
@@ -2580,7 +2580,7 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
-                        "spt-aki is running, waiting for escape from tarkov")
+                        "spt is running, waiting for escape from tarkov")
                     {
                         showError("This feature is currently W.I.P, we apologize for the inconvenience");
                         /*
@@ -2597,7 +2597,7 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
-                        "stop spt-aki")
+                        "stop spt")
                     {
                         if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
@@ -2608,18 +2608,18 @@ namespace SPTMiniLauncher
                             bool akiRunning = isAKIRunning();
                             if (!akiRunning)
                             {
-                                Control stopButton = findRun(false, "stop spt-aki");
+                                Control stopButton = findRun(false, "stop spt");
                                 if (stopButton != null)
                                 {
                                     stopButton.Invoke((MethodInvoker)(() =>
                                     {
-                                        stopButton.Text = "SPT-AKI is not running!";
+                                        stopButton.Text = "SPT is not running!";
                                         stopButton.ForeColor = Color.IndianRed;
                                     }));
                                     await Task.Delay(750);
                                     stopButton.Invoke((MethodInvoker)(() =>
                                     {
-                                        stopButton.Text = "Stop SPT-AKI";
+                                        stopButton.Text = "Stop SPT";
                                         stopButton.ForeColor = Color.LightGray;
                                     }));
                                 }
@@ -2628,7 +2628,7 @@ namespace SPTMiniLauncher
                             {
                                 if (Properties.Settings.Default.displayConfirmationMessage)
                                 {
-                                    if (MessageBox.Show("Quit SPT?\n\n\nThis will close all SPT-AKI related processes.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                    if (MessageBox.Show("Quit SPT?\n\n\nThis will close all SPT related processes.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                                     {
                                         displayServerStatus("stopping");
                                         hasStopped = true;
@@ -2646,11 +2646,11 @@ namespace SPTMiniLauncher
                     }
 
                     else if (label.Text.ToLower() ==
-                        "stop aki server")
+                        "stop spt server")
                     {
                         if ((Control.MouseButtons & MouseButtons.Right) != 0)
                         {
-                            label.Text = "Stop SPT-AKI";
+                            label.Text = "Stop SPT";
                         }
                         else
                         {
@@ -2849,7 +2849,7 @@ namespace SPTMiniLauncher
 
                         if (serverFolderExists)
                         {
-                            string warning = $"As per the SPT-AKI Workshop rules / file submission guidelines:\n\n";
+                            string warning = $"As per the SPT Workshop rules / file submission guidelines:\n\n";
 
                             string serverName = boxSelectedServerTitle.Text;
                             modExport exportForm = new modExport(this.Size.Width, this.Size.Height);
@@ -3215,7 +3215,7 @@ namespace SPTMiniLauncher
 
             Task.Delay(300);
 
-            string launcherProcess = "Aki.Server";
+            string launcherProcess = "SPT.Server";
             Process[] launchers = Process.GetProcessesByName(launcherProcess);
             string currentDir = Directory.GetCurrentDirectory();
 
@@ -3225,7 +3225,7 @@ namespace SPTMiniLauncher
                 Process akiServer = new Process();
 
                 akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                akiServer.StartInfo.FileName = "Aki.Server.exe";
+                akiServer.StartInfo.FileName = "SPT.Server.exe";
                 akiServer.StartInfo.CreateNoWindow = true;
                 akiServer.StartInfo.UseShellExecute = false;
                 akiServer.StartInfo.RedirectStandardOutput = true;
@@ -3261,7 +3261,7 @@ namespace SPTMiniLauncher
                 Process akiServer = new Process();
 
                 akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                akiServer.StartInfo.FileName = "Aki.Server.exe";
+                akiServer.StartInfo.FileName = "SPT.Server.exe";
                 akiServer.StartInfo.CreateNoWindow = false;
                 akiServer.StartInfo.UseShellExecute = false;
                 akiServer.StartInfo.RedirectStandardOutput = false;
@@ -3282,7 +3282,7 @@ namespace SPTMiniLauncher
 
         public void runLauncher()
         {
-            string launcherProcess = "Aki.Launcher";
+            string launcherProcess = "SPT.Launcher";
             Process[] launchers = Process.GetProcessesByName(launcherProcess);
             string currentDir = Directory.GetCurrentDirectory();
             int akiPort = 0;
@@ -3313,7 +3313,7 @@ namespace SPTMiniLauncher
             Task.Delay(500);
 
             // Check if there are 2 or more instances of the Aki Launcher, and if so terminate the "leftovers"
-            string akiLauncherProcess = "Aki.Launcher";
+            string akiLauncherProcess = "SPT.Launcher";
             try
             {
                 Process[] launcherprocs = Process.GetProcessesByName(akiLauncherProcess);
@@ -3394,7 +3394,7 @@ namespace SPTMiniLauncher
             {
                 Process akiLauncher = new Process();
                 akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "Aki.Launcher.exe");
+                akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "SPT.Launcher.exe");
                 akiLauncher.StartInfo.CreateNoWindow = false;
 
                 try
@@ -3451,8 +3451,8 @@ namespace SPTMiniLauncher
 
         public bool isAKIRunning()
         {
-            string akiServerProcess = "Aki.Server";
-            string akiLauncherProcess = "Aki.Launcher";
+            string akiServerProcess = "SPT.Server";
+            string akiLauncherProcess = "SPT.Launcher";
             string eftProcess = "EscapeFromTarkov";
             bool akiServerTerminated = false;
             bool akiLauncherTerminated = false;
@@ -3510,7 +3510,7 @@ namespace SPTMiniLauncher
                 stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
             }
 
-            string akiServerProcess = "Aki.Server";
+            string akiServerProcess = "SPT.Server";
 
             try
             {
@@ -3549,7 +3549,7 @@ namespace SPTMiniLauncher
                     {
                         stopButton.Invoke((MethodInvoker)(() => {
                             stopButton.Enabled = true;
-                            stopButton.Text = $"Stop SPT-AKI";
+                            stopButton.Text = $"Stop SPT";
                         }));
                     }
                 }
@@ -3562,15 +3562,15 @@ namespace SPTMiniLauncher
 
         public void killAKIProcesses()
         {
-            Control stopButton = findRun(false, "stop spt-aki");
+            Control stopButton = findRun(false, "stop spt");
 
             if (stopButton != null)
             {
                 stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
             }
 
-            string akiServerProcess = "Aki.Server";
-            string akiLauncherProcess = "Aki.Launcher";
+            string akiServerProcess = "SPT.Server";
+            string akiLauncherProcess = "SPT.Launcher";
             string eftProcess = "EscapeFromTarkov";
             
             try
@@ -3703,16 +3703,16 @@ namespace SPTMiniLauncher
             bool akiRunning = isAKIRunning();
             if (!akiRunning)
             {
-                Control stopButton = findRun(false, "stop spt-aki");
+                Control stopButton = findRun(false, "stop spt");
                 if (stopButton != null)
                 {
                     stopButton.Invoke((MethodInvoker)(() => {
-                        stopButton.Text = "SPT-AKI is not running!";
+                        stopButton.Text = "SPT is not running!";
                         stopButton.ForeColor = Color.IndianRed;
                     }));
                     await Task.Delay(750);
                     stopButton.Invoke((MethodInvoker)(() => {
-                        stopButton.Text = "Stop SPT-AKI";
+                        stopButton.Text = "Stop SPT";
                         stopButton.ForeColor = Color.LightGray;
                     }));
                 }
@@ -3725,14 +3725,14 @@ namespace SPTMiniLauncher
 
         public async void killProcesses()
         {
-            Control stopButton = findRun(false, "stop spt-aki");
+            Control stopButton = findRun(false, "stop spt");
             bool akiRunning = isAKIRunning();
 
             if (!akiRunning)
             {
-                stopButton.Invoke((MethodInvoker)(() => { stopButton.Text = "SPT-AKI is not running!"; }));
+                stopButton.Invoke((MethodInvoker)(() => { stopButton.Text = "SPT is not running!"; }));
                 await Task.Delay(1500);
-                stopButton.Invoke((MethodInvoker)(() => { stopButton.Text = "Stop SPT-AKI"; }));
+                stopButton.Invoke((MethodInvoker)(() => { stopButton.Text = "Stop SPT"; }));
             }
             else
             {
@@ -3764,8 +3764,8 @@ namespace SPTMiniLauncher
                     CheckServerWorker = null;
                 }
 
-                string akiServerProcess = "Aki.Server";
-                string akiLauncherProcess = "Aki.Launcher";
+                string akiServerProcess = "SPT.Server";
+                string akiLauncherProcess = "SPT.Launcher";
                 string eftProcess = "EscapeFromTarkov";
                 bool akiServerTerminated = false;
                 bool akiLauncherTerminated = false;
@@ -3791,10 +3791,10 @@ namespace SPTMiniLauncher
                     }
                 }
 
-                Control statusButton = findRun(true, "spt-aki is running!");
+                Control statusButton = findRun(true, "spt is running!");
                 if (statusButton != null)
                 {
-                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT-AKI"; }));
+                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT"; }));
                     stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
                 }
                 else
@@ -3802,7 +3802,7 @@ namespace SPTMiniLauncher
                     statusButton = findRun(true, "loading spt");
                     if (statusButton != null)
                     {
-                        statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT-AKI"; }));
+                        statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT"; }));
                         stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
                     }
                 }
@@ -3959,10 +3959,10 @@ namespace SPTMiniLauncher
                     {
                         if (attemptedButton != null)
                         {
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "SPT-AKI successfully exited, resetting"; }));
+                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "SPT successfully exited, resetting"; }));
                             await Task.Delay(1000);
                             attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Enabled = true; }));
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Launch SPT-AKI"; }));
+                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Launch SPT"; }));
                         }
                     }
                     else
@@ -3972,7 +3972,7 @@ namespace SPTMiniLauncher
                             attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Termination failed; one or more instances did not exit"; }));
                             await Task.Delay(1000);
                             attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Enabled = true; }));
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Launch SPT-AKI"; }));
+                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Launch SPT"; }));
                         }
                     }
                 }
@@ -4077,7 +4077,7 @@ namespace SPTMiniLauncher
 
                     showError("We could not detect the Aki Launcher after 5 minutes.\n" +
                                 "\n" +
-                                "Max duration reached, launching SPT-AKI.");
+                                "Max duration reached, launching SPT.");
 
                     runLauncher();
                     return;
@@ -4128,7 +4128,7 @@ namespace SPTMiniLauncher
         {
             if (hasStopped)
             {
-                Console.WriteLine("Aki.Server was stopped. This is timeout code running, ignore");
+                Console.WriteLine("SPT.Server was stopped. This is timeout code running, ignore");
                 displayServerStatus("idle");
                 return false;
             }
@@ -4183,7 +4183,7 @@ namespace SPTMiniLauncher
 
         public void resetRunButton()
         {
-            setRunText("Launch SPT-AKI");
+            setRunText("Launch SPT");
         }
 
         public void clearOutput()
@@ -4462,8 +4462,8 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    if (File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Server.exe")) &&
-                            File.Exists(Path.Combine(Path.GetFullPath(item), "Aki.Launcher.exe")) &&
+                    if (File.Exists(Path.Combine(Path.GetFullPath(item), "SPT.Server.exe")) &&
+                            File.Exists(Path.Combine(Path.GetFullPath(item), "SPT.Launcher.exe")) &&
                             Directory.Exists(Path.Combine(Path.GetFullPath(item), "Aki_Data")))
                     {
                         try
@@ -4513,8 +4513,8 @@ namespace SPTMiniLauncher
 
                     if (Directory.Exists(boxPath.Text))
                     {
-                        if (File.Exists(Path.Combine(boxPath.Text, "Aki.Server.exe")) &&
-                        File.Exists(Path.Combine(boxPath.Text, "Aki.Launcher.exe")) &&
+                        if (File.Exists(Path.Combine(boxPath.Text, "SPT.Server.exe")) &&
+                        File.Exists(Path.Combine(boxPath.Text, "SPT.Launcher.exe")) &&
                         Directory.Exists(Path.Combine(boxPath.Text, "Aki_Data")))
                         {
                             try
@@ -4632,12 +4632,12 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+                    MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"SPT.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
                 }
             }
             else
             {
-                MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+                MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"SPT.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
             }
         }
 
@@ -4730,13 +4730,13 @@ namespace SPTMiniLauncher
                 }
                 else
                 {
-                    MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+                    MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"SPT.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
                 }
                 */
             }
             else
             {
-                MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"Aki.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
+                MessageBox.Show("Please browse for an SPT folder before adjusting settings.\n\n\nHit Browse, navigate to a folder that contains \"SPT.Server.exe\", and select it.", this.Text, MessageBoxButtons.OK);
             }
         }
 

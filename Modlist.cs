@@ -89,10 +89,10 @@ namespace SPTMiniLauncher
                 {
                     string fileItem = System.IO.Path.GetFileName(item);
 
-                    if (fileItem != "aki-core.dll" &&
-                        fileItem != "aki-custom.dll" &&
-                        fileItem != "aki-debugging.dll" &&
-                        fileItem != "aki-singleplayer.dll" &&
+                    if (fileItem != "spt-core.dll" &&
+                        fileItem != "spt-custom.dll" &&
+                        fileItem != "spt-debugging.dll" &&
+                        fileItem != "spt-singleplayer.dll" &&
                         fileItem.ToLower() != "configurationmanager.dll")
                     {
                         collectedMods.Add(fileItem);
