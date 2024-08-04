@@ -538,7 +538,7 @@
             this.tabSPTAKI.Name = "tabSPTAKI";
             this.tabSPTAKI.Size = new System.Drawing.Size(232, 45);
             this.tabSPTAKI.TabIndex = 12;
-            this.tabSPTAKI.Text = "SPT-AKI settings";
+            this.tabSPTAKI.Text = "SPT settings";
             this.tooltipSPTAKI.SetToolTip(this.tabSPTAKI, "Settings and configurations related to SPT-AKI and its Server and Launcher");
             this.tabSPTAKI.UseVisualStyleBackColor = false;
             this.tabSPTAKI.Click += new System.EventHandler(this.tabSPTAKI_Click);
