@@ -80,7 +80,6 @@ namespace SPTMiniLauncher
             "Open server mods",
             "Open client mods",
             "Open profiles folder",
-            "Open modloader JSON",
             "Miscellaneous",
             "Open profile -",
             "Open control panel",
@@ -170,7 +169,7 @@ namespace SPTMiniLauncher
                             new JObject
                             {
                                 ["Name"] = "Server Value Modifier",
-                                ["Path"] = "Greed.exe",
+                                ["Path"] = "root\\Greed.exe",
                                 ["Type"] = "App"
                             }
                         }
@@ -335,8 +334,7 @@ namespace SPTMiniLauncher
                         new JObject(new JProperty("View installed mods", true)),
                         new JObject(new JProperty("Open server mods", true)),
                         new JObject(new JProperty("Open client mods", true)),
-                        new JObject(new JProperty("Open profiles folder", true)),
-                        new JObject(new JProperty("Open modloader", true))
+                        new JObject(new JProperty("Open profiles folder", true))
                     )
                 ),
                 new JProperty("Miscellaneous",
@@ -1083,6 +1081,45 @@ namespace SPTMiniLauncher
                         if (_path.ToLower().StartsWith("mods"))
                         {
                             string newPath = _path.Replace("mods", modsFolder);
+                            bool newPathExists;
+
+                            if (_type.ToLower() == "folder")
+                            {
+                                newPathExists = Directory.Exists(newPath);
+                            }
+                            else
+                            {
+                                newPathExists = File.Exists(newPath);
+                            }
+
+                            try
+                            {
+                                if (newPathExists)
+                                {
+                                    ProcessStartInfo newApp = new ProcessStartInfo();
+                                    newApp.WorkingDirectory = Path.GetDirectoryName(newPath);
+                                    newApp.FileName = Path.GetFileName(newPath);
+                                    newApp.UseShellExecute = true;
+                                    newApp.Verb = "open";
+
+                                    Process.Start(newApp);
+                                }
+                                else
+                                {
+                                    showError($"It appears that third party tool {_name} doesn't exist in path{Environment.NewLine}{Environment.NewLine}{newPath}" +
+                                        $"{Environment.NewLine}{Environment.NewLine}" +
+                                        $"Please download and install the tool to use it. Alternatively, remove it from Third Party Apps (right-click until you see Remove).");
+                                }
+                            }
+                            catch (Exception err)
+                            {
+                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
+                            }
+                        }
+                        else if (_path.ToLower().StartsWith("root\\"))
+                        {
+                            string newPath = _path.Replace("root", userFolder);
                             bool newPathExists;
 
                             if (_type.ToLower() == "folder")
@@ -3686,296 +3723,129 @@ namespace SPTMiniLauncher
             }
         }
 
-        public async void killProcesses()
+        public async Task killProcesses()
         {
             Control stopButton = findRun(false, "stop spt");
             bool akiRunning = isAKIRunning();
 
             if (!akiRunning)
             {
-                stopButton.Invoke((MethodInvoker)(() => { stopButton.Text = "SPT is not running!"; }));
+                stopButton?.Invoke((MethodInvoker)(() => { stopButton.Text = "SPT is not running!"; }));
                 await Task.Delay(1500);
-                stopButton.Invoke((MethodInvoker)(() => { stopButton.Text = "Stop SPT"; }));
+                stopButton?.Invoke((MethodInvoker)(() => {
+                    stopButton.Text = "Stop SPT";
+                    stopButton.ForeColor = Color.IndianRed;
+                }));
+                return;
             }
-            else
+
+            globalProcessDetector?.CancelAsync(); globalProcessDetector?.Dispose(); globalProcessDetector = null;
+            TarkovEndDetector?.CancelAsync(); TarkovEndDetector?.Dispose(); TarkovEndDetector = null;
+            TarkovProcessDetector?.CancelAsync(); TarkovProcessDetector?.Dispose(); TarkovProcessDetector = null;
+            CheckServerWorker?.CancelAsync(); CheckServerWorker?.Dispose(); CheckServerWorker = null;
+
+            if (Directory.Exists(Properties.Settings.Default.server_path) && Properties.Settings.Default.clearCache == 2)
             {
-                if (globalProcessDetector != null)
+                string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user", "cache");
+                if (Directory.Exists(cacheFolder))
                 {
-                    globalProcessDetector.CancelAsync();
-                    globalProcessDetector.Dispose();
-                    globalProcessDetector = null;
-                }
-
-                if (TarkovEndDetector != null)
-                {
-                    TarkovEndDetector.CancelAsync();
-                    TarkovEndDetector.Dispose();
-                    TarkovEndDetector = null;
-                }
-
-                if (TarkovProcessDetector != null)
-                {
-                    TarkovProcessDetector.CancelAsync();
-                    TarkovProcessDetector.Dispose();
-                    TarkovProcessDetector = null;
-                }
-
-                if (CheckServerWorker != null)
-                {
-                    CheckServerWorker.CancelAsync();
-                    CheckServerWorker.Dispose();
-                    CheckServerWorker = null;
-                }
-
-                string akiServerProcess = "SPT.Server";
-                string akiLauncherProcess = "SPT.Launcher";
-                string eftProcess = "EscapeFromTarkov";
-                bool akiServerTerminated = false;
-                bool akiLauncherTerminated = false;
-                bool eftTerminated = false;
-
-                if (Directory.Exists(Properties.Settings.Default.server_path))
-                {
-                    if (Properties.Settings.Default.clearCache == 2)
+                    try { Directory.Delete(cacheFolder, true); }
+                    catch (Exception err)
                     {
-                        string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user", "cache");
-                        if (Directory.Exists(cacheFolder))
-                        {
-                            try
-                            {
-                                Directory.Delete(cacheFolder, true);
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                            }
-                        }
+                        Debug.WriteLine($"ERROR: {err}");
+                        MessageBox.Show($"Oops! Error clearing cache:\n\n{err}", Text, MessageBoxButtons.OK);
                     }
-                }
-
-                Control statusButton = findRun(true, "spt is running!");
-                if (statusButton != null)
-                {
-                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT"; }));
-                    stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
-                }
-                else
-                {
-                    statusButton = findRun(true, "loading spt");
-                    if (statusButton != null)
-                    {
-                        statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT"; }));
-                        stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
-                    }
-                }
-
-                try
-                {
-                    Process[] procs = Process.GetProcessesByName(akiServerProcess);
-                    if (procs != null && procs.Length > 0)
-                    {
-                        foreach (Process aki in procs)
-                        {
-                            if (!aki.HasExited)
-                            {
-                                if (!aki.CloseMainWindow())
-                                {
-                                    try
-                                    {
-                                        aki.Kill();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
-                                        {
-                                            Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
-                                        }
-                                    }
-                                    aki.WaitForExit();
-                                }
-                                else
-                                {
-                                    aki.WaitForExit();
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"TERMINATION FAILURE OF AKI SERVER (IGNORE): {err.ToString()}");
-                }
-
-                await Task.Delay(200);
-
-                try
-                {
-                    Process[] procs = Process.GetProcessesByName(akiLauncherProcess);
-                    if (procs != null && procs.Length > 0)
-                    {
-                        foreach (Process aki in procs)
-                        {
-                            if (!aki.HasExited)
-                            {
-                                if (!aki.CloseMainWindow())
-                                {
-                                    try
-                                    {
-                                        aki.Kill();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
-                                        {
-                                            Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
-                                        }
-                                    }
-                                    aki.WaitForExit();
-                                }
-                                else
-                                {
-                                    aki.WaitForExit();
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"TERMINATION FAILURE OF AKI LAUNCHER (IGNORE): {err.ToString()}");
-                }
-
-                await Task.Delay(200);
-
-                try
-                {
-                    Process[] procs = Process.GetProcessesByName(eftProcess);
-                    if (procs != null && procs.Length > 0)
-                    {
-                        foreach (Process aki in procs)
-                        {
-                            if (!aki.HasExited)
-                            {
-                                if (!aki.CloseMainWindow())
-                                {
-                                    try
-                                    {
-                                        aki.Kill();
-                                    }
-                                    catch (Exception ex)
-                                    {
-                                        if (ex is System.ComponentModel.Win32Exception win32Exception && win32Exception.Message == "Access is denied")
-                                        {
-                                            Console.WriteLine("Controlled exception access is denied occurred. If administrator account, ignore");
-                                        }
-                                    }
-                                    aki.WaitForExit();
-                                }
-                                else
-                                {
-                                    aki.WaitForExit();
-                                }
-                            }
-                        }
-                    }
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"TERMINATION FAILURE OF AKI LAUNCHER (IGNORE): {err.ToString()}");
-                }
-
-                await Task.Delay(500);
-
-                try
-                {
-                    Process[] procs1 = Process.GetProcessesByName(akiServerProcess);
-                    if (procs1 != null && procs1.Length > 0)
-                    {
-                    }
-                    else
-                    {
-                        akiServerTerminated = true;
-                    }
-
-                    Process[] procs2 = Process.GetProcessesByName(akiLauncherProcess);
-                    if (procs2 != null && procs2.Length > 0)
-                    {
-                    }
-                    else
-                    {
-                        akiLauncherTerminated = true;
-                    }
-
-                    Process[] procs3 = Process.GetProcessesByName(eftProcess);
-                    if (procs3 != null && procs3.Length > 0)
-                    {
-                    }
-                    else
-                    {
-                        eftTerminated = true;
-                    }
-
-                    Control attemptedButton = findRun(false, "attempting to exit");
-
-                    if (akiServerTerminated && akiLauncherTerminated && eftTerminated)
-                    {
-                        if (attemptedButton != null)
-                        {
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "SPT successfully exited, resetting"; }));
-                            await Task.Delay(1000);
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Enabled = true; }));
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Launch SPT"; }));
-                        }
-                    }
-                    else
-                    {
-                        if (attemptedButton != null)
-                        {
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Termination failed; one or more instances did not exit"; }));
-                            await Task.Delay(1000);
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Enabled = true; }));
-                            attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = "Launch SPT"; }));
-                        }
-                    }
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"TERMINATION FAILURE (IGNORE): {err.ToString()}");
-                }
-
-                stopButton.Invoke((MethodInvoker)(() => { stopButton.Enabled = true; }));
-                Control cacheBtn = findCache();
-                if (cacheBtn != null)
-                {
-                    cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
-                }
-
-                try
-                {
-                    resetRunButton();
-                    clearOutput();
-
-                    displayServerStatus("stopping");
-                    await Task.Delay(500);
-                    displayServerStatus("stopped");
-                    await Task.Delay(1000);
-                    displayServerStatus("idle");
-
-                    Console.WriteLine("All processes successfully killed");
-                    isServerOnly = false;
-
-                    if (Properties.Settings.Default.closeOnQuit)
-                        Application.Exit();
-
-                    statusButton.Invoke((MethodInvoker)(() => { statusButton.Enabled = true; }));
-                }
-                catch (Exception err)
-                {
-                    Debug.WriteLine($"DISPOSE FAILURE (IGNORE): {err.ToString()}");
                 }
             }
-            
+
+            Control statusButton = findRun(true, "spt is running!") ?? findRun(true, "loading spt");
+            if (statusButton != null)
+            {
+                statusButton.Invoke((MethodInvoker)(() => { statusButton.Text = "Attempting to exit SPT"; }));
+                stopButton?.Invoke((MethodInvoker)(() => { stopButton.Enabled = false; }));
+            }
+
+            string[] processNames = { "EscapeFromTarkov", "SPT.Launcher", "SPT.Server" };
+            foreach (string procName in processNames)
+            {
+                await TerminateProcessGroupAsync(procName);
+            }
+
+            bool allTerminated = processNames.All(p => Process.GetProcessesByName(p).Length == 0);
+
+            Control attemptedButton = findRun(false, "attempting to exit");
+            if (attemptedButton != null)
+            {
+                string msg = allTerminated
+                    ? "SPT successfully exited, resetting"
+                    : "Termination failed; one or more instances did not exit";
+
+                attemptedButton.Invoke((MethodInvoker)(() => { attemptedButton.Text = msg; }));
+                await Task.Delay(1000);
+                attemptedButton.Invoke((MethodInvoker)(() => {
+                    attemptedButton.Enabled = true;
+                    attemptedButton.Text = "Launch SPT";
+                }));
+            }
+
+            stopButton?.Invoke((MethodInvoker)(() => { stopButton.Enabled = true; }));
+
+            Control cacheBtn = findCache();
+            if (cacheBtn != null) cacheBtn.Invoke((MethodInvoker)(() => { cacheBtn.Text = "Clear cache"; }));
+
+            try
+            {
+                resetRunButton();
+                clearOutput();
+
+                displayServerStatus("stopping");
+                await Task.Delay(500);
+                displayServerStatus("stopped");
+                await Task.Delay(1000);
+                displayServerStatus("idle");
+
+                Console.WriteLine("All processes successfully killed");
+                isServerOnly = false;
+
+                if (Properties.Settings.Default.closeOnQuit)
+                    Application.Exit();
+
+                statusButton?.Invoke((MethodInvoker)(() => { statusButton.Enabled = true; }));
+            }
+            catch (Exception err)
+            {
+                Debug.WriteLine($"DISPOSE FAILURE (IGNORE): {err}");
+            }
+        }
+
+        private async Task TerminateProcessGroupAsync(string processName)
+        {
+            try
+            {
+                Process[] procs = Process.GetProcessesByName(processName);
+                foreach (Process proc in procs)
+                {
+                    using (proc)
+                    {
+                        if (proc.HasExited) continue;
+                        if (!proc.CloseMainWindow())
+                        {
+                            proc.Kill();
+                        }
+
+                        var waitTask = Task.Run(() => proc.WaitForExit(3000));
+                        await waitTask;
+                        if (!proc.HasExited)
+                        {
+                            proc.Kill();
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error terminating {processName}: {ex.Message}");
+            }
         }
 
         public void checkWorker()

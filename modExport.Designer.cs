@@ -259,6 +259,7 @@
             this.chkPackageToggle.TabIndex = 15;
             this.chkPackageToggle.Text = "Open package.json on open";
             this.chkPackageToggle.UseVisualStyleBackColor = true;
+            this.chkPackageToggle.Visible = false;
             // 
             // groupBox1
             // 
