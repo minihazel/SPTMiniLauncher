@@ -74,7 +74,7 @@ namespace SPTMiniLauncher
             if (Properties.Settings.Default.serverErrorMessages)
             {
                 string fullServerPath = Properties.Settings.Default.server_path;
-                string userFolder = Path.Combine(fullServerPath, "user");
+                string userFolder = Path.Combine(fullServerPath, "SPT_Runtime", "user");
                 string modsFolder = Path.Combine(userFolder, "mods");
 
                 bool userExists = Directory.Exists(userFolder);

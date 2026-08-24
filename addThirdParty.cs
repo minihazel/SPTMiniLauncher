@@ -1,4 +1,4 @@
-﻿using Microsoft.WindowsAPICodePack.Dialogs;
+﻿// using Microsoft.WindowsAPICodePack.Dialogs;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Media;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace SPTMiniLauncher
 {
@@ -77,34 +78,50 @@ namespace SPTMiniLauncher
         {
             if (bToolType.Text.ToLower() == "folder")
             {
-                CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-                dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-                dialog.IsFolderPicker = true;
-
-                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+                using (var fbd = new FolderBrowserDialog())
                 {
-                    string fullPath = Path.GetFullPath(dialog.FileName);
-                    fullPath = fullPath.Replace("\"", "");
+                    fbd.RootFolder = Environment.SpecialFolder.MyDocuments;
+                    fbd.Description = "Browse for a third party folder";
+                    DialogResult result = fbd.ShowDialog();
 
-                    if (Directory.Exists(fullPath))
+                    if (result == DialogResult.OK && !string.IsNullOrWhiteSpace(fbd.SelectedPath))
                     {
-                        string[] parts = fullPath.Split('\\');
-                        int userIndex = Array.IndexOf(parts, "user");
-                        int modsIndex = Array.IndexOf(parts, "mods");
+                        string resultFolder = fbd.SelectedPath;
+                        string fullPath = Path.GetFullPath(resultFolder);
+                        fullPath = fullPath.Replace("\"", "");
 
-                        if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                        if (Directory.Exists(fullPath))
                         {
-                            string folderName = parts[modsIndex];
-                            folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
+                            string[] parts = fullPath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                            int runtimeIndex = Array.IndexOf(parts, "SPT_Runtime");
+                            int userIndex = Array.IndexOf(parts, "user");
+                            int modsIndex = Array.IndexOf(parts, "mods");
 
-                            txtPathToApp.Text = folderName;
-                        }
-                        else if (userIndex == -1 && modsIndex == -1)
-                        {
-                            txtPathToApp.Text = fullPath;
-                        }
+                            if (runtimeIndex != -1 && runtimeIndex + 1 < parts.Length)
+                            {
+                                txtPathToApp.Text = string.Join(
+                                    Path.DirectorySeparatorChar.ToString(),
+                                    parts,
+                                    runtimeIndex + 1,
+                                    parts.Length - (runtimeIndex + 1)
+                                );
+                            }
+                            else if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            {
+                                txtPathToApp.Text = string.Join(
+                                    Path.DirectorySeparatorChar.ToString(),
+                                    parts,
+                                    modsIndex,
+                                    parts.Length - modsIndex
+                                );
+                            }
+                            else
+                            {
+                                txtPathToApp.Text = fullPath;
+                            }
 
-                        bBrowsePath.Select();
+                            bBrowsePath.Select();
+                        }
                     }
                 }
             }
@@ -121,18 +138,30 @@ namespace SPTMiniLauncher
                     string fullFilePath = open.FileName;
                     fullFilePath = fullFilePath.Replace("\"", "");
 
-                    string[] parts = fullFilePath.Split('\\');
+                    string[] parts = fullFilePath.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                    int runtimeIndex = Array.IndexOf(parts, "SPT_Runtime");
                     int userIndex = Array.IndexOf(parts, "user");
                     int modsIndex = Array.IndexOf(parts, "mods");
 
-                    if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                    if (runtimeIndex != -1 && runtimeIndex + 1 < parts.Length)
                     {
-                        string folderName = parts[modsIndex];
-                        folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
-
-                        txtPathToApp.Text = folderName;
+                        txtPathToApp.Text = string.Join(
+                            Path.DirectorySeparatorChar.ToString(),
+                            parts,
+                            runtimeIndex + 1,
+                            parts.Length - (runtimeIndex + 1)
+                        );
                     }
-                    else if (userIndex == -1 && modsIndex == -1)
+                    else if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                    {
+                        txtPathToApp.Text = string.Join(
+                            Path.DirectorySeparatorChar.ToString(),
+                            parts,
+                            modsIndex,
+                            parts.Length - modsIndex
+                        );
+                    }
+                    else
                     {
                         txtPathToApp.Text = fullFilePath;
                     }
@@ -218,25 +247,39 @@ namespace SPTMiniLauncher
 
                         if (mainForm.appDict.ContainsKey(appName))
                         {
-                            string[] parts = txtPathToApp.Text.Split('\\');
+                            string[] parts = txtPathToApp.Text.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                            int runtimeIndex = Array.IndexOf(parts, "SPT_Runtime");
                             int userIndex = Array.IndexOf(parts, "user");
                             int modsIndex = Array.IndexOf(parts, "mods");
 
-                            if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            string resolvedPath;
+
+                            if (runtimeIndex != -1 && runtimeIndex + 1 < parts.Length)
                             {
-                                string folderName = parts[modsIndex];
-                                folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
-                                mainForm.appDict[appName].Path = folderName;
-                                mainForm.appDict[appName].Type = type;
-                                mainForm.editThirdPartyApp(appName, folderName, type);
+                                resolvedPath = string.Join(
+                                    Path.DirectorySeparatorChar.ToString(),
+                                    parts,
+                                    runtimeIndex + 1,
+                                    parts.Length - (runtimeIndex + 1)
+                                );
+                            }
+                            else if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            {
+                                resolvedPath = string.Join(
+                                    Path.DirectorySeparatorChar.ToString(),
+                                    parts,
+                                    modsIndex,
+                                    parts.Length - modsIndex
+                                );
                             }
                             else
                             {
-                                mainForm.appDict[appName].Path = fullFilePath;
-                                mainForm.appDict[appName].Type = type;
-
-                                mainForm.editThirdPartyApp(appName, fullFilePath, type);
+                                resolvedPath = fullFilePath;
                             }
+
+                            mainForm.appDict[appName].Path = resolvedPath;
+                            mainForm.appDict[appName].Type = type;
+                            mainForm.editThirdPartyApp(appName, resolvedPath, type);
 
                             Task.Delay(500);
                             mainForm.readGallery();
@@ -256,24 +299,39 @@ namespace SPTMiniLauncher
 
                         if (mainForm.appDict.ContainsKey(appName))
                         {
-                            string[] parts = txtPathToApp.Text.Split('\\');
+                            string[] parts = txtPathToApp.Text.Split(Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar);
+                            int runtimeIndex = Array.IndexOf(parts, "SPT_Runtime");
                             int userIndex = Array.IndexOf(parts, "user");
                             int modsIndex = Array.IndexOf(parts, "mods");
 
-                            if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            string targetPath;
+
+                            if (runtimeIndex != -1 && runtimeIndex + 1 < parts.Length)
                             {
-                                string folderName = parts[modsIndex];
-                                folderName = Path.Combine(folderName, string.Join(Path.DirectorySeparatorChar.ToString(), parts, modsIndex + 1, parts.Length - modsIndex - 1));
-                                mainForm.appDict[appName].Path = folderName;
-                                mainForm.appDict[appName].Type = type;
-                                mainForm.editThirdPartyApp(appName, folderName, type);
+                                targetPath = string.Join(
+                                    Path.DirectorySeparatorChar.ToString(),
+                                    parts,
+                                    runtimeIndex + 1,
+                                    parts.Length - (runtimeIndex + 1)
+                                );
+                            }
+                            else if (userIndex != -1 && modsIndex != -1 && userIndex < modsIndex)
+                            {
+                                targetPath = string.Join(
+                                    Path.DirectorySeparatorChar.ToString(),
+                                    parts,
+                                    modsIndex,
+                                    parts.Length - modsIndex
+                                );
                             }
                             else
                             {
-                                mainForm.appDict[appName].Path = fullFilePath;
-                                mainForm.appDict[appName].Type = type;
-                                mainForm.editThirdPartyApp(appName, fullFilePath, type);
+                                targetPath = fullFilePath;
                             }
+
+                            mainForm.appDict[appName].Path = targetPath;
+                            mainForm.appDict[appName].Type = type;
+                            mainForm.editThirdPartyApp(appName, targetPath, type);
 
                             Task.Delay(500);
                             mainForm.readGallery();

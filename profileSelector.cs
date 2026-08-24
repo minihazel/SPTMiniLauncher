@@ -75,7 +75,7 @@ namespace SPTMiniLauncher
         {
             Form1 mainForm = new Form1();
 
-            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {

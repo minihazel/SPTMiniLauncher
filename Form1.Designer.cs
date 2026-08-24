@@ -152,6 +152,7 @@
             this.boxServerPlaceholder.Text = "Server placeholder";
             this.boxServerPlaceholder.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             this.boxServerPlaceholder.Visible = false;
+            this.boxServerPlaceholder.Click += new System.EventHandler(this.boxServerPlaceholder_Click);
             // 
             // boxServersTitle
             // 

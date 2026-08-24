@@ -7,25 +7,16 @@ using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Text;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Media.Animation;
-using System.Xml.Linq;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
-using System.Net.NetworkInformation;
-using System.Security.Policy;
-using System.Security.Permissions;
-using System.Runtime.InteropServices.ComTypes;
-using System.Configuration;
-using System.Windows.Media.Imaging;
 
 namespace SPTMiniLauncher
 {
@@ -178,26 +169,8 @@ namespace SPTMiniLauncher
                         {
                             new JObject
                             {
-                                ["Name"] = "Load Order Editor",
-                                ["Path"] = "mods\\Load Order Editor.exe",
-                                ["Type"] = "App"
-                            },
-                            new JObject
-                            {
-                                ["Name"] = "SPT-AKI Profile Editor",
-                                ["Path"] = "C:\\Program Files\\SPT-AKI Profile Editor\\SPT-AKI Profile Editor.exe",
-                                ["Type"] = "App"
-                            },
-                            new JObject
-                            {
                                 ["Name"] = "Server Value Modifier",
-                                ["Path"] = "mods\\ServerValueModifier\\GFVE.exe",
-                                ["Type"] = "App"
-                            },
-                            new JObject
-                            {
-                                ["Name"] = "SPT Realism",
-                                ["Path"] = "mods\\SPT-Realism-Mod\\RealismModConfig.exe",
+                                ["Path"] = "Greed.exe",
                                 ["Type"] = "App"
                             }
                         }
@@ -607,7 +580,7 @@ namespace SPTMiniLauncher
 
         public string fetchProfileFromAID(string profileAID)
         {
-            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {
@@ -642,7 +615,7 @@ namespace SPTMiniLauncher
 
         public JObject fetchFullProfileFromAID(string profileAID)
         {
-            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {
@@ -686,8 +659,11 @@ namespace SPTMiniLauncher
             return false;
         }
 
+        /*
         public void updateOrderJSON(string path)
         {
+            // For SPT 4.0 and up, `order.json` no longer exists; this code is here for legacy support
+            //
 
             // Personal reference: path means user/mods
             //
@@ -756,6 +732,7 @@ namespace SPTMiniLauncher
                 MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
             }
         }
+        */
 
         public void showError(string content)
         {
@@ -903,7 +880,7 @@ namespace SPTMiniLauncher
                     Array.Resize(ref thirdPartyContent, thirdPartyContent.Length + 1);
                     thirdPartyContent[thirdPartyContent.Length - 1] = "Add new tool";
 
-                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                     string modsFolder = Path.Combine(userFolder, "mods");
 
                     foreach (var app in appDict)
@@ -1090,8 +1067,8 @@ namespace SPTMiniLauncher
         {
             if (appDict.Count > 0)
             {
-                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
-                string modsFolder = Path.Combine(userFolder, "mods");
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path);
+                string modsFolder = Path.Combine(userFolder, "SPT_Runtime", "user", "mods");
 
                 foreach (var app in appDict)
                 {
@@ -1226,7 +1203,7 @@ namespace SPTMiniLauncher
         public void checkForSingularProfile(string path)
         {
             string mainFolder = path;
-            string userFolder = Path.Combine(mainFolder, "user");
+            string userFolder = Path.Combine(mainFolder, "SPT_Runtime", "user");
             bool userExists = Directory.Exists(userFolder);
             if (userExists)
             {
@@ -1307,24 +1284,27 @@ namespace SPTMiniLauncher
 
         public void browseInstallation()
         {
-            CommonOpenFileDialog dialog = new CommonOpenFileDialog();
-            dialog.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-            dialog.IsFolderPicker = true;
-
-            if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
+            using (var dialog = new CommonOpenFileDialog())
             {
-                string fullPath = Path.GetFullPath(dialog.FileName);
+                dialog.IsFolderPicker = true;
+                dialog.Title = "Browse for a folder called SPT_Runtime";
 
-                if (Directory.Exists(fullPath))
+                if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
-                    if (File.Exists(Path.Combine(fullPath, "SPT.Server.exe")) &&
-                        File.Exists(Path.Combine(fullPath, "SPT.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(fullPath, "SPT_Data")))
+                    string resultFolder = dialog.FileName;
+                    string fullPath = Path.GetFullPath(resultFolder);
+
+                    if (Directory.Exists(fullPath))
                     {
-                        boxPath.Text = fullPath;
-                        Properties.Settings.Default.server_path = boxPath.Text;
-                        Properties.Settings.Default.Save();
-                        addGalleryInstall(Properties.Settings.Default.server_path);
+                        if (File.Exists(Path.Combine(fullPath, "SPT_Runtime", "SPT.Server.exe")) &&
+                            File.Exists(Path.Combine(fullPath, "SPT_Runtime", "SPT.Launcher.exe")) &&
+                            Directory.Exists(Path.Combine(fullPath, "SPT_Runtime", "SPT_Data")))
+                        {
+                            boxPath.Text = fullPath;
+                            Properties.Settings.Default.server_path = boxPath.Text;
+                            Properties.Settings.Default.Save();
+                            addGalleryInstall(Properties.Settings.Default.server_path);
+                        }
                     }
                 }
             }
@@ -1497,7 +1477,7 @@ namespace SPTMiniLauncher
             string clientModsBepinFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx");
             string clientModsPluginsFolder = Path.Combine(clientModsBepinFolder, "plugins");
 
-            string serverModsUserFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string serverModsUserFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
             string serverModsModsFolder = Path.Combine(serverModsUserFolder, "mods");
 
             bool bepinexExists = Directory.Exists(clientModsBepinFolder);
@@ -1627,55 +1607,52 @@ namespace SPTMiniLauncher
                     string installName = foundInstall.Name;
                     string installPath = foundInstall.Path;
 
-                    string akiData = Path.Combine(installPath, "SPT_Data");
+                    string akiData = Path.Combine(installPath, "SPT_Runtime", "SPT_Data");
                     bool akiDataExists = Directory.Exists(akiData);
                     if (akiDataExists)
                     {
-                        string akiServer = Path.Combine(akiData, "Server");
-                        bool akiServerExists = Directory.Exists(akiServer);
-                        if (akiDataExists)
+                        string akiConfigs = Path.Combine(akiData, "configs");
+                        bool akiConfigsExists = Directory.Exists(akiConfigs);
+                        if (akiConfigsExists)
                         {
-                            string akiConfigs = Path.Combine(akiServer, "configs");
-                            bool akiConfigsExists = Directory.Exists(akiConfigs);
-                            if (akiConfigsExists)
+                            core = Path.Combine(akiConfigs, "core.json");
+                            if (File.Exists(core))
                             {
-                                core = Path.Combine(akiConfigs, "core.json");
-                                if (File.Exists(core))
-                                {
-                                    string lastUsedName = Path.GetFileName(installPath);
-                                    Properties.Settings.Default.server_path = installPath;
-                                    Properties.Settings.Default.lastUsedInstall = lastUsedName;
-                                    boxPath.Text = Properties.Settings.Default.server_path;
-                                    Properties.Settings.Default.Save();
+                                string lastUsedName = Path.GetFileName(installPath);
+                                Properties.Settings.Default.server_path = installPath;
+                                Properties.Settings.Default.lastUsedInstall = lastUsedName;
+                                boxPath.Text = Properties.Settings.Default.server_path;
+                                Properties.Settings.Default.Save();
 
-                                    string userFolder = Path.Combine(installPath, "user");
-                                    bool userFolderExists = Directory.Exists(userFolder);
-                                    if (userFolderExists)
+                                listServerOptions(true);
+                                checkForSingularProfile(installPath);
+
+                                /*
+                                string userFolder = Path.Combine(installPath, "SPT_Runtime", "user");
+                                bool userFolderExists = Directory.Exists(userFolder);
+                                if (userFolderExists)
+                                {
+                                    string modsFolder = Path.Combine(userFolder, "mods");
+                                    bool modsFolderExists = Directory.Exists(modsFolder);
+                                    if (modsFolderExists)
                                     {
-                                        string modsFolder = Path.Combine(userFolder, "mods");
-                                        bool modsFolderExists = Directory.Exists(modsFolder);
-                                        if (modsFolderExists)
+                                        string orderJSON = Path.Combine(modsFolder, "order.json");
+                                        bool orderJSONExists = File.Exists(orderJSON);
+                                        if (orderJSONExists)
                                         {
-                                            string orderJSON = Path.Combine(modsFolder, "order.json");
-                                            bool orderJSONExists = File.Exists(orderJSON);
-                                            if (orderJSONExists)
+                                            try
                                             {
-                                                try
-                                                {
-                                                    updateOrderJSON(modsFolder);
-                                                }
-                                                catch (Exception err)
-                                                {
-                                                    Debug.WriteLine($"ERROR: {err.ToString()}");
-                                                    // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
-                                                }
+                                                // updateOrderJSON(modsFolder);
+                                            }
+                                            catch (Exception err)
+                                            {
+                                                Debug.WriteLine($"ERROR: {err.ToString()}");
+                                                // MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                             }
                                         }
                                     }
-
-                                    listServerOptions(true);
-                                    checkForSingularProfile(installPath);
                                 }
+                                */
                             }
                         }
                     }
@@ -2170,7 +2147,7 @@ namespace SPTMiniLauncher
                                 }
                                 else if (serverOptions[i].ToLower().Contains("open a profile"))
                                 {
-                                    string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\profiles");
+                                    string profilesFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user", "profiles");
                                     bool profilesFolderExists = Directory.Exists(profilesFolder);
                                     if (profilesFolderExists)
                                     {
@@ -2511,7 +2488,7 @@ namespace SPTMiniLauncher
                         {
                             if (MessageBox.Show("Clear cache?\n\nThis will make the Server load significantly slower next launch.", this.Text, MessageBoxButtons.YesNo) == DialogResult.Yes)
                             {
-                                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                                 bool userFolderExists = Directory.Exists(userFolder);
                                 if (userFolderExists)
                                 {
@@ -2526,7 +2503,7 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                             bool userFolderExists = Directory.Exists(userFolder);
                             if (userFolderExists)
                             {
@@ -2676,7 +2653,7 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user", "mods");
                             if (Directory.Exists(modsFolder))
                             {
                                 try
@@ -2701,7 +2678,7 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\mods");
+                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user", "mods");
                             if (Directory.Exists(modsFolder))
                             {
                                 try
@@ -2739,7 +2716,7 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            string pluginsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
+                            string pluginsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx", "plugins");
                             if (Directory.Exists(pluginsFolder))
                             {
                                 try
@@ -2764,7 +2741,7 @@ namespace SPTMiniLauncher
                         }
                         else
                         {
-                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx\\plugins");
+                            string modsFolder = Path.Combine(Properties.Settings.Default.server_path, "BepInEx", "plugins");
                             if (Directory.Exists(modsFolder))
                             {
                                 try
@@ -2797,7 +2774,7 @@ namespace SPTMiniLauncher
                         "open profiles folder")
                     {
                         string fullPath = Properties.Settings.Default.server_path;
-                        string userFolder = Path.Combine(fullPath, "user");
+                        string userFolder = Path.Combine(fullPath, "SPT_Runtime", "user");
                         bool userFolderExists = Directory.Exists(userFolder);
                         if (userFolderExists)
                         {
@@ -2820,24 +2797,6 @@ namespace SPTMiniLauncher
                                     Debug.WriteLine($"ERROR: {err.ToString()}");
                                     MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                                 }
-                            }
-                        }
-                    }
-
-                    else if (label.Text.ToLower() ==
-                        "open modloader json")
-                    {
-                        string orderFile = Path.Combine(Properties.Settings.Default.server_path, "user\\mods\\order.json");
-                        if (File.Exists(orderFile))
-                        {
-                            try
-                            {
-                                Process.Start(orderFile);
-                            }
-                            catch (Exception err)
-                            {
-                                Debug.WriteLine($"ERROR: {err.ToString()}");
-                                MessageBox.Show($"Oops! It seems like we received an error. If you're uncertain what it\'s about, please message the developer with a screenshot:\n\n{err.ToString()}", this.Text, MessageBoxButtons.OK);
                             }
                         }
                     }
@@ -2964,7 +2923,7 @@ namespace SPTMiniLauncher
         private void selectFirstProfile()
         {
             string fullPath = Properties.Settings.Default.server_path;
-            string userFolder = Path.Combine(fullPath, "user");
+            string userFolder = Path.Combine(fullPath, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {
@@ -2986,7 +2945,7 @@ namespace SPTMiniLauncher
             profile_ids.Items.Clear();
 
             string fullPath = Properties.Settings.Default.server_path;
-            string userFolder = Path.Combine(fullPath, "user");
+            string userFolder = Path.Combine(fullPath, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {
@@ -3040,7 +2999,7 @@ namespace SPTMiniLauncher
                     {
                         string fullPath = Properties.Settings.Default.server_path;
 
-                        string userFolder = Path.Combine(fullPath, "user");
+                        string userFolder = Path.Combine(fullPath, "SPT_Runtime", "user");
                         bool userFolderExists = Directory.Exists(userFolder);
                         if (userFolderExists)
                         {
@@ -3110,7 +3069,7 @@ namespace SPTMiniLauncher
                     {
                         string fullPath = Properties.Settings.Default.server_path;
 
-                        string userFolder = Path.Combine(fullPath, "user");
+                        string userFolder = Path.Combine(fullPath, "SPT_Runtime", "user");
                         bool userFolderExists = Directory.Exists(userFolder);
                         if (userFolderExists)
                         {
@@ -3221,10 +3180,10 @@ namespace SPTMiniLauncher
 
             if (Properties.Settings.Default.timedLauncherToggle)
             {
-                Directory.SetCurrentDirectory(Properties.Settings.Default.server_path);
+                Directory.SetCurrentDirectory(Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime"));
                 Process akiServer = new Process();
 
-                akiServer.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
+                akiServer.StartInfo.WorkingDirectory = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime");
                 akiServer.StartInfo.FileName = "SPT.Server.exe";
                 akiServer.StartInfo.CreateNoWindow = true;
                 akiServer.StartInfo.UseShellExecute = false;
@@ -3289,23 +3248,19 @@ namespace SPTMiniLauncher
             string ip_address = "";
 
             string akiPath = Properties.Settings.Default.server_path;
-            string akiData = Path.Combine(akiPath, "SPT_Data");
+            string akiData = Path.Combine(akiPath, "SPT_Runtime", "SPT_Data");
             if (Directory.Exists(akiData))
             {
-                string akiDataServer = Path.Combine(akiData, "Server");
-                if (Directory.Exists(akiDataServer))
+                string akiDatabase = Path.Combine(akiData, "database");
+                if (Directory.Exists(akiDatabase))
                 {
-                    string akiDatabase = Path.Combine(akiDataServer, "database");
-                    if (Directory.Exists(akiDatabase))
+                    string akiServerJson = Path.Combine(akiDatabase, "server.json");
+                    if (File.Exists(akiServerJson))
                     {
-                        string akiServerJson = Path.Combine(akiDatabase, "server.json");
-                        if (File.Exists(akiServerJson))
-                        {
-                            string readJson = File.ReadAllText(akiServerJson);
-                            JObject parsedJson = JObject.Parse(readJson);
-                            akiPort = Convert.ToInt32(parsedJson["port"]);
-                            ip_address = (string)parsedJson["ip"];
-                        }
+                        string readJson = File.ReadAllText(akiServerJson);
+                        JObject parsedJson = JObject.Parse(readJson);
+                        akiPort = Convert.ToInt32(parsedJson["port"]);
+                        ip_address = (string)parsedJson["ip"];
                     }
                 }
             }
@@ -3358,12 +3313,16 @@ namespace SPTMiniLauncher
                     _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                     if (akiPort != 0)
                     {
-                        _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
+                        _tarkov.Arguments = $"-force-gfx-jobs native " +
+                                            $"-token={aid} " +
+                                            $"-config={{'BackendUrl':'https://{ip_address}:{akiPort}','Version':'live','MatchingVersion':'live'}}";
                     }
                     else
                     {
 
-                        _tarkov.Arguments = $"-token={aid} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                        _tarkov.Arguments = $"-force-gfx-jobs native " +
+                                            $"-token={aid} " +
+                                            $"-config={{'BackendUrl':'https://127.0.0.1:6969','Version':'live','MatchingVersion':'live'}}";
                     }
                 }
                 else
@@ -3371,12 +3330,16 @@ namespace SPTMiniLauncher
                     _tarkov.FileName = Path.Combine(Properties.Settings.Default.server_path, "EscapeFromTarkov.exe");
                     if (akiPort != 0)
                     {
-                        _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://{ip_address}:{akiPort}\",\"Version\":\"live\"}}";
+                        _tarkov.Arguments = $"-force-gfx-jobs native " +
+                                            $"-token={Properties.Settings.Default.currentProfileAID} " +
+                                            $"-config={{'BackendUrl':'https://{ip_address}:{akiPort}','Version':'live','MatchingVersion':'live'}}";
                     }
                     else
                     {
 
-                        _tarkov.Arguments = $"-token={Properties.Settings.Default.currentProfileAID} -config={{\"BackendUrl\":\"http://127.0.0.1:6969\",\"Version\":\"live\"}}";
+                        _tarkov.Arguments = $"-force-gfx-jobs native " +
+                                            $"-token={Properties.Settings.Default.currentProfileAID} " +
+                                            $"-config={{'BackendUrl':'https://127.0.0.1:6969','Version':'live','MatchingVersion':'live'}}";
                     }
                 }
 
@@ -3393,8 +3356,8 @@ namespace SPTMiniLauncher
             else
             {
                 Process akiLauncher = new Process();
-                akiLauncher.StartInfo.WorkingDirectory = Properties.Settings.Default.server_path;
-                akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "SPT.Launcher.exe");
+                akiLauncher.StartInfo.WorkingDirectory = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime");
+                akiLauncher.StartInfo.FileName = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "SPT.Launcher.exe");
                 akiLauncher.StartInfo.CreateNoWindow = false;
 
                 try
@@ -3775,7 +3738,7 @@ namespace SPTMiniLauncher
                 {
                     if (Properties.Settings.Default.clearCache == 2)
                     {
-                        string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "user\\cache");
+                        string cacheFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user", "cache");
                         if (Directory.Exists(cacheFolder))
                         {
                             try
@@ -4045,7 +4008,7 @@ namespace SPTMiniLauncher
         private void CheckServerWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             int akiPort;
-            string portPath = Path.Combine(Properties.Settings.Default.server_path, "SPT_Data\\Server\\database\\server.json");
+            string portPath = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "SPT_Data", "database", "server.json");
             bool portExists = File.Exists(portPath);
             if (portExists)
             {
@@ -4513,9 +4476,9 @@ namespace SPTMiniLauncher
 
                     if (Directory.Exists(boxPath.Text))
                     {
-                        if (File.Exists(Path.Combine(boxPath.Text, "SPT.Server.exe")) &&
-                        File.Exists(Path.Combine(boxPath.Text, "SPT.Launcher.exe")) &&
-                        Directory.Exists(Path.Combine(boxPath.Text, "SPT_Data")))
+                        if (File.Exists(Path.Combine(boxPath.Text, "SPT_Runtime", "SPT.Server.exe")) &&
+                        File.Exists(Path.Combine(boxPath.Text, "SPT_Runtime", "SPT.Launcher.exe")) &&
+                        Directory.Exists(Path.Combine(boxPath.Text, "SPT_Runtime", "SPT_Data")))
                         {
                             try
                             {
@@ -4756,6 +4719,11 @@ namespace SPTMiniLauncher
         }
 
         private void boxServers_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void boxServerPlaceholder_Click(object sender, EventArgs e)
         {
 
         }

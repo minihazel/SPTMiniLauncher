@@ -183,7 +183,7 @@ namespace SPTMiniLauncher
             {
                 string homeBepinFolder = Path.Combine(mainFolder, "BepInEx");
                 string homePluginsFolder = Path.Combine(homeBepinFolder, "plugins");
-                string homeUserFolder = Path.Combine(mainFolder, "user");
+                string homeUserFolder = Path.Combine(mainFolder, "SPT_Runtime", "user");
                 string homeModsFolder = Path.Combine(homeUserFolder, "mods");
 
                 string zipPath = Path.Combine(currentDir, "Exported mods.zip");
@@ -297,7 +297,7 @@ namespace SPTMiniLauncher
             try
             {
                 // Prepare server mods
-                string homeUserFolder = Path.Combine(mainFolder, "user");
+                string homeUserFolder = Path.Combine(mainFolder, "SPT_Runtime", "user");
                 string homeModsFolder = Path.Combine(homeUserFolder, "mods");
 
                 bool homeUserFolderExists = Directory.Exists(homeUserFolder);
@@ -306,7 +306,7 @@ namespace SPTMiniLauncher
                     Directory.Delete(homeUserFolder, true);
                 }
 
-                Directory.CreateDirectory(Path.Combine(mainFolder, "user"));
+                Directory.CreateDirectory(Path.Combine(mainFolder, "SPT_Runtime", "user"));
                 Directory.CreateDirectory(Path.Combine(homeUserFolder, "mods"));
 
                 // Enumerate and fetch
@@ -315,7 +315,7 @@ namespace SPTMiniLauncher
                     .Where(lbl => lbl.ForeColor == Color.DodgerBlue);
 
                 // Check folders
-                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                 bool userFolderExists = Directory.Exists(userFolder);
                 if (userFolderExists)
                 {
@@ -412,14 +412,14 @@ namespace SPTMiniLauncher
         private void exportServerMods()
         {
             // Prepare server mods
-            string homeUserFolder = Path.Combine(mainFolder, "user");
+            string homeUserFolder = Path.Combine(mainFolder, "SPT_Runtime", "user");
             string homeModsFolder = Path.Combine(homeUserFolder, "mods");
 
             bool homeUserFolderExists = Directory.Exists(homeUserFolder);
             if (homeUserFolderExists)
                 Directory.Delete(homeUserFolder, true);
 
-            Directory.CreateDirectory(Path.Combine(mainFolder, "user"));
+            Directory.CreateDirectory(Path.Combine(mainFolder, "SPT_Runtime", "user"));
             Directory.CreateDirectory(Path.Combine(homeUserFolder, "mods"));
 
             // Enumerate and fetch
@@ -428,7 +428,7 @@ namespace SPTMiniLauncher
                 .Where(lbl => lbl.ForeColor == Color.DodgerBlue);
 
             // Check folders
-            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {
@@ -603,7 +603,7 @@ namespace SPTMiniLauncher
 
         private void loadServerMods()
         {
-            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
             bool userFolderExists = Directory.Exists(userFolder);
             if (userFolderExists)
             {
@@ -739,7 +739,7 @@ namespace SPTMiniLauncher
                     }
                     else if (parentName == "panelservermods")
                     {
-                        string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                        string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                         bool userFolderExists = Directory.Exists(userFolder);
                         if (userFolderExists)
                         {
@@ -789,23 +789,38 @@ namespace SPTMiniLauncher
                                 bool pluginsFolderExists = Directory.Exists(pluginsFolder);
                                 if (pluginsFolderExists)
                                 {
+                                    string relativePath = label.Text.Substring(3);
+                                    string fullPath = Path.Combine(pluginsFolder, relativePath);
+
                                     if (!label.Text.EndsWith(".dll"))
                                     {
-                                        ProcessStartInfo newApp = new ProcessStartInfo();
-                                        newApp.WorkingDirectory = pluginsFolder;
-                                        newApp.FileName = Path.GetFileName(label.Text.Substring(3));
-                                        newApp.UseShellExecute = true;
-                                        newApp.Verb = "open";
-                                        Console.WriteLine(label.Text.Substring(3));
-
-                                        Process.Start(newApp);
+                                        if (Directory.Exists(fullPath))
+                                        {
+                                            Process.Start(new ProcessStartInfo
+                                            {
+                                                FileName = fullPath,
+                                                UseShellExecute = true
+                                            });
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (File.Exists(fullPath))
+                                        {
+                                            Process.Start(new ProcessStartInfo
+                                            {
+                                                FileName = "explorer.exe",
+                                                Arguments = $"/select,\"{fullPath}\"",
+                                                UseShellExecute = true
+                                            });
+                                        }
                                     }
                                 }
                             }
                         }
                         else if (parentName == "panelservermods")
                         {
-                            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                            string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                             bool userFolderExists = Directory.Exists(userFolder);
                             if (userFolderExists)
                             {
@@ -878,21 +893,38 @@ namespace SPTMiniLauncher
                         bool pluginsFolderExists = Directory.Exists(pluginsFolder);
                         if (pluginsFolderExists)
                         {
+                            string relativePath = label.Text.Substring(3);
+                            string fullPath = Path.Combine(pluginsFolder, relativePath);
+
                             if (!label.Text.EndsWith(".dll"))
                             {
-                                ProcessStartInfo newApp = new ProcessStartInfo();
-                                newApp.WorkingDirectory = pluginsFolder;
-                                newApp.FileName = Path.GetFileName(label.Text.Substring(3));
-                                newApp.UseShellExecute = true;
-                                newApp.Verb = "open";
-                                Process.Start(newApp);
+                                if (Directory.Exists(fullPath))
+                                {
+                                    Process.Start(new ProcessStartInfo
+                                    {
+                                        FileName = fullPath,
+                                        UseShellExecute = true
+                                    });
+                                }
+                            }
+                            else
+                            {
+                                if (File.Exists(fullPath))
+                                {
+                                    Process.Start(new ProcessStartInfo
+                                    {
+                                        FileName = "explorer.exe",
+                                        Arguments = $"/select,\"{fullPath}\"",
+                                        UseShellExecute = true
+                                    });
+                                }
                             }
                         }
                     }
                 }
                 else if (parentName == "panelservermods")
                 {
-                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "user");
+                    string userFolder = Path.Combine(Properties.Settings.Default.server_path, "SPT_Runtime", "user");
                     bool userFolderExists = Directory.Exists(userFolder);
                     if (userFolderExists)
                     {
@@ -943,7 +975,7 @@ namespace SPTMiniLauncher
             int serverMods = int.Parse(bCounterServerMods.Text);
 
             string homeBepinFolder = Path.Combine(mainFolder, "BepInEx");
-            string homeUserFolder = Path.Combine(mainFolder, "user");
+            string homeUserFolder = Path.Combine(mainFolder, "SPT_Runtime", "user");
 
             string content = $"Do you wish to export {clientMods} client mods and {serverMods} server mods? This may take a minute.";
             if (System.Windows.Forms.MessageBox.Show(content, this.Text, (MessageBoxButtons)MessageBoxButton.YesNo) == DialogResult.Yes)

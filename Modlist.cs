@@ -62,7 +62,7 @@ namespace SPTMiniLauncher
 
         private void Modlist_Load(object sender, EventArgs e)
         {
-            update();
+            // update();
             addMods();
             boxServerSeparator.Select();
         }
@@ -492,7 +492,7 @@ namespace SPTMiniLauncher
                 }
             }
 
-            update();
+            // update();
             /*
             if (isfound && !Directory.Exists(System.IO.Path.Combine(boxPathPlaceholder.Text, System.IO.Path.GetFileName(rootFolderPath))))
             {
@@ -580,17 +580,19 @@ namespace SPTMiniLauncher
             }
         }
 
+        /*
         public void update()
         {
             Form1 form = new Form1();
             string newPath = System.IO.Path.GetFullPath(System.IO.Path.Combine(boxPathPlaceholder.Text, @"..\..\"));
-            string modsFolder = System.IO.Path.Combine(newPath, "user\\mods");
+            string modsFolder = System.IO.Path.Combine(newPath, "SPT_Runtime", "user", "mods");
             form.updateOrderJSON(modsFolder);
         }
+        */
 
         private void Modlist_FormClosing(object sender, FormClosingEventArgs e)
         {
-            update();
+            // update();
         }
     }
 }
