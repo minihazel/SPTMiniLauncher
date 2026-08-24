@@ -1324,7 +1324,7 @@ namespace SPTMiniLauncher
             using (var dialog = new CommonOpenFileDialog())
             {
                 dialog.IsFolderPicker = true;
-                dialog.Title = "Browse for a folder called SPT_Runtime";
+                dialog.Title = "Browse for any SPT installation (with EscapeFromTarkov.exe in it)";
 
                 if (dialog.ShowDialog() == CommonFileDialogResult.Ok)
                 {
