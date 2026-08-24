@@ -706,6 +706,7 @@
             this.panelImportExistingConfig.TabStop = false;
             this.panelImportExistingConfig.Text = "Import existing configuration";
             this.optionsToolTip.SetToolTip(this.panelImportExistingConfig, "If enabled, SPT Launcher will close when the Aki Server & Launcher close.");
+            this.panelImportExistingConfig.Visible = false;
             // 
             // btnImportExistingConfig
             // 
